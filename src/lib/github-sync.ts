@@ -1,6 +1,6 @@
 import { createOctokitClient } from '@/lib/github';
 import { db } from '@/db';
-import { contributions } from '@/db/schema';
+import { contributions, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 /**
@@ -17,8 +17,19 @@ import { eq } from 'drizzle-orm';
 export async function syncGitHubContributions(userId: string, accessToken: string) {
   const octokit = createOctokitClient(accessToken);
 
-  const { data: user } = await octokit.rest.users.getAuthenticated();
-  const username = user.login;
+  const { data: ghUser } = await octokit.rest.users.getAuthenticated();
+  const username = ghUser.login;
+
+  // Backfill githubUsername if missing
+  await db
+    .update(users)
+    .set({
+      githubUsername: username,
+      githubId: String(ghUser.id),
+      image: ghUser.avatar_url,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, userId));
 
   const allMergedPRs: NewContribution[] = [];
   const seenRepos = new Set<string>();
