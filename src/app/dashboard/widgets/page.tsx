@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { Box, Plus, Pencil, Trash2, LayoutGrid, List, Clock, CreditCard } from 'lucide-react';
+import { Box, Plus, Pencil, Trash2, Code, LayoutGrid, List, Clock, CreditCard } from 'lucide-react';
 import { useWidgets } from '@/hooks';
 import { deleteWidget } from '@/lib/api-client';
+import { EmbedCodeModal } from '@/components/embed-code-modal';
+import { useState } from 'react';
 import type { Widget } from '@/types';
 
 const layoutIcons = {
@@ -21,6 +23,7 @@ const layoutIcons = {
 export default function WidgetsPage() {
   const { data: widgets, loading, error, refetch } = useWidgets();
   const router = useRouter();
+  const [embedWidgetId, setEmbedWidgetId] = useState<string | null>(null);
 
   async function handleDelete(widget: Widget) {
     if (!confirm(`Delete "${widget.name}"? This cannot be undone.`)) return;
@@ -33,7 +36,7 @@ export default function WidgetsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">My Widgets</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-1 text-sm">
             Create and manage embeddable contribution widgets.
           </p>
         </div>
@@ -44,7 +47,7 @@ export default function WidgetsPage() {
       </div>
 
       {error && (
-        <div className="mt-4 rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="border-destructive/50 bg-destructive/10 text-destructive mt-4 rounded-lg border p-3 text-sm">
           {error}
         </div>
       )}
@@ -62,13 +65,13 @@ export default function WidgetsPage() {
             const LayoutIcon = layoutIcons[layout] ?? LayoutGrid;
 
             return (
-              <Card key={widget.id} className="transition-colors hover:bg-muted/30">
+              <Card key={widget.id} className="hover:bg-muted/30 transition-colors">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="min-w-0 flex-1">
                       <h3 className="truncate font-medium">{widget.name}</h3>
                       {widget.description && (
-                        <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+                        <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">
                           {widget.description}
                         </p>
                       )}
@@ -79,7 +82,7 @@ export default function WidgetsPage() {
                     </Badge>
                   </div>
 
-                  <div className="mt-3 flex flex-wrap gap-1.5 text-xs text-muted-foreground">
+                  <div className="text-muted-foreground mt-3 flex flex-wrap gap-1.5 text-xs">
                     {widget.config?.theme && <Badge variant="outline">{widget.config.theme}</Badge>}
                     {widget.config?.timeRange && widget.config.timeRange !== 'all' && (
                       <Badge variant="outline">{widget.config.timeRange}</Badge>
@@ -99,7 +102,16 @@ export default function WidgetsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="gap-1 text-destructive hover:bg-destructive/10"
+                      className="gap-1"
+                      onClick={() => setEmbedWidgetId(widget.id)}
+                    >
+                      <Code className="size-3" />
+                      Embed
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-destructive hover:bg-destructive/10 gap-1"
                       onClick={() => handleDelete(widget)}
                     >
                       <Trash2 className="size-3" />
@@ -112,9 +124,9 @@ export default function WidgetsPage() {
           })
         ) : (
           <div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
-            <Box className="size-10 text-muted-foreground/50" />
+            <Box className="text-muted-foreground/50 size-10" />
             <h3 className="mt-4 text-lg font-medium">No widgets yet</h3>
-            <p className="mt-1 max-w-xs text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-1 max-w-xs text-sm">
               Create your first widget to showcase your merged PRs on any website.
             </p>
             <Button className="mt-4 gap-1.5" onClick={() => router.push('/dashboard/widgets/new')}>
@@ -124,6 +136,14 @@ export default function WidgetsPage() {
           </div>
         )}
       </div>
+
+      {embedWidgetId && (
+        <EmbedCodeModal
+          widgetId={embedWidgetId}
+          open={!!embedWidgetId}
+          onClose={() => setEmbedWidgetId(null)}
+        />
+      )}
     </div>
   );
 }

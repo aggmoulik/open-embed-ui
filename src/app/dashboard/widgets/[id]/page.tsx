@@ -19,9 +19,11 @@ import {
   Check,
   X,
   Pencil,
+  Code,
 } from 'lucide-react';
 import { useWidget, useContributions } from '@/hooks';
 import { createWidget } from '@/lib/api-client';
+import { EmbedCodeModal } from '@/components/embed-code-modal';
 import type { WidgetConfig, Contribution } from '@/types';
 
 const LAYOUTS = [
@@ -50,6 +52,7 @@ export default function WidgetBuilderPage() {
     maxItems: 10,
   });
   const [saving, setSaving] = useState(false);
+  const [showEmbed, setShowEmbed] = useState(false);
   const [editingTitle, setEditingTitle] = useState<string | null>(null);
   const [editTitleValue, setEditTitleValue] = useState('');
 
@@ -203,7 +206,18 @@ export default function WidgetBuilderPage() {
           <ArrowLeft className="size-4" />
         </Button>
         <h1 className="text-2xl font-bold">{isNew ? 'New Widget' : 'Edit Widget'}</h1>
-        <div className="ml-auto">
+        <div className="ml-auto flex gap-2">
+          {!isNew && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => setShowEmbed(true)}
+            >
+              <Code className="size-3.5" />
+              Embed
+            </Button>
+          )}
           <Button
             size="sm"
             className="gap-1.5"
@@ -473,6 +487,10 @@ export default function WidgetBuilderPage() {
           </div>
         </div>
       </div>
+
+      {!isNew && showEmbed && (
+        <EmbedCodeModal widgetId={params.id} open={showEmbed} onClose={() => setShowEmbed(false)} />
+      )}
     </div>
   );
 }
