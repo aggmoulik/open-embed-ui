@@ -1,11 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import {
-  fetchContributions,
-  type ContributionFilters,
-  ApiError,
-} from '@/lib/api-client';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { fetchContributions, type ContributionFilters, ApiError } from '@/lib/api-client';
 import type { Contribution } from '@/types';
 
 interface UseContributionsReturn {
@@ -21,6 +17,7 @@ export function useContributions(filters?: ContributionFilters): UseContribution
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchedRef = useRef(false);
 
   const filterKey = JSON.stringify(filters ?? {});
 
@@ -41,7 +38,12 @@ export function useContributions(filters?: ContributionFilters): UseContribution
   }, [filterKey]);
 
   useEffect(() => {
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
     refetch();
+    return () => {
+      fetchedRef.current = false;
+    };
   }, [refetch]);
 
   return { data, total, loading, error, refetch };

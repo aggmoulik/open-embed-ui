@@ -25,6 +25,16 @@ export interface Contribution {
   updatedAt: Date;
 }
 
+export interface WidgetConfig {
+  theme?: 'light' | 'dark' | 'system';
+  layout?: 'grid' | 'list' | 'timeline' | 'single-card';
+  repos?: string[];
+  timeRange?: 'week' | 'month' | 'year' | 'all';
+  maxItems?: number;
+  selectedPRs?: string[];
+  titleOverrides?: Record<string, string>;
+}
+
 export interface Widget {
   id: string;
   userId: string;
@@ -34,14 +44,6 @@ export interface Widget {
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface WidgetConfig {
-  theme?: 'light' | 'dark' | 'system';
-  repos?: string[];
-  timeRange?: 'week' | 'month' | 'year' | 'all';
-  layout?: 'grid' | 'list' | 'timeline';
-  maxItems?: number;
 }
 
 export interface Embed {

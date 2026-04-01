@@ -126,8 +126,10 @@ export const embeds = sqliteTable('embeds', {
 
 type WidgetConfig = {
   theme?: 'light' | 'dark' | 'system';
+  layout?: 'grid' | 'list' | 'timeline' | 'single-card';
   repos?: string[];
   timeRange?: 'week' | 'month' | 'year' | 'all';
-  layout?: 'grid' | 'list' | 'timeline';
   maxItems?: number;
+  selectedPRs?: string[]; // Cherry-picked contribution IDs
+  titleOverrides?: Record<string, string>; // contributionId → custom title
 };

@@ -1,4 +1,4 @@
-import type { User, Contribution } from '@/types';
+import type { User, Contribution, Widget, WidgetConfig } from '@/types';
 
 // --- Error types ---
 
@@ -96,4 +96,35 @@ export function updateProfile(data: Partial<Pick<User, 'name' | 'image'>>) {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
+}
+
+// --- Widgets ---
+
+export function fetchWidgets() {
+  return apiFetch<PaginatedResponse<Widget>>('/api/widgets');
+}
+
+export function fetchWidget(id: string) {
+  return apiFetch<DataResponse<Widget>>(`/api/widgets/${id}`);
+}
+
+export function createWidget(data: { name: string; description?: string; config: WidgetConfig }) {
+  return apiFetch<DataResponse<Widget>>('/api/widgets', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateWidget(
+  id: string,
+  data: Partial<{ name: string; description: string; config: WidgetConfig; isPublic: boolean }>,
+) {
+  return apiFetch<DataResponse<Widget>>(`/api/widgets/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteWidget(id: string) {
+  return apiFetch<{ message: string }>(`/api/widgets/${id}`, { method: 'DELETE' });
 }
