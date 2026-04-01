@@ -90,15 +90,16 @@ export const contributions = sqliteTable('contributions', {
   userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  type: text('type', { enum: ['pr', 'issue', 'commit', 'review'] }).notNull(),
   title: text('title').notNull(),
   url: text('url').notNull(),
   repo: text('repo').notNull(),
   repoOwner: text('repo_owner').notNull(),
   repoName: text('repo_name').notNull(),
-  state: text('state', { enum: ['open', 'closed', 'merged'] }).notNull(),
   githubId: text('github_id').notNull(),
-  rawData: text('raw_data', { mode: 'json' }),
+  mergedAt: integer('merged_at', { mode: 'timestamp' }),
+  additions: integer('additions').notNull().default(0),
+  deletions: integer('deletions').notNull().default(0),
+  changedFiles: integer('changed_files').notNull().default(0),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -126,7 +127,6 @@ export const embeds = sqliteTable('embeds', {
 type WidgetConfig = {
   theme?: 'light' | 'dark' | 'system';
   repos?: string[];
-  contributionTypes?: ('pr' | 'issue' | 'commit' | 'review')[];
   timeRange?: 'week' | 'month' | 'year' | 'all';
   layout?: 'grid' | 'list' | 'timeline';
   maxItems?: number;

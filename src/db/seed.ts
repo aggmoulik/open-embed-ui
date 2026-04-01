@@ -33,7 +33,6 @@ async function seed() {
     description: 'A widget showing my recent GitHub contributions',
     config: {
       theme: 'system',
-      contributionTypes: ['pr', 'issue', 'commit', 'review'],
       timeRange: 'month',
       layout: 'grid',
       maxItems: 10,
