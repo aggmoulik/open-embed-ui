@@ -1,6 +1,6 @@
 import { createOctokitClient } from '@/lib/github';
-import { db } from '@/db';
-import { contributions, users } from '@/db/schema';
+import { db } from '@github-embed-ui/db';
+import { contributions, users } from '@github-embed-ui/db/schema';
 import { eq } from 'drizzle-orm';
 
 /**

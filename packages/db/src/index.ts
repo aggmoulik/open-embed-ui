@@ -1,3 +1,6 @@
+export * as schema from './schema';
+export { users, sessions, accounts, verifications, widgets, contributions, embeds } from './schema';
+
 import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client';
 import * as schema from './schema';

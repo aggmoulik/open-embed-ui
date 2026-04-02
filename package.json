@@ -4,16 +4,19 @@
   "private": true,
   "packageManager": "pnpm@10.29.3",
   "scripts": {
-    "dev": "turbo dev --filter=@github-embed-ui/dashboard",
+    "dev": "pnpm db:push && turbo dev --filter=@github-embed-ui/dashboard",
     "build": "turbo build",
     "build:widget": "turbo build --filter=@github-embed-ui/widget && cp packages/widget/dist/widget.js apps/dashboard/public/widget.js",
     "start": "pnpm --filter @github-embed-ui/dashboard start",
     "lint": "turbo lint",
     "dev:widget": "pnpm --filter @github-embed-ui/widget dev",
     "preview:widget": "turbo build --filter=@github-embed-ui/widget && pnpm --filter @github-embed-ui/widget preview",
-    "db:push": "pnpm --filter @github-embed-ui/dashboard db:push",
-    "db:studio": "pnpm --filter @github-embed-ui/dashboard db:studio",
-    "db:seed": "pnpm --filter @github-embed-ui/dashboard db:seed"
+    "db:push": "pnpm --filter @github-embed-ui/db db:push",
+    "db:generate": "pnpm --filter @github-embed-ui/db db:generate",
+    "db:migrate": "pnpm --filter @github-embed-ui/db db:migrate",
+    "db:studio": "pnpm --filter @github-embed-ui/db db:studio",
+    "db:seed": "pnpm --filter @github-embed-ui/db db:seed",
+    "setup": "pnpm install && cp -n packages/db/.env.example packages/db/.env && cp -n apps/dashboard/.env.example apps/dashboard/.env && pnpm db:push"
   },
   "devDependencies": {
     "turbo": "2.9.3"

@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { widgets, contributions, users, embeds } from '@/db/schema';
+import { db } from '@github-embed-ui/db';
+import { widgets, contributions, users, embeds } from '@github-embed-ui/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import type { WidgetConfig } from '@/types';
 

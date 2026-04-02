@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { contributions } from '@/db/schema';
+import { db } from '@github-embed-ui/db';
+import { contributions } from '@github-embed-ui/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { getSession, errorResponse } from '@/lib/auth-server';
 import type { NextRequest } from 'next/server';

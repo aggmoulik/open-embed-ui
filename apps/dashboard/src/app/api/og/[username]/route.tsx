@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
-import { db } from '@/db';
-import { users, contributions } from '@/db/schema';
+import { db } from '@github-embed-ui/db';
+import { users, contributions } from '@github-embed-ui/db/schema';
 import { eq, sql } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';

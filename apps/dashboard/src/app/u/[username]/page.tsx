@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { users, contributions } from '@/db/schema';
+import { db } from '@github-embed-ui/db';
+import { users, contributions } from '@github-embed-ui/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
