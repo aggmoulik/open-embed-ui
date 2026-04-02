@@ -1,0 +1,7 @@
+{
+  "extends": "../../packages/tsconfig/preact.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src/**/*"]
+}

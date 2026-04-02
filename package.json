@@ -11,6 +11,8 @@
     "lint": "turbo lint",
     "dev:widget": "pnpm --filter @github-embed-ui/widget dev",
     "preview:widget": "turbo build --filter=@github-embed-ui/widget && pnpm --filter @github-embed-ui/widget preview",
+    "preview": "pnpm --filter @github-embed-ui/preview dev",
+    "build:preview": "turbo build --filter=@github-embed-ui/preview",
     "db:push": "pnpm --filter @github-embed-ui/db db:push",
     "db:generate": "pnpm --filter @github-embed-ui/db db:generate",
     "db:migrate": "pnpm --filter @github-embed-ui/db db:migrate",
