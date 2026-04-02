@@ -21,6 +21,7 @@ import {
 import { useWidgets } from '@/hooks';
 import { deleteWidget } from '@/lib/api-client';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
+import { PreviewModal } from '@/components/preview-modal';
 import { useState } from 'react';
 import type { Widget } from '@/types';
 
@@ -35,6 +36,7 @@ export default function WidgetsPage() {
   const { data: widgets, loading, error, refetch } = useWidgets();
   const router = useRouter();
   const [embedWidgetId, setEmbedWidgetId] = useState<string | null>(null);
+  const [previewWidgetId, setPreviewWidgetId] = useState<string | null>(null);
 
   async function handleDelete(widget: Widget) {
     if (!confirm(`Delete "${widget.name}"? This cannot be undone.`)) return;
@@ -110,12 +112,15 @@ export default function WidgetsPage() {
                         Edit
                       </Button>
                     </Link>
-                    <Link href={`/dashboard/widgets/${widget.id}/preview`}>
-                      <Button variant="outline" size="sm" className="gap-1">
-                        <Eye className="size-3" />
-                        Preview
-                      </Button>
-                    </Link>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1"
+                      onClick={() => setPreviewWidgetId(widget.id)}
+                    >
+                      <Eye className="size-3" />
+                      Preview
+                    </Button>
                     <Button
                       variant="outline"
                       size="sm"
@@ -159,6 +164,14 @@ export default function WidgetsPage() {
           widgetId={embedWidgetId}
           open={!!embedWidgetId}
           onClose={() => setEmbedWidgetId(null)}
+        />
+      )}
+
+      {previewWidgetId && (
+        <PreviewModal
+          widgetId={previewWidgetId}
+          open={!!previewWidgetId}
+          onClose={() => setPreviewWidgetId(null)}
         />
       )}
     </div>

@@ -22,10 +22,10 @@ import {
   Code,
   Eye,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useWidget, useContributions } from '@/hooks';
 import { createWidget } from '@/lib/api-client';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
+import { PreviewModal } from '@/components/preview-modal';
 import type { WidgetConfig, Contribution } from '@/types';
 
 const LAYOUTS = [
@@ -55,6 +55,7 @@ export default function WidgetBuilderPage() {
   });
   const [saving, setSaving] = useState(false);
   const [showEmbed, setShowEmbed] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [editingTitle, setEditingTitle] = useState<string | null>(null);
   const [editTitleValue, setEditTitleValue] = useState('');
 
@@ -211,12 +212,15 @@ export default function WidgetBuilderPage() {
         <div className="ml-auto flex gap-2">
           {!isNew && (
             <>
-              <Link href={`/dashboard/widgets/${params.id}/preview`}>
-                <Button variant="outline" size="sm" className="gap-1.5">
-                  <Eye className="size-3.5" />
-                  Preview
-                </Button>
-              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                onClick={() => setShowPreview(true)}
+              >
+                <Eye className="size-3.5" />
+                Preview
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -504,6 +508,14 @@ export default function WidgetBuilderPage() {
 
       {!isNew && showEmbed && (
         <EmbedCodeModal widgetId={params.id} open={showEmbed} onClose={() => setShowEmbed(false)} />
+      )}
+
+      {!isNew && showPreview && (
+        <PreviewModal
+          widgetId={params.id}
+          open={showPreview}
+          onClose={() => setShowPreview(false)}
+        />
       )}
     </div>
   );
