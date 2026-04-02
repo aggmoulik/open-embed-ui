@@ -4,7 +4,9 @@
   "private": true,
   "packageManager": "pnpm@10.29.3",
   "scripts": {
-    "dev": "pnpm db:push && turbo dev --filter=@github-embed-ui/dashboard",
+    "dev": "pnpm db:push && turbo dev --filter=@github-embed-ui/dashboard --ui=stream",
+    "dev:all": "pnpm db:push && turbo dev --filter=@github-embed-ui/dashboard --filter=@github-embed-ui/preview",
+    "dx": "pnpm install && pnpm db:push && pnpm db:seed",
     "build": "turbo build",
     "build:widget": "turbo build --filter=@github-embed-ui/widget && cp packages/widget/dist/widget.js apps/dashboard/public/widget.js",
     "start": "pnpm --filter @github-embed-ui/dashboard start",

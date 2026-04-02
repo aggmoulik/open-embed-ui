@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { magicLink } from 'better-auth/plugins/magic-link';
 import { db, users, schema } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 
@@ -19,6 +20,13 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     },
   },
+  plugins: [
+    magicLink({
+      sendMagicLink: async ({ email, url }) => {
+        console.log(`\n  🔗 Magic link for ${email}:\n  ${url}\n`);
+      },
+    }),
+  ],
   account: {
     accountLinking: {
       enabled: true,

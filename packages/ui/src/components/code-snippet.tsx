@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Button } from '@github-embed-ui/ui/components/button';
+import { Button } from './button';
 import { Copy, Check } from 'lucide-react';
 
 interface CodeSnippetProps {

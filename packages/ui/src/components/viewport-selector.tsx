@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@github-embed-ui/ui/components/button';
+import { Button } from './button';
 import { Monitor, Tablet, Smartphone } from 'lucide-react';
 
 export type Viewport = 'desktop' | 'tablet' | 'mobile';

@@ -6,3 +6,5 @@ export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 export { Input } from './components/input';
 export { Separator } from './components/separator';
 export { Skeleton } from './components/skeleton';
+export { CodeSnippet } from './components/code-snippet';
+export { ViewportSelector, getViewportWidth, type Viewport } from './components/viewport-selector';
