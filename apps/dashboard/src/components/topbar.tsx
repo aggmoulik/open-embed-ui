@@ -1,8 +1,8 @@
 'use client';
 
 import { authClient } from '@/lib/auth-client';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@github-embed-ui/ui/components/avatar';
+import { Button } from '@github-embed-ui/ui/components/button';
 import { LogOut, Sun, Moon, Monitor } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';

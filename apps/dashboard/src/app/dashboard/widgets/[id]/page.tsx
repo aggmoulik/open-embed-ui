@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@github-embed-ui/ui/components/button';
+import { Input } from '@github-embed-ui/ui/components/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@github-embed-ui/ui/components/card';
+import { Badge } from '@github-embed-ui/ui/components/badge';
+import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
 import { WidgetRenderer } from '@/components/widget-preview/widget-renderer';
 import {
   ArrowLeft,
@@ -20,7 +20,9 @@ import {
   X,
   Pencil,
   Code,
+  Eye,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useWidget, useContributions } from '@/hooks';
 import { createWidget } from '@/lib/api-client';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
@@ -208,15 +210,23 @@ export default function WidgetBuilderPage() {
         <h1 className="text-2xl font-bold">{isNew ? 'New Widget' : 'Edit Widget'}</h1>
         <div className="ml-auto flex gap-2">
           {!isNew && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5"
-              onClick={() => setShowEmbed(true)}
-            >
-              <Code className="size-3.5" />
-              Embed
-            </Button>
+            <>
+              <Link href={`/dashboard/widgets/${params.id}/preview`}>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <Eye className="size-3.5" />
+                  Preview
+                </Button>
+              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                onClick={() => setShowEmbed(true)}
+              >
+                <Code className="size-3.5" />
+                Embed
+              </Button>
+            </>
           )}
           <Button
             size="sm"
@@ -242,7 +252,7 @@ export default function WidgetBuilderPage() {
                 <label className="text-muted-foreground mb-1 block text-xs font-medium">Name</label>
                 <Input
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                   placeholder="My Widget"
                 />
               </div>
@@ -252,7 +262,9 @@ export default function WidgetBuilderPage() {
                 </label>
                 <Input
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setDescription(e.target.value)
+                  }
                   placeholder="Optional description"
                 />
               </div>
@@ -311,7 +323,7 @@ export default function WidgetBuilderPage() {
                 min={1}
                 value={config.maxItems ?? ''}
                 placeholder="10"
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setConfig((prev) => ({
                     ...prev,
                     maxItems:
@@ -407,10 +419,12 @@ export default function WidgetBuilderPage() {
                           <div className="flex items-center gap-1">
                             <Input
                               value={editTitleValue}
-                              onChange={(e) => setEditTitleValue(e.target.value)}
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setEditTitleValue(e.target.value)
+                              }
                               className="h-7 text-xs"
                               autoFocus
-                              onKeyDown={(e) => {
+                              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                                 if (e.key === 'Enter') saveTitle(pr.id);
                                 if (e.key === 'Escape') cancelEditTitle();
                               }}

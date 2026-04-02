@@ -7,7 +7,7 @@
     "build": "pnpm --filter @github-embed-ui/dashboard build",
     "start": "pnpm --filter @github-embed-ui/dashboard start",
     "lint": "pnpm --filter @github-embed-ui/dashboard lint",
-    "build:widget": "pnpm --filter @github-embed-ui/widget build",
+    "build:widget": "pnpm --filter @github-embed-ui/widget build && cp packages/widget/dist/widget.js apps/dashboard/public/widget.js",
     "dev:widget": "pnpm --filter @github-embed-ui/widget dev",
     "preview:widget": "pnpm --filter @github-embed-ui/widget preview",
     "db:push": "pnpm --filter @github-embed-ui/dashboard db:push",

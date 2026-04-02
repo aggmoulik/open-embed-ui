@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import { cn } from '@github-embed-ui/ui/lib/utils';
 import {
   LayoutDashboard,
   GitPullRequest,
@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@github-embed-ui/ui/components/button';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { ContributionCard } from '@/components/contribution-card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@github-embed-ui/ui/components/button';
+import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
 import { GitPullRequest, RefreshCw, Loader2 } from 'lucide-react';
 import { useContributions, useSyncContributions } from '@/hooks';
 

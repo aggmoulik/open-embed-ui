@@ -2,11 +2,22 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
-import { Box, Plus, Pencil, Trash2, Code, LayoutGrid, List, Clock, CreditCard } from 'lucide-react';
+import { Button } from '@github-embed-ui/ui/components/button';
+import { Card, CardContent } from '@github-embed-ui/ui/components/card';
+import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
+import { Badge } from '@github-embed-ui/ui/components/badge';
+import {
+  Box,
+  Plus,
+  Pencil,
+  Trash2,
+  Code,
+  Eye,
+  LayoutGrid,
+  List,
+  Clock,
+  CreditCard,
+} from 'lucide-react';
 import { useWidgets } from '@/hooks';
 import { deleteWidget } from '@/lib/api-client';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
@@ -97,6 +108,12 @@ export default function WidgetsPage() {
                       <Button variant="outline" size="sm" className="gap-1">
                         <Pencil className="size-3" />
                         Edit
+                      </Button>
+                    </Link>
+                    <Link href={`/dashboard/widgets/${widget.id}/preview`}>
+                      <Button variant="outline" size="sm" className="gap-1">
+                        <Eye className="size-3" />
+                        Preview
                       </Button>
                     </Link>
                     <Button
