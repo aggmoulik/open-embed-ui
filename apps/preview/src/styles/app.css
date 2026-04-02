@@ -2,10 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  @apply bg-gray-50;
+}
+html.dark {
+  @apply bg-gray-950;
+}
 .preview-app {
   @apply min-h-screen font-sans text-gray-900 bg-gray-50;
 }
-.preview-app.dark {
+.dark .preview-app {
   @apply bg-gray-950 text-gray-100;
 }
 .preview-toolbar {
