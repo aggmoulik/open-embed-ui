@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  @apply bg-gray-50;
+}
+html.dark {
+  @apply bg-gray-950;
+}
+.preview-app {
+  @apply min-h-screen font-sans text-gray-900 bg-gray-50;
+}
+.dark .preview-app {
+  @apply bg-gray-950 text-gray-100;
+}
+.preview-toolbar {
+  @apply sticky top-0 z-10 flex flex-wrap items-center gap-3 border-b bg-white px-4 py-2.5;
+}
+.dark .preview-toolbar {
+  @apply border-gray-800 bg-gray-900;
+}
+.preview-toolbar h1 {
+  @apply text-sm font-semibold mr-auto;
+}
+.toolbar-group {
+  @apply flex items-center gap-2;
+}
+.toolbar-label {
+  @apply text-xs font-medium text-gray-500;
+}
+.dark .toolbar-label {
+  @apply text-gray-400;
+}
+.toolbar-btn {
+  @apply px-2.5 py-1.5 text-xs rounded-md border border-gray-200 bg-white cursor-pointer transition-colors;
+}
+.toolbar-btn:hover {
+  @apply bg-gray-50;
+}
+.toolbar-btn.active {
+  @apply bg-gray-900 text-white border-gray-900;
+}
+.dark .toolbar-btn {
+  @apply border-gray-700 bg-gray-800 text-gray-300;
+}
+.dark .toolbar-btn:hover {
+  @apply bg-gray-700;
+}
+.dark .toolbar-btn.active {
+  @apply bg-white text-gray-900 border-white;
+}
+.viewport-frame {
+  @apply mx-auto transition-all;
+}
+.preview-canvas {
+  @apply flex items-start justify-center p-6;
+}
+.preview-footer {
+  @apply text-center py-4 text-xs text-gray-400;
+}
+.dark .preview-footer {
+  @apply text-gray-600;
+}
+.preview-loading {
+  @apply flex items-center justify-center py-20 text-sm text-gray-400;
+}
+.preview-error {
+  @apply text-center py-12 text-sm text-red-500;
+}
