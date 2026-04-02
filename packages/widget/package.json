@@ -1,0 +1,32 @@
+{
+  "name": "@github-embed-ui/widget",
+  "version": "0.1.0",
+  "private": false,
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "preview": "node dev/serve.mjs"
+  },
+  "peerDependencies": {
+    "preact": "^10.0.0"
+  },
+  "dependencies": {
+    "preact": "^10.25.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^12.0.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "rollup": "^4.0.0",
+    "rollup-plugin-postcss": "^4.0.0",
+    "tailwindcss": "^3.4.0",
+    "tslib": "^2.8.0",
+    "typescript": "^5.0.0"
+  }
+}

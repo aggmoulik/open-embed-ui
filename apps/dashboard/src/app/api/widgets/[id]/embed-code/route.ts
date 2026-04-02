@@ -19,11 +19,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   if (!widget) return errorResponse('Widget not found', 404);
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
-  const embedUrl = `${baseUrl}/embed/${widget.id}`;
 
   return Response.json({
-    directUrl: embedUrl,
-    iframe: `<iframe src="${embedUrl}" width="100%" height="400" frameborder="0" style="border:none;border-radius:8px;"></iframe>`,
-    script: `<div id="geu-${widget.id}"></div>\n<script src="${baseUrl}/embed.js" data-widget="${widget.id}" async></script>`,
+    script: `<script async src="${baseUrl}/widget.js" data-widget-id="${widget.id}"></script>`,
+    npm: `import { mount } from '@github-embed-ui/widget';\nmount('#my-widget', { widgetId: '${widget.id}', baseUrl: '${baseUrl}' });`,
   });
 }

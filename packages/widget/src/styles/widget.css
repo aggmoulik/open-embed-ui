@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Container */
+.geu-widget {
+  @apply font-sans text-sm leading-relaxed text-gray-900;
+}
+.geu-widget.dark {
+  @apply text-gray-100;
+}
+
+/* Grid Layout */
+.geu-grid {
+  @apply grid grid-cols-1 gap-3;
+}
+@media (min-width: 540px) {
+  .geu-grid { @apply grid-cols-2; }
+}
+@media (min-width: 800px) {
+  .geu-grid { @apply grid-cols-3; }
+}
+
+/* List Layout */
+.geu-list {
+  @apply flex flex-col gap-2;
+}
+
+/* PR Card */
+.geu-card {
+  @apply flex gap-2.5 rounded-lg border border-gray-200 bg-white p-3 transition-colors;
+}
+.geu-card:hover {
+  @apply bg-gray-50;
+}
+.dark .geu-card {
+  @apply border-gray-700 bg-gray-900;
+}
+.dark .geu-card:hover {
+  @apply bg-gray-800;
+}
+
+.geu-card-icon {
+  @apply mt-0.5 shrink-0 text-purple-500;
+}
+
+.geu-card-content {
+  @apply min-w-0 flex-1;
+}
+
+.geu-card-title {
+  @apply text-sm font-medium text-gray-900 no-underline;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.geu-card-title:hover {
+  @apply underline;
+}
+.dark .geu-card-title {
+  @apply text-gray-100;
+}
+
+.geu-card-title-compact {
+  @apply text-xs;
+}
+
+.geu-card-title-large {
+  @apply text-base font-semibold;
+  -webkit-line-clamp: 2;
+}
+
+.geu-card-meta {
+  @apply mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-gray-500;
+}
+.dark .geu-card-meta {
+  @apply text-gray-400;
+}
+
+.geu-card-repo {
+  @apply flex items-center gap-1 text-gray-500 no-underline;
+}
+.geu-card-repo:hover {
+  @apply underline;
+}
+.dark .geu-card-repo {
+  @apply text-gray-400;
+}
+
+.geu-card-avatar {
+  @apply size-3.5 rounded-full;
+}
+.geu-card-avatar-large {
+  @apply size-5;
+}
+
+.geu-additions {
+  @apply text-green-600;
+}
+.geu-deletions {
+  @apply text-red-600;
+}
+
+/* Timeline Layout */
+.geu-timeline {
+  @apply relative pl-1;
+}
+.geu-timeline-line {
+  @apply absolute top-0 bottom-0 left-4 w-px bg-gray-200;
+}
+.dark .geu-timeline-line {
+  @apply bg-gray-700;
+}
+.geu-timeline-item {
+  @apply relative flex gap-3.5 py-3 pl-1;
+}
+.geu-timeline-dot {
+  @apply relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-purple-500;
+}
+.dark .geu-timeline-dot {
+  @apply border-gray-700 bg-gray-900;
+}
+
+/* Single Card */
+.geu-single {
+  @apply flex gap-3.5 rounded-xl border border-gray-200 bg-white p-5;
+}
+.dark .geu-single {
+  @apply border-gray-700 bg-gray-900;
+}
+.geu-single-icon {
+  @apply flex size-10 shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-600;
+}
+.dark .geu-single-icon {
+  @apply bg-purple-900/30 text-purple-400;
+}
+.geu-single-date {
+  @apply mt-1 text-xs text-gray-500;
+}
+.dark .geu-single-date {
+  @apply text-gray-400;
+}
+
+/* Empty State */
+.geu-empty {
+  @apply text-center py-12 text-sm text-gray-400 border border-dashed border-gray-200 rounded-lg;
+}
+.dark .geu-empty {
+  @apply text-gray-500 border-gray-700;
+}
+
+/* Footer */
+.geu-footer {
+  @apply block text-center mt-3 text-[10px] text-gray-400 no-underline;
+}
+.geu-footer:hover {
+  @apply underline text-gray-500;
+}
+.dark .geu-footer {
+  @apply text-gray-600;
+}
+.dark .geu-footer:hover {
+  @apply text-gray-500;
+}
+
+/* Loading */
+.geu-loading {
+  @apply flex items-center justify-center py-12 text-sm text-gray-400;
+}
+
+/* Error */
+.geu-error {
+  @apply text-center py-8 text-sm text-red-500;
+}

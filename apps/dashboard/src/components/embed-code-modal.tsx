@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Code, Copy, Check, X, ExternalLink } from 'lucide-react';
+import { Code, Copy, Check, X } from 'lucide-react';
 
 interface EmbedCodeModalProps {
   widgetId: string;
@@ -12,14 +11,15 @@ interface EmbedCodeModalProps {
 }
 
 interface EmbedCodes {
-  directUrl: string;
-  iframe: string;
   script: string;
+  npm: string;
 }
+
+type Tab = 'script' | 'npm';
 
 export function EmbedCodeModal({ widgetId, open, onClose }: EmbedCodeModalProps) {
   const [codes, setCodes] = useState<EmbedCodes | null>(null);
-  const [tab, setTab] = useState<'iframe' | 'script'>('iframe');
+  const [tab, setTab] = useState<Tab>('script');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -32,21 +32,22 @@ export function EmbedCodeModal({ widgetId, open, onClose }: EmbedCodeModalProps)
 
   const copyCode = useCallback(() => {
     if (!codes) return;
-    const text = tab === 'iframe' ? codes.iframe : codes.script;
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(codes[tab]);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, [codes, tab]);
 
   if (!open) return null;
 
+  const tabs: { key: Tab; label: string; description: string }[] = [
+    { key: 'script', label: 'Script Tag', description: 'Shadow DOM widget. Paste anywhere — styles are fully isolated from your site. Only 9.6KB gzipped.' },
+    { key: 'npm', label: 'npm Package', description: 'Install @github-embed-ui/widget and mount programmatically. Preact as peer dependency.' },
+  ];
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
       <div
-        className="bg-background mx-4 w-full max-w-lg rounded-xl border p-6 shadow-lg"
+        className="mx-4 w-full max-w-lg rounded-xl border bg-background p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -60,27 +61,23 @@ export function EmbedCodeModal({ widgetId, open, onClose }: EmbedCodeModalProps)
         </div>
 
         <div className="mt-4 flex gap-2">
-          <Button
-            variant={tab === 'iframe' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setTab('iframe')}
-          >
-            iframe
-          </Button>
-          <Button
-            variant={tab === 'script' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setTab('script')}
-          >
-            Script Tag
-          </Button>
+          {tabs.map((t) => (
+            <Button
+              key={t.key}
+              variant={tab === t.key ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTab(t.key)}
+            >
+              {t.label}
+            </Button>
+          ))}
         </div>
 
         {codes ? (
           <>
-            <div className="relative mt-3">
-              <pre className="bg-muted max-h-40 overflow-auto rounded-lg p-3 text-xs">
-                <code>{tab === 'iframe' ? codes.iframe : codes.script}</code>
+            <div className="mt-3">
+              <pre className="max-h-40 overflow-auto rounded-lg bg-muted p-3 text-xs">
+                <code>{codes[tab]}</code>
               </pre>
             </div>
 
@@ -89,22 +86,14 @@ export function EmbedCodeModal({ widgetId, open, onClose }: EmbedCodeModalProps)
                 {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
                 {copied ? 'Copied!' : 'Copy Code'}
               </Button>
-              <a href={`${codes.directUrl}/preview`} target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm" className="gap-1.5">
-                  <ExternalLink className="size-3.5" />
-                  Preview
-                </Button>
-              </a>
             </div>
 
-            <p className="text-muted-foreground mt-3 text-xs">
-              {tab === 'iframe'
-                ? 'Paste this HTML anywhere on your site. The iframe renders without JavaScript.'
-                : 'The script tag auto-resizes the embed to fit its content. Requires JavaScript.'}
+            <p className="mt-3 text-xs text-muted-foreground">
+              {tabs.find((t) => t.key === tab)?.description}
             </p>
           </>
         ) : (
-          <div className="text-muted-foreground mt-4 flex items-center justify-center py-8 text-sm">
+          <div className="mt-4 flex items-center justify-center py-8 text-sm text-muted-foreground">
             Loading embed codes...
           </div>
         )}

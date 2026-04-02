@@ -1,6 +1,15 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider as NextThemeProvider } from 'next-themes';
+
+const ThemeProvider = NextThemeProvider as React.ComponentType<
+  React.PropsWithChildren<{
+    attribute: string;
+    defaultTheme: string;
+    enableSystem: boolean;
+    disableTransitionOnChange: boolean;
+  }>
+>;
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
