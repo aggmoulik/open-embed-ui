@@ -7,7 +7,6 @@ import { Input } from '@github-embed-ui/ui/components/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@github-embed-ui/ui/components/card';
 import { Badge } from '@github-embed-ui/ui/components/badge';
 import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
-import { WidgetRenderer } from '@/components/widget-preview/widget-renderer';
 import {
   ArrowLeft,
   Save,
@@ -43,7 +42,7 @@ export default function WidgetBuilderPage() {
   const isNew = params.id === 'new';
 
   const { data: widget, loading: widgetLoading, update } = useWidget(isNew ? null : params.id);
-  const { data: allContributions, loading: contributionsLoading } = useContributions();
+  const { data: allContributions } = useContributions();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -389,7 +388,7 @@ export default function WidgetBuilderPage() {
               <h2 className="text-muted-foreground mb-2 text-sm font-medium">
                 Select PRs ({selectedInView}/{candidatePRs.length})
               </h2>
-              <div className="max-h-72 space-y-1.5 overflow-y-auto rounded-lg border p-3">
+              <div className="max-h-[calc(100vh-300px)] space-y-1.5 overflow-y-auto rounded-lg border p-3">
                 {candidatePRs.map((pr) => {
                   const selected = isPRSelected(pr.id);
                   const hasOverride = !!config.titleOverrides?.[pr.id];
@@ -482,27 +481,6 @@ export default function WidgetBuilderPage() {
               </div>
             </div>
           )}
-
-          {/* Live Preview */}
-          <div>
-            <div className="mb-2 flex items-center justify-between">
-              <h2 className="text-muted-foreground text-sm font-medium">Widget Preview</h2>
-              <Badge variant="outline" className="text-xs">
-                {filteredContributions.length} PRs shown
-              </Badge>
-            </div>
-            <div className="bg-background rounded-lg border p-4">
-              {contributionsLoading ? (
-                <div className="space-y-3">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <Skeleton key={i} className="h-16 rounded-lg" />
-                  ))}
-                </div>
-              ) : (
-                <WidgetRenderer contributions={filteredContributions} config={config} />
-              )}
-            </div>
-          </div>
         </div>
       </div>
 
@@ -515,6 +493,8 @@ export default function WidgetBuilderPage() {
           widgetId={params.id}
           open={showPreview}
           onClose={() => setShowPreview(false)}
+          currentConfig={config}
+          currentContributions={filteredContributions}
         />
       )}
     </div>
