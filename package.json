@@ -2,16 +2,20 @@
   "name": "github-embed-ui",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.29.3",
   "scripts": {
-    "dev": "pnpm --filter @github-embed-ui/dashboard dev",
-    "build": "pnpm --filter @github-embed-ui/dashboard build",
+    "dev": "turbo dev --filter=@github-embed-ui/dashboard",
+    "build": "turbo build",
+    "build:widget": "turbo build --filter=@github-embed-ui/widget && cp packages/widget/dist/widget.js apps/dashboard/public/widget.js",
     "start": "pnpm --filter @github-embed-ui/dashboard start",
-    "lint": "pnpm --filter @github-embed-ui/dashboard lint",
-    "build:widget": "pnpm --filter @github-embed-ui/widget build && cp packages/widget/dist/widget.js apps/dashboard/public/widget.js",
+    "lint": "turbo lint",
     "dev:widget": "pnpm --filter @github-embed-ui/widget dev",
-    "preview:widget": "pnpm --filter @github-embed-ui/widget preview",
+    "preview:widget": "turbo build --filter=@github-embed-ui/widget && pnpm --filter @github-embed-ui/widget preview",
     "db:push": "pnpm --filter @github-embed-ui/dashboard db:push",
     "db:studio": "pnpm --filter @github-embed-ui/dashboard db:studio",
     "db:seed": "pnpm --filter @github-embed-ui/dashboard db:seed"
+  },
+  "devDependencies": {
+    "turbo": "2.9.3"
   }
 }

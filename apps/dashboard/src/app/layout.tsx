@@ -1,17 +1,14 @@
 import type { Metadata } from 'next';
+import type { ThemeProviderProps } from 'next-themes';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ThemeProvider as NextThemeProvider } from 'next-themes';
-
-const ThemeProvider = NextThemeProvider as React.ComponentType<
-  React.PropsWithChildren<{
-    attribute: string;
-    defaultTheme: string;
-    enableSystem: boolean;
-    disableTransitionOnChange: boolean;
-  }>
->;
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
+
+// next-themes@0.4.6 types were built against @types/react@18.
+// React 19 changed JSX.Element types, causing a children mismatch.
+// This cast resolves the type conflict without changing runtime behavior.
+const ThemeProvider = NextThemeProvider as React.ComponentType<ThemeProviderProps>;
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
