@@ -25,6 +25,7 @@ import { useWidget, useContributions } from '@/hooks';
 import { createWidget } from '@/lib/api-client';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
 import { PreviewModal } from '@/components/preview-modal';
+import { toast } from 'sonner';
 import type { WidgetConfig, Contribution } from '@/types';
 
 const LAYOUTS = [
@@ -181,10 +182,14 @@ export default function WidgetBuilderPage() {
           description: description.trim() || undefined,
           config,
         });
+        toast.success('Widget created');
         router.push(`/dashboard/widgets/${res.data.id}`);
       } else {
         await update({ name: name.trim(), description: description.trim() || undefined, config });
+        toast.success('Widget updated');
       }
+    } catch {
+      toast.error('Failed to update widget');
     } finally {
       setSaving(false);
     }
@@ -209,27 +214,25 @@ export default function WidgetBuilderPage() {
         </Button>
         <h1 className="text-2xl font-bold">{isNew ? 'New Widget' : 'Edit Widget'}</h1>
         <div className="ml-auto flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => setShowPreview(true)}
+          >
+            <Eye className="size-3.5" />
+            Preview
+          </Button>
           {!isNew && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5"
-                onClick={() => setShowPreview(true)}
-              >
-                <Eye className="size-3.5" />
-                Preview
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5"
-                onClick={() => setShowEmbed(true)}
-              >
-                <Code className="size-3.5" />
-                Embed
-              </Button>
-            </>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => setShowEmbed(true)}
+            >
+              <Code className="size-3.5" />
+              Embed
+            </Button>
           )}
           <Button
             size="sm"
@@ -238,7 +241,7 @@ export default function WidgetBuilderPage() {
             disabled={saving || !name.trim()}
           >
             {saving ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? 'Updating...' : isNew ? 'Create' : 'Update'}
           </Button>
         </div>
       </div>
@@ -488,7 +491,7 @@ export default function WidgetBuilderPage() {
         <EmbedCodeModal widgetId={params.id} open={showEmbed} onClose={() => setShowEmbed(false)} />
       )}
 
-      {!isNew && showPreview && (
+      {showPreview && (
         <PreviewModal
           widgetId={params.id}
           open={showPreview}

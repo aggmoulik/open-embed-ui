@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react';
 import { Button } from '@github-embed-ui/ui/components/button';
 import { Code, Copy, Check, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface EmbedCodeModalProps {
   widgetId: string;
@@ -26,19 +27,36 @@ export function EmbedCodeModal({ widgetId, open, onClose }: EmbedCodeModalProps)
   const copyCode = useCallback(() => {
     navigator.clipboard.writeText(codes[tab]);
     setCopied(true);
+    toast.success('Embed code copied to clipboard');
     setTimeout(() => setCopied(false), 2000);
   }, [codes, tab]);
 
   if (!open) return null;
 
   const tabs: { key: Tab; label: string; description: string }[] = [
-    { key: 'script', label: 'Script Tag', description: 'Shadow DOM widget. Paste anywhere — styles are fully isolated from your site. Only 9.6KB gzipped.' },
-    { key: 'npm', label: 'npm Package', description: 'Install @github-embed-ui/widget and mount programmatically. Preact as peer dependency.' },
+    {
+      key: 'script',
+      label: 'Script Tag',
+      description:
+        'Shadow DOM widget. Paste anywhere — styles are fully isolated from your site. Only 9.6KB gzipped.',
+    },
+    {
+      key: 'npm',
+      label: 'npm Package',
+      description:
+        'Install @github-embed-ui/widget and mount programmatically. Preact as peer dependency.',
+    },
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
-      <div className="mx-4 w-full max-w-lg rounded-xl border bg-background p-6 shadow-lg" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-background mx-4 w-full max-w-lg rounded-xl border p-6 shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Code className="size-5" />
@@ -51,14 +69,19 @@ export function EmbedCodeModal({ widgetId, open, onClose }: EmbedCodeModalProps)
 
         <div className="mt-4 flex gap-2">
           {tabs.map((t) => (
-            <Button key={t.key} variant={tab === t.key ? 'default' : 'outline'} size="sm" onClick={() => setTab(t.key)}>
+            <Button
+              key={t.key}
+              variant={tab === t.key ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTab(t.key)}
+            >
               {t.label}
             </Button>
           ))}
         </div>
 
         <div className="mt-3">
-          <pre className="max-h-40 overflow-auto rounded-lg bg-muted p-3 text-xs">
+          <pre className="bg-muted max-h-40 overflow-auto rounded-lg p-3 text-xs">
             <code>{codes[tab]}</code>
           </pre>
         </div>
@@ -70,7 +93,7 @@ export function EmbedCodeModal({ widgetId, open, onClose }: EmbedCodeModalProps)
           </Button>
         </div>
 
-        <p className="mt-3 text-xs text-muted-foreground">
+        <p className="text-muted-foreground mt-3 text-xs">
           {tabs.find((t) => t.key === tab)?.description}
         </p>
       </div>

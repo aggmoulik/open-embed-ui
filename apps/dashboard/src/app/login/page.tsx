@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@github-embed-ui/ui/components/card';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -33,6 +34,9 @@ export default function LoginPage() {
         callbackURL: '/dashboard',
       });
       setMagicLinkSent(true);
+      toast.success('Magic link sent — check your terminal');
+    } catch {
+      toast.error('Failed to send magic link');
     } finally {
       setLoading(false);
     }

@@ -6,6 +6,7 @@ import { Button } from '@github-embed-ui/ui/components/button';
 import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
 import { GitPullRequest, RefreshCw, Loader2 } from 'lucide-react';
 import { useContributions, useSyncContributions } from '@/hooks';
+import { toast } from 'sonner';
 
 type SortOrder = 'newest' | 'oldest';
 
@@ -13,7 +14,7 @@ export default function ContributionsPage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
 
   const { data: contributions, loading, error, refetch } = useContributions();
-  const { sync, loading: syncing } = useSyncContributions();
+  const { sync, loading: syncing, error: syncError } = useSyncContributions();
 
   const sorted = [...contributions].sort((a, b) => {
     const diff = new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -23,6 +24,11 @@ export default function ContributionsPage() {
   async function handleSync() {
     await sync();
     refetch();
+    if (syncError) {
+      toast.error('Failed to sync contributions');
+    } else {
+      toast.success('Contributions synced');
+    }
   }
 
   return (
@@ -30,7 +36,7 @@ export default function ContributionsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Merged Pull Requests</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-1 text-sm">
             Your merged PRs from public repositories.
           </p>
         </div>
@@ -54,16 +60,14 @@ export default function ContributionsPage() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() =>
-            setSortOrder((o) => (o === 'newest' ? 'oldest' : 'newest'))
-          }
+          onClick={() => setSortOrder((o) => (o === 'newest' ? 'oldest' : 'newest'))}
         >
           {sortOrder === 'newest' ? 'Newest first' : 'Oldest first'}
         </Button>
       </div>
 
       {error && (
-        <div className="mt-4 rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="border-destructive/50 bg-destructive/10 text-destructive mt-4 rounded-lg border p-3 text-sm">
           {error}
         </div>
       )}
@@ -102,11 +106,12 @@ function LoadingSkeleton() {
 
 function EmptyState({ onSync, syncing }: { onSync: () => void; syncing: boolean }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">
-      <GitPullRequest className="size-10 text-muted-foreground/50" />
+    <div className="border-border flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
+      <GitPullRequest className="text-muted-foreground/50 size-10" />
       <h3 className="mt-4 text-lg font-medium">No merged PRs yet</h3>
-      <p className="mt-1 max-w-xs text-sm text-muted-foreground">
-        Import your GitHub contributions to get started. Merged PRs from public repos will appear here.
+      <p className="text-muted-foreground mt-1 max-w-xs text-sm">
+        Import your GitHub contributions to get started. Merged PRs from public repos will appear
+        here.
       </p>
       <Button className="mt-4 gap-1.5" onClick={onSync} disabled={syncing}>
         {syncing ? (

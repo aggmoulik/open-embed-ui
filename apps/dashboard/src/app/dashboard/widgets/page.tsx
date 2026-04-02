@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { Button } from '@github-embed-ui/ui/components/button';
 import { Card, CardContent } from '@github-embed-ui/ui/components/card';
 import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
@@ -20,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useWidgets } from '@/hooks';
 import { deleteWidget } from '@/lib/api-client';
+import { ConfirmDialog } from '@github-embed-ui/ui/components/confirm-dialog';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
 import { PreviewModal } from '@/components/preview-modal';
 import { useState } from 'react';
@@ -37,11 +39,19 @@ export default function WidgetsPage() {
   const router = useRouter();
   const [embedWidgetId, setEmbedWidgetId] = useState<string | null>(null);
   const [previewWidgetId, setPreviewWidgetId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Widget | null>(null);
 
-  async function handleDelete(widget: Widget) {
-    if (!confirm(`Delete "${widget.name}"? This cannot be undone.`)) return;
-    await deleteWidget(widget.id);
-    refetch();
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    try {
+      await deleteWidget(deleteTarget.id);
+      refetch();
+      toast.error(`"${deleteTarget.name}" deleted`);
+    } catch {
+      toast.error('Failed to delete widget');
+    } finally {
+      setDeleteTarget(null);
+    }
   }
 
   return (
@@ -134,7 +144,7 @@ export default function WidgetsPage() {
                       variant="outline"
                       size="sm"
                       className="text-destructive hover:bg-destructive/10 gap-1"
-                      onClick={() => handleDelete(widget)}
+                      onClick={() => setDeleteTarget(widget)}
                     >
                       <Trash2 className="size-3" />
                       Delete
@@ -174,6 +184,16 @@ export default function WidgetsPage() {
           onClose={() => setPreviewWidgetId(null)}
         />
       )}
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Widget"
+        description={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        destructive
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }
