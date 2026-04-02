@@ -1,6 +1,5 @@
 import type { NextRequest } from 'next/server';
-import { db } from '@github-embed-ui/db';
-import { widgets } from '@github-embed-ui/db/schema';
+import { db, widgets } from '@/lib/db';
 import { eq, desc, count } from 'drizzle-orm';
 import { getSession, errorResponse } from '@/lib/auth-server';
 import { randomUUID } from 'crypto';

@@ -1,5 +1,4 @@
-import { db } from '@github-embed-ui/db';
-import { users, contributions } from '@github-embed-ui/db/schema';
+import { db, users, contributions } from '@/lib/db';
 import { eq, desc, sql } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -51,7 +50,7 @@ export default async function PublicProfilePage({ params }: Props) {
   const stats = await getStats(user.id);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Profile Header */}
         <div className="flex items-center gap-4">
@@ -59,7 +58,7 @@ export default async function PublicProfilePage({ params }: Props) {
             <img
               src={user.image}
               alt={user.name}
-              className="size-16 rounded-full border-2 border-border sm:size-20"
+              className="border-border size-16 rounded-full border-2 sm:size-20"
             />
           )}
           <div>
@@ -68,7 +67,7 @@ export default async function PublicProfilePage({ params }: Props) {
               href={`https://github.com/${username}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-muted-foreground hover:underline"
+              className="text-muted-foreground text-sm hover:underline"
             >
               @{username}
             </a>
@@ -79,8 +78,16 @@ export default async function PublicProfilePage({ params }: Props) {
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <StatCard label="Merged PRs" value={stats.totalPRs} />
           <StatCard label="Repos" value={stats.totalRepos} />
-          <StatCard label="Lines Added" value={formatNumber(stats.totalAdditions)} className="text-green-600" />
-          <StatCard label="Lines Removed" value={formatNumber(stats.totalDeletions)} className="text-red-600" />
+          <StatCard
+            label="Lines Added"
+            value={formatNumber(stats.totalAdditions)}
+            className="text-green-600"
+          />
+          <StatCard
+            label="Lines Removed"
+            value={formatNumber(stats.totalDeletions)}
+            className="text-red-600"
+          />
         </div>
 
         {/* Contributions */}
@@ -94,7 +101,7 @@ export default async function PublicProfilePage({ params }: Props) {
               config={{ layout: 'grid', theme: 'system' }}
             />
           ) : (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center text-sm">
               No contributions yet.
             </div>
           )}
@@ -104,7 +111,7 @@ export default async function PublicProfilePage({ params }: Props) {
         <div className="mt-8 text-center">
           <a
             href={process.env.NEXT_PUBLIC_APP_URL ?? '/'}
-            className="text-xs text-muted-foreground hover:underline"
+            className="text-muted-foreground text-xs hover:underline"
           >
             Powered by GitHub Embed UI
           </a>
@@ -114,11 +121,19 @@ export default async function PublicProfilePage({ params }: Props) {
   );
 }
 
-function StatCard({ label, value, className }: { label: string; value: string | number; className?: string }) {
+function StatCard({
+  label,
+  value,
+  className,
+}: {
+  label: string;
+  value: string | number;
+  className?: string;
+}) {
   return (
-    <div className="rounded-lg border bg-card p-3 text-center">
+    <div className="bg-card rounded-lg border p-3 text-center">
       <div className={`text-xl font-bold ${className ?? ''}`}>{value}</div>
-      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-muted-foreground text-xs">{label}</div>
     </div>
   );
 }

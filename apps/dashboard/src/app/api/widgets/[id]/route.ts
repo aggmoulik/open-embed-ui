@@ -1,6 +1,5 @@
 import type { NextRequest } from 'next/server';
-import { db } from '@github-embed-ui/db';
-import { widgets } from '@github-embed-ui/db/schema';
+import { db, widgets } from '@/lib/db';
 import { eq, and } from 'drizzle-orm';
 import { getSession, errorResponse } from '@/lib/auth-server';
 
@@ -48,7 +47,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   return Response.json({ data: updated });
 }
 
-export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const session = await getSession();
   if (!session) return errorResponse('Unauthorized', 401);
 

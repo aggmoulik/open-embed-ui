@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
-import Script from 'next/script';
 
 interface WidgetHostProps {
   widgetId: string;
@@ -12,7 +11,10 @@ interface WidgetHostProps {
 declare global {
   interface Window {
     GitHubEmbedWidget?: {
-      mount: (el: HTMLElement, options: { widgetId: string; theme?: string; baseUrl?: string }) => void;
+      mount: (
+        el: HTMLElement,
+        options: { widgetId: string; theme?: string; baseUrl?: string },
+      ) => void;
       unmount: (el: HTMLElement) => void;
     };
   }
@@ -47,9 +49,19 @@ export function WidgetHost({ widgetId, theme = 'system', className }: WidgetHost
     });
   }, [widgetId, theme]);
 
-  // Mount when script loads or when widgetId/theme changes
+  // Load widget.js dynamically and mount
   useEffect(() => {
-    mountWidget();
+    if (document.getElementById('geu-widget-script')) {
+      // Already loaded
+      mountWidget();
+      return;
+    }
+    const script = document.createElement('script');
+    script.id = 'geu-widget-script';
+    script.src = '/widget.js';
+    script.async = true;
+    script.onload = mountWidget;
+    document.head.appendChild(script);
 
     return () => {
       if (hostRef.current) {
@@ -67,14 +79,5 @@ export function WidgetHost({ widgetId, theme = 'system', className }: WidgetHost
     window.postMessage({ type: 'geu-theme', theme }, '*');
   }, [theme]);
 
-  return (
-    <>
-      <Script
-        src="/widget.js"
-        strategy="afterInteractive"
-        onLoad={mountWidget}
-      />
-      <div ref={containerRef} className={className} />
-    </>
-  );
+  return <div ref={containerRef} className={className} />;
 }

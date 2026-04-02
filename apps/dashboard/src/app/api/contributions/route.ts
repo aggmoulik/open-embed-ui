@@ -1,6 +1,5 @@
 import type { NextRequest } from 'next/server';
-import { db } from '@github-embed-ui/db';
-import { contributions } from '@github-embed-ui/db/schema';
+import { db, contributions } from '@/lib/db';
 import { eq, and, desc, count, gte } from 'drizzle-orm';
 import { getSession, errorResponse } from '@/lib/auth-server';
 

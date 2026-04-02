@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { authClient } from '@/lib/auth-client';
 import { Avatar, AvatarFallback, AvatarImage } from '@github-embed-ui/ui/components/avatar';
 import { Button } from '@github-embed-ui/ui/components/button';
@@ -11,6 +12,8 @@ export function Topbar() {
   const { data: session } = authClient.useSession();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   async function handleLogout() {
     await authClient.signOut();
@@ -24,7 +27,13 @@ export function Topbar() {
     setTheme(next);
   }
 
-  const ThemeIcon = theme === 'dark' ? Moon : theme === 'light' ? Sun : Monitor;
+  const ThemeIcon = !mounted
+    ? Monitor
+    : theme === 'dark'
+      ? Moon
+      : theme === 'light'
+        ? Sun
+        : Monitor;
 
   const user = session?.user;
   const initials = user?.name
@@ -37,31 +46,19 @@ export function Topbar() {
     : '?';
 
   return (
-    <header className="flex h-14 items-center justify-end gap-3 border-b border-border bg-background px-4 md:px-6">
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        onClick={cycleTheme}
-        aria-label={`Theme: ${theme}`}
-      >
+    <header className="border-border bg-background flex h-14 items-center justify-end gap-3 border-b px-4 md:px-6">
+      <Button variant="ghost" size="icon-sm" onClick={cycleTheme} aria-label={`Theme: ${theme}`}>
         <ThemeIcon className="size-4" />
       </Button>
 
       {user && (
         <div className="flex items-center gap-3">
-          <span className="hidden text-sm font-medium sm:inline">
-            {user.name}
-          </span>
+          <span className="hidden text-sm font-medium sm:inline">{user.name}</span>
           <Avatar className="size-8">
             <AvatarImage src={user.image ?? undefined} alt={user.name} />
             <AvatarFallback className="text-xs">{initials}</AvatarFallback>
           </Avatar>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={handleLogout}
-            aria-label="Log out"
-          >
+          <Button variant="ghost" size="icon-sm" onClick={handleLogout} aria-label="Log out">
             <LogOut className="size-4" />
           </Button>
         </div>

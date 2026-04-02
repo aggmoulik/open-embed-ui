@@ -1,9 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { db } from '@github-embed-ui/db';
-import { users } from '@github-embed-ui/db/schema';
+import { db, users, schema } from '@/lib/db';
 import { eq } from 'drizzle-orm';
-import * as schema from '@github-embed-ui/db/schema';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {

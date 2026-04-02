@@ -1,11 +1,13 @@
-import { db } from '@github-embed-ui/db';
-import { widgets, contributions, users, embeds } from '@github-embed-ui/db/schema';
+import { db, widgets, contributions, users, embeds } from '@/lib/db';
 import { eq, and, desc } from 'drizzle-orm';
 import type { WidgetConfig } from '@/types';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: Request, { params }: { params: Promise<{ widgetId: string }> }) {
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ widgetId: string }> },
+) {
   const { widgetId } = await params;
 
   const widget = await db.query.widgets.findFirst({
@@ -20,7 +22,11 @@ export async function GET(_request: Request, { params }: { params: Promise<{ wid
 
   const [user, prs] = await Promise.all([
     db.query.users.findFirst({ where: eq(users.id, widget.userId) }),
-    db.select().from(contributions).where(eq(contributions.userId, widget.userId)).orderBy(desc(contributions.mergedAt)),
+    db
+      .select()
+      .from(contributions)
+      .where(eq(contributions.userId, widget.userId))
+      .orderBy(desc(contributions.mergedAt)),
   ]);
 
   // Apply filters
@@ -90,7 +96,10 @@ async function incrementViewCount(widgetId: string) {
   try {
     const embed = await db.query.embeds.findFirst({ where: eq(embeds.widgetId, widgetId) });
     if (embed) {
-      await db.update(embeds).set({ viewCount: embed.viewCount + 1, updatedAt: new Date() }).where(eq(embeds.id, embed.id));
+      await db
+        .update(embeds)
+        .set({ viewCount: embed.viewCount + 1, updatedAt: new Date() })
+        .where(eq(embeds.id, embed.id));
     }
   } catch {
     // Non-critical

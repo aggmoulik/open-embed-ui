@@ -1,7 +1,6 @@
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { db } from '@github-embed-ui/db';
-import { accounts } from '@github-embed-ui/db/schema';
+import { db, accounts } from '@/lib/db';
 import { eq, and } from 'drizzle-orm';
 
 export async function getSession() {
