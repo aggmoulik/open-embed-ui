@@ -48,7 +48,9 @@ export default [
   {
     ...shared,
     output: {
-      file: 'dist/index.mjs',
+      dir: 'dist',
+      entryFileNames: 'index.mjs',
+      chunkFileNames: 'chunks/[name]-[hash].mjs',
       format: 'esm',
       sourcemap: true,
     },

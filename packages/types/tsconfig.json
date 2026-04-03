@@ -1,0 +1,7 @@
+{
+  "extends": "@github-embed-ui/tsconfig/base.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "outDir": "dist"
+  }
+}

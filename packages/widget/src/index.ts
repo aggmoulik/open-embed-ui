@@ -32,7 +32,7 @@ export function unmount(selector: string | HTMLElement): void {
 }
 
 export { Widget as GitHubWidget } from './Widget';
-export type { WidgetOptions, WidgetData, WidgetConfig, Contribution } from './types';
+export type { WidgetOptions, WidgetData, WidgetConfig, WidgetLayout, Contribution } from './types';
 
 // --- Private ---
 

@@ -1,3 +1,9 @@
+export type { WidgetLayout, WidgetConfig } from '@github-embed-ui/types';
+export type { BaseContribution } from '@github-embed-ui/types';
+
+import type { WidgetConfig } from '@github-embed-ui/types';
+import type { BaseContribution } from '@github-embed-ui/types';
+
 export interface WidgetOptions {
   widgetId: string;
   theme?: 'light' | 'dark' | 'system';
@@ -17,25 +23,7 @@ export interface WidgetData {
   };
 }
 
-export interface WidgetConfig {
-  theme?: 'light' | 'dark' | 'system';
-  layout?: 'grid' | 'list' | 'timeline' | 'single-card';
-  repos?: string[];
-  timeRange?: 'week' | 'month' | 'year' | 'all';
-  maxItems?: number;
-  selectedPRs?: string[];
-  titleOverrides?: Record<string, string>;
-}
-
-export interface Contribution {
-  id: string;
-  title: string;
-  url: string;
-  repo: string;
-  repoOwner: string;
-  repoName: string;
+/** Widget-facing contribution (mergedAt is always a string from the API). */
+export interface Contribution extends BaseContribution {
   mergedAt: string | null;
-  additions: number;
-  deletions: number;
-  changedFiles: number;
 }

@@ -16,6 +16,7 @@
     "db:seed": "tsx --env-file=.env src/seed.ts"
   },
   "dependencies": {
+    "@github-embed-ui/types": "workspace:*",
     "@libsql/client": "0.17.2",
     "drizzle-orm": "0.45.2"
   },

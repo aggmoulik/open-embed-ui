@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@github-embed-ui/db": "workspace:*",
+    "@github-embed-ui/types": "workspace:*",
     "@github-embed-ui/ui": "workspace:*",
     "@base-ui/react": "1.3.0",
     "better-auth": "1.5.6",

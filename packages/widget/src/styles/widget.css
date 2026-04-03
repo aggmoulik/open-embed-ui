@@ -142,6 +142,112 @@
   @apply text-gray-400;
 }
 
+/* Marquee Layout */
+.geu-marquee {
+  @apply overflow-hidden;
+}
+.geu-marquee-track {
+  @apply flex gap-3;
+  animation: geu-marquee 30s linear infinite;
+}
+.geu-marquee:hover .geu-marquee-track {
+  animation-play-state: paused;
+}
+.geu-marquee-item {
+  @apply shrink-0;
+  width: 280px;
+}
+@keyframes geu-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Carousel Layout */
+.geu-carousel {
+  @apply relative;
+}
+.geu-carousel-viewport {
+  @apply overflow-hidden rounded-lg;
+}
+.geu-carousel-track {
+  @apply flex transition-transform duration-300 ease-in-out;
+}
+.geu-carousel-slide {
+  @apply w-full shrink-0 px-1;
+}
+.geu-carousel-btn {
+  @apply absolute top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm transition-colors;
+}
+.geu-carousel-btn:hover {
+  @apply bg-gray-50 text-gray-900;
+}
+.dark .geu-carousel-btn {
+  @apply border-gray-700 bg-gray-800 text-gray-300;
+}
+.dark .geu-carousel-btn:hover {
+  @apply bg-gray-700 text-gray-100;
+}
+.geu-carousel-prev {
+  left: -12px;
+}
+.geu-carousel-next {
+  right: -12px;
+}
+.geu-carousel-dots {
+  @apply mt-3 flex justify-center gap-1.5;
+}
+.geu-carousel-dot {
+  @apply size-2 rounded-full bg-gray-300 transition-colors;
+}
+.geu-carousel-dot:hover {
+  @apply bg-gray-400;
+}
+.geu-carousel-dot.active {
+  @apply bg-purple-500;
+}
+.dark .geu-carousel-dot {
+  @apply bg-gray-600;
+}
+.dark .geu-carousel-dot.active {
+  @apply bg-purple-400;
+}
+
+/* Masonry Layout */
+.geu-masonry {
+  columns: 1;
+  column-gap: 0.75rem;
+}
+.geu-masonry-item {
+  break-inside: avoid;
+  @apply mb-3;
+}
+@media (min-width: 540px) {
+  .geu-masonry { columns: 2; }
+}
+@media (min-width: 800px) {
+  .geu-masonry { columns: 3; }
+}
+
+/* Highlight Layout */
+.geu-highlight {
+  @apply space-y-3;
+}
+.geu-highlight-featured {
+  @apply flex gap-4 rounded-xl border-l-4 border-l-purple-500 border border-gray-200 bg-white p-5;
+}
+.dark .geu-highlight-featured {
+  @apply border-gray-700 bg-gray-900 border-l-purple-400;
+}
+.geu-highlight-icon {
+  @apply flex size-10 shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-600;
+}
+.dark .geu-highlight-icon {
+  @apply bg-purple-900/30 text-purple-400;
+}
+.geu-highlight-secondary {
+  @apply grid grid-cols-1 gap-3 sm:grid-cols-2;
+}
+
 /* Empty State */
 .geu-empty {
   @apply text-center py-12 text-sm text-gray-400 border border-dashed border-gray-200 rounded-lg;

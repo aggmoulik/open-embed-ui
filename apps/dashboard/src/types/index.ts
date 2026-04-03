@@ -1,3 +1,9 @@
+export type { WidgetLayout, WidgetConfig } from '@github-embed-ui/types';
+export type { BaseContribution } from '@github-embed-ui/types';
+
+import type { WidgetConfig } from '@github-embed-ui/types';
+import type { BaseContribution } from '@github-embed-ui/types';
+
 export interface User {
   id: string;
   name: string;
@@ -9,30 +15,12 @@ export interface User {
   updatedAt: Date;
 }
 
-export interface Contribution {
-  id: string;
-  title: string;
-  url: string;
-  repo: string;
-  repoOwner: string;
-  repoName: string;
+/** Dashboard contribution with DB-specific fields. */
+export interface Contribution extends BaseContribution {
   githubId: string;
   mergedAt?: Date | null;
-  additions: number;
-  deletions: number;
-  changedFiles: number;
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface WidgetConfig {
-  theme?: 'light' | 'dark' | 'system';
-  layout?: 'grid' | 'list' | 'timeline' | 'single-card';
-  repos?: string[];
-  timeRange?: 'week' | 'month' | 'year' | 'all';
-  maxItems?: number;
-  selectedPRs?: string[];
-  titleOverrides?: Record<string, string>;
 }
 
 export interface Widget {

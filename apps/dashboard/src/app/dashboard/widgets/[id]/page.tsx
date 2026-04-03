@@ -15,6 +15,10 @@ import {
   List,
   Clock,
   CreditCard,
+  GalleryHorizontal,
+  Presentation,
+  LayoutDashboard,
+  Star,
   Check,
   X,
   Pencil,
@@ -33,6 +37,10 @@ const LAYOUTS = [
   { value: 'list' as const, label: 'List', icon: List },
   { value: 'timeline' as const, label: 'Timeline', icon: Clock },
   { value: 'single-card' as const, label: 'Single Card', icon: CreditCard },
+  { value: 'marquee' as const, label: 'Marquee', icon: GalleryHorizontal },
+  { value: 'carousel' as const, label: 'Carousel', icon: Presentation },
+  { value: 'masonry' as const, label: 'Masonry', icon: LayoutDashboard },
+  { value: 'highlight' as const, label: 'Highlight', icon: Star },
 ];
 
 const TIME_RANGES = ['week', 'month', 'year', 'all'] as const;
@@ -282,7 +290,7 @@ export default function WidgetBuilderPage() {
               <CardTitle className="text-sm">Layout</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {LAYOUTS.map((l) => (
                   <Button
                     key={l.value}

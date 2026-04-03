@@ -20,6 +20,9 @@ importers:
       '@github-embed-ui/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@github-embed-ui/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@github-embed-ui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -124,6 +127,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@github-embed-ui/types':
+        specifier: workspace:*
+        version: link:../types
       '@libsql/client':
         specifier: 0.17.2
         version: 0.17.2
@@ -145,6 +151,8 @@ importers:
         version: 5.9.3
 
   packages/tsconfig: {}
+
+  packages/types: {}
 
   packages/ui:
     dependencies:
@@ -185,6 +193,9 @@ importers:
 
   packages/widget:
     dependencies:
+      '@github-embed-ui/types':
+        specifier: workspace:*
+        version: link:../types
       preact:
         specifier: 10.29.0
         version: 10.29.0

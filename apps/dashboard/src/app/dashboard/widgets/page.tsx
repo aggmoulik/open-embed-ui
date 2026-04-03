@@ -18,6 +18,10 @@ import {
   List,
   Clock,
   CreditCard,
+  GalleryHorizontal,
+  Presentation,
+  LayoutDashboard,
+  Star,
 } from 'lucide-react';
 import { useWidgets } from '@/hooks';
 import { deleteWidget } from '@/lib/api-client';
@@ -32,6 +36,10 @@ const layoutIcons = {
   list: List,
   timeline: Clock,
   'single-card': CreditCard,
+  marquee: GalleryHorizontal,
+  carousel: Presentation,
+  masonry: LayoutDashboard,
+  highlight: Star,
 };
 
 export default function WidgetsPage() {
