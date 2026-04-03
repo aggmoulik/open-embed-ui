@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { db, users, contributions } from '@/lib/db';
-import { eq, sql } from 'drizzle-orm';
+import { eq, and, sql, isNull } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +11,7 @@ export async function GET(
   const { username } = await params;
 
   const user = await db.query.users.findFirst({
-    where: eq(users.githubUsername, username),
+    where: and(eq(users.githubUsername, username), isNull(users.deletedAt)),
   });
 
   if (!user) {
@@ -25,12 +25,12 @@ export async function GET(
       totalDeletions: sql<number>`coalesce(sum(${contributions.deletions}), 0)`,
     })
     .from(contributions)
-    .where(eq(contributions.userId, user.id));
+    .where(and(eq(contributions.userId, user.id), isNull(contributions.deletedAt)));
 
   const repos = await db
     .selectDistinct({ repo: contributions.repo })
     .from(contributions)
-    .where(eq(contributions.userId, user.id));
+    .where(and(eq(contributions.userId, user.id), isNull(contributions.deletedAt)));
 
   const stats = {
     totalPRs: result[0]?.totalPRs ?? 0,

@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { db, contributions } from '@/lib/db';
-import { eq, and, desc, count, gte } from 'drizzle-orm';
+import { eq, and, desc, count, gte, isNull } from 'drizzle-orm';
 import { getSession, errorResponse } from '@/lib/auth-server';
 
 export const dynamic = 'force-dynamic';
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   const limit = Math.min(Number(searchParams.get('limit') ?? 50), 100);
   const offset = Number(searchParams.get('offset') ?? 0);
 
-  const conditions = [eq(contributions.userId, session.user.id)];
+  const conditions = [eq(contributions.userId, session.user.id), isNull(contributions.deletedAt)];
 
   if (repo) {
     conditions.push(eq(contributions.repo, repo));

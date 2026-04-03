@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { db, widgets } from '@/lib/db';
-import { eq, desc, count } from 'drizzle-orm';
+import { eq, and, desc, count, isNull } from 'drizzle-orm';
 import { getSession, errorResponse } from '@/lib/auth-server';
 import { randomUUID } from 'crypto';
 
@@ -18,11 +18,14 @@ export async function GET(request: NextRequest) {
     db
       .select()
       .from(widgets)
-      .where(eq(widgets.userId, session.user.id))
+      .where(and(eq(widgets.userId, session.user.id), isNull(widgets.deletedAt)))
       .orderBy(desc(widgets.updatedAt))
       .limit(limit)
       .offset(offset),
-    db.select({ count: count() }).from(widgets).where(eq(widgets.userId, session.user.id)),
+    db
+      .select({ count: count() })
+      .from(widgets)
+      .where(and(eq(widgets.userId, session.user.id), isNull(widgets.deletedAt))),
   ]);
 
   return Response.json({

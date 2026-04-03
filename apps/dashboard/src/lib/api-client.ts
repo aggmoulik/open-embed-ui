@@ -128,3 +128,9 @@ export function updateWidget(
 export function deleteWidget(id: string) {
   return apiFetch<{ message: string }>(`/api/widgets/${id}`, { method: 'DELETE' });
 }
+
+// --- Account ---
+
+export function deleteAccount() {
+  return apiFetch<{ message: string }>('/api/account', { method: 'DELETE' });
+}

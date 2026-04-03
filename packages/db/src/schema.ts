@@ -8,6 +8,7 @@ export const users = sqliteTable('users', {
   image: text('image'),
   githubId: text('github_id').unique(),
   githubUsername: text('github_username'),
+  deletedAt: integer('deleted_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -77,6 +78,7 @@ export const widgets = sqliteTable('widgets', {
   description: text('description'),
   config: text('config', { mode: 'json' }).$type<WidgetConfig>(),
   isPublic: integer('is_public', { mode: 'boolean' }).notNull().default(true),
+  deletedAt: integer('deleted_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -100,6 +102,7 @@ export const contributions = sqliteTable('contributions', {
   additions: integer('additions').notNull().default(0),
   deletions: integer('deletions').notNull().default(0),
   changedFiles: integer('changed_files').notNull().default(0),
+  deletedAt: integer('deleted_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -116,6 +119,7 @@ export const embeds = sqliteTable('embeds', {
   embedCode: text('embed_code').notNull(),
   allowedDomains: text('allowed_domains'),
   viewCount: integer('view_count').notNull().default(0),
+  deletedAt: integer('deleted_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .$defaultFn(() => new Date()),

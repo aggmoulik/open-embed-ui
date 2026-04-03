@@ -1,5 +1,5 @@
 import { db, users, contributions } from '@/lib/db';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, and, desc, sql, isNull } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { WidgetRenderer } from '@/components/widget-preview/widget-renderer';
@@ -12,7 +12,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { username } = await params;
   const user = await db.query.users.findFirst({
-    where: eq(users.githubUsername, username),
+    where: and(eq(users.githubUsername, username), isNull(users.deletedAt)),
   });
 
   if (!user) return { title: 'Profile Not Found' };
@@ -36,7 +36,7 @@ export default async function PublicProfilePage({ params }: Props) {
   const { username } = await params;
 
   const user = await db.query.users.findFirst({
-    where: eq(users.githubUsername, username),
+    where: and(eq(users.githubUsername, username), isNull(users.deletedAt)),
   });
 
   if (!user) return notFound();
@@ -44,7 +44,7 @@ export default async function PublicProfilePage({ params }: Props) {
   const userContributions = (await db
     .select()
     .from(contributions)
-    .where(eq(contributions.userId, user.id))
+    .where(and(eq(contributions.userId, user.id), isNull(contributions.deletedAt)))
     .orderBy(desc(contributions.mergedAt))) as Contribution[];
 
   const stats = await getStats(user.id);
@@ -152,12 +152,12 @@ async function getStats(userId: string) {
       totalDeletions: sql<number>`coalesce(sum(${contributions.deletions}), 0)`,
     })
     .from(contributions)
-    .where(eq(contributions.userId, userId));
+    .where(and(eq(contributions.userId, userId), isNull(contributions.deletedAt)));
 
   const repos = await db
     .selectDistinct({ repo: contributions.repo })
     .from(contributions)
-    .where(eq(contributions.userId, userId));
+    .where(and(eq(contributions.userId, userId), isNull(contributions.deletedAt)));
 
   return {
     totalPRs: result[0]?.totalPRs ?? 0,

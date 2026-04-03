@@ -1,5 +1,5 @@
 import { db, widgets, contributions, users, embeds } from '@/lib/db';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, isNull } from 'drizzle-orm';
 import type { WidgetConfig } from '@/types';
 
 export const dynamic = 'force-dynamic';
@@ -11,7 +11,7 @@ export async function GET(
   const { widgetId } = await params;
 
   const widget = await db.query.widgets.findFirst({
-    where: and(eq(widgets.id, widgetId), eq(widgets.isPublic, true)),
+    where: and(eq(widgets.id, widgetId), eq(widgets.isPublic, true), isNull(widgets.deletedAt)),
   });
 
   if (!widget) {
@@ -21,11 +21,11 @@ export async function GET(
   const config: WidgetConfig = (widget.config as WidgetConfig) ?? {};
 
   const [user, prs] = await Promise.all([
-    db.query.users.findFirst({ where: eq(users.id, widget.userId) }),
+    db.query.users.findFirst({ where: and(eq(users.id, widget.userId), isNull(users.deletedAt)) }),
     db
       .select()
       .from(contributions)
-      .where(eq(contributions.userId, widget.userId))
+      .where(and(eq(contributions.userId, widget.userId), isNull(contributions.deletedAt)))
       .orderBy(desc(contributions.mergedAt)),
   ]);
 
