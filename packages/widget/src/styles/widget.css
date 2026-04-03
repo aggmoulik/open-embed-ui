@@ -145,21 +145,41 @@
 /* Marquee Layout */
 .geu-marquee {
   @apply overflow-hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.geu-marquee-row {
+  @apply overflow-hidden;
 }
 .geu-marquee-track {
-  @apply flex gap-3;
-  animation: geu-marquee 30s linear infinite;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.75rem;
+  width: max-content;
+  animation: geu-marquee 60s linear infinite;
+}
+.geu-marquee-track-reverse {
+  animation-name: geu-marquee-reverse;
 }
 .geu-marquee:hover .geu-marquee-track {
   animation-play-state: paused;
 }
 .geu-marquee-item {
-  @apply shrink-0;
+  flex: 0 0 280px;
   width: 280px;
+  min-width: 0;
+}
+.geu-marquee-item .geu-card {
+  @apply h-full;
 }
 @keyframes geu-marquee {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  100% { transform: translateX(calc(-50% - 0.375rem)); }
+}
+@keyframes geu-marquee-reverse {
+  0% { transform: translateX(calc(-50% - 0.375rem)); }
+  100% { transform: translateX(0); }
 }
 
 /* Carousel Layout */

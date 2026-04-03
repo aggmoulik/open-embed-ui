@@ -11,9 +11,13 @@ export function MasonryLayout({ contributions, titleOverrides }: MasonryLayoutPr
 
   return (
     <div className="columns-1 gap-3 sm:columns-2 lg:columns-3">
-      {contributions.map((c) => (
+      {contributions.map((c, i) => (
         <div key={c.id} className="mb-3 break-inside-avoid">
-          <PRCard contribution={c} titleOverride={titleOverrides?.[c.id]} />
+          <PRCard
+            contribution={c}
+            titleOverride={titleOverrides?.[c.id]}
+            showDescription={i % 3 === 0}
+          />
         </div>
       ))}
     </div>

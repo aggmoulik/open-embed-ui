@@ -5,14 +5,15 @@ interface PRCardProps {
   contribution: Contribution;
   compact?: boolean;
   titleOverride?: string;
+  showDescription?: boolean;
 }
 
-export function PRCard({ contribution, compact, titleOverride }: PRCardProps) {
+export function PRCard({ contribution, compact, titleOverride, showDescription }: PRCardProps) {
   const displayTitle = titleOverride || contribution.title;
   const avatarUrl = `https://github.com/${contribution.repoOwner}.png?size=32`;
 
   return (
-    <div className="rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50">
+    <div className="border-border bg-card hover:bg-muted/50 rounded-lg border p-3 transition-colors">
       <div className="flex gap-2.5">
         <GitPullRequest className="mt-0.5 size-4 shrink-0 text-purple-500" />
         <div className="min-w-0 flex-1">
@@ -24,7 +25,7 @@ export function PRCard({ contribution, compact, titleOverride }: PRCardProps) {
           >
             {displayTitle}
           </a>
-          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+          <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
             <a
               href={`https://github.com/${contribution.repo}`}
               target="_blank"
@@ -47,6 +48,12 @@ export function PRCard({ contribution, compact, titleOverride }: PRCardProps) {
               </time>
             )}
           </div>
+          {showDescription && (
+            <p className="text-muted-foreground mt-2 text-xs leading-relaxed">
+              {contribution.changedFiles} files changed across {contribution.repo.split('/')[1]}{' '}
+              with {contribution.additions + contribution.deletions} total line modifications.
+            </p>
+          )}
         </div>
       </div>
     </div>

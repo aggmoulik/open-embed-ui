@@ -62,7 +62,7 @@ export function HighlightLayout({ contributions, titleOverrides }: Props) {
       </div>
       {contributions.length > 1 && (
         <div class="geu-highlight-secondary">
-          {contributions.slice(1, 3).map((c) => (
+          {contributions.slice(1).map((c) => (
             <PRCard key={c.id} contribution={c} titleOverride={titleOverrides?.[c.id]} />
           ))}
         </div>
