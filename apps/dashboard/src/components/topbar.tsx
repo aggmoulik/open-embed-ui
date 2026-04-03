@@ -7,9 +7,11 @@ import { Button } from '@github-embed-ui/ui/components/button';
 import { LogOut, Sun, Moon, Monitor } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import { useProfile } from '@/hooks';
 
 export function Topbar() {
   const { data: session } = authClient.useSession();
+  const { data: profile } = useProfile();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -35,11 +37,12 @@ export function Topbar() {
         ? Sun
         : Monitor;
 
-  const user = session?.user;
+  // Use profile data (live from DB) for name/image, fall back to session
+  const user = profile ?? session?.user;
   const initials = user?.name
     ? user.name
         .split(' ')
-        .map((n) => n[0])
+        .map((n: string) => n[0])
         .join('')
         .toUpperCase()
         .slice(0, 2)

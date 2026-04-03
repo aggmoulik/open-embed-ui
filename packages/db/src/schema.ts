@@ -128,6 +128,21 @@ export const embeds = sqliteTable('embeds', {
     .$defaultFn(() => new Date()),
 });
 
+export const accountDeletions = sqliteTable('account_deletions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull(), // Original user ID (no FK — user row is anonymized)
+  email: text('email').notNull(), // Original email before anonymization
+  name: text('name').notNull(), // Display name at time of deletion
+  githubUsername: text('github_username'), // GitHub username at time of deletion
+  githubId: text('github_id'), // GitHub ID at time of deletion
+  widgetCount: integer('widget_count').notNull().default(0),
+  contributionCount: integer('contribution_count').notNull().default(0),
+  accountCreatedAt: integer('account_created_at', { mode: 'timestamp' }), // When they originally signed up
+  deletedAt: integer('deleted_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
 type WidgetConfig = {
   theme?: 'light' | 'dark' | 'system';
   layout?: 'grid' | 'list' | 'timeline' | 'single-card';
