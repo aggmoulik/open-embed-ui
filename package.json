@@ -21,7 +21,7 @@
     "db:studio": "pnpm --filter @github-embed-ui/db db:studio",
     "db:seed": "pnpm --filter @github-embed-ui/db db:seed",
     "setup": "pnpm install && cp -n packages/db/.env.example packages/db/.env && cp -n apps/dashboard/.env.example apps/dashboard/.env && pnpm db:push",
-    "ui:add": "cd packages/ui && pnpm dlx shadcn@latest add"
+    "ui:add": "pnpm --filter @github-embed-ui/ui shadcn add"
   },
   "devDependencies": {
     "turbo": "2.9.3"
