@@ -30,4 +30,10 @@ export interface BaseContribution {
   additions: number;
   deletions: number;
   changedFiles: number;
+  // User-authored metadata (feature 11). All optional so widget code that
+  // does not consume them compiles unchanged.
+  description?: string | null;
+  blogUrl?: string | null;
+  /** Whether the blog link should open in a new tab. Defaults to true. */
+  blogOpenInNewTab?: boolean;
 }

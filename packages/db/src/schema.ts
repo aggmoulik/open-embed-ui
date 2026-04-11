@@ -103,6 +103,11 @@ export const contributions = sqliteTable('contributions', {
   additions: integer('additions').notNull().default(0),
   deletions: integer('deletions').notNull().default(0),
   changedFiles: integer('changed_files').notNull().default(0),
+  // User-authored metadata (feature 11). All optional. Survive github-sync via
+  // an explicit upsert `set` clause that omits these columns.
+  description: text('description'),
+  blogUrl: text('blog_url'),
+  blogOpenInNewTab: integer('blog_open_in_new_tab', { mode: 'boolean' }).notNull().default(true),
   deletedAt: integer('deleted_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()

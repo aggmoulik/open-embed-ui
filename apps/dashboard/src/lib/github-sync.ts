@@ -1,6 +1,6 @@
 import { createOctokitClient } from '@/lib/github';
 import { db, contributions, users } from '@/lib/db';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 /**
  * Syncs merged PRs authored by the user across ALL public repos on GitHub.
@@ -67,9 +67,22 @@ export async function syncGitHubContributions(userId: string, accessToken: strin
     cursor = result.search.pageInfo.endCursor;
   }
 
-  // Upsert contributions
-  await db.delete(contributions).where(eq(contributions.userId, userId));
-
+  // Upsert contributions — feature 11.
+  //
+  // Replaced the previous delete+insert flow because it wiped user-authored
+  // metadata (description, blog_url, blog_open_in_new_tab) on every sync.
+  //
+  // The `set` clause below MUST only contain GitHub-sourced columns. Do not
+  // add `description`, `blogUrl`, or `blogOpenInNewTab` here — those are
+  // user-authored and must survive re-syncs untouched. There is a
+  // regression test that asserts this; if you change this code, make sure
+  // the test still passes.
+  //
+  // Side-effect: PRs deleted from GitHub will linger as orphaned rows. This
+  // is an acceptable trade-off — PRs rarely get deleted upstream and the
+  // previous flow had no graceful "this was deleted" affordance either. A
+  // future feature can add an opt-in `?prune=1` mode that soft-deletes rows
+  // not seen in the current sync.
   if (allMergedPRs.length > 0) {
     for (let i = 0; i < allMergedPRs.length; i += 100) {
       const batch = allMergedPRs.slice(i, i + 100).map((c) => ({
@@ -77,7 +90,24 @@ export async function syncGitHubContributions(userId: string, accessToken: strin
         userId,
         id: `pr-${c.githubId}`,
       }));
-      await db.insert(contributions).values(batch);
+      await db
+        .insert(contributions)
+        .values(batch)
+        .onConflictDoUpdate({
+          target: contributions.id,
+          set: {
+            title: sql`excluded.title`,
+            url: sql`excluded.url`,
+            repo: sql`excluded.repo`,
+            repoOwner: sql`excluded.repo_owner`,
+            repoName: sql`excluded.repo_name`,
+            mergedAt: sql`excluded.merged_at`,
+            additions: sql`excluded.additions`,
+            deletions: sql`excluded.deletions`,
+            changedFiles: sql`excluded.changed_files`,
+            updatedAt: new Date(),
+          },
+        });
     }
   }
 

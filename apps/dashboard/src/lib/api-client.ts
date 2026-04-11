@@ -64,6 +64,7 @@ export interface ContributionFilters {
   timeRange?: 'week' | 'month' | 'year' | 'all';
   limit?: number;
   offset?: number;
+  sort?: 'newest' | 'oldest';
 }
 
 export function fetchContributions(filters?: ContributionFilters) {
@@ -71,7 +72,8 @@ export function fetchContributions(filters?: ContributionFilters) {
   if (filters?.repo) params.set('repo', filters.repo);
   if (filters?.timeRange) params.set('timeRange', filters.timeRange);
   if (filters?.limit) params.set('limit', String(filters.limit));
-  if (filters?.offset) params.set('offset', String(filters.offset));
+  if (filters?.offset !== undefined) params.set('offset', String(filters.offset));
+  if (filters?.sort) params.set('sort', filters.sort);
 
   const qs = params.toString();
   return apiFetch<PaginatedResponse<Contribution>>(`/api/contributions${qs ? `?${qs}` : ''}`);
@@ -79,6 +81,19 @@ export function fetchContributions(filters?: ContributionFilters) {
 
 export function fetchContribution(id: string) {
   return apiFetch<Contribution>(`/api/contributions/${id}`);
+}
+
+export interface UpdateContributionPayload {
+  description?: string | null;
+  blogUrl?: string | null;
+  blogOpenInNewTab?: boolean;
+}
+
+export function updateContribution(id: string, data: UpdateContributionPayload) {
+  return apiFetch<Contribution>(`/api/contributions/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
 }
 
 export function syncContributions() {
