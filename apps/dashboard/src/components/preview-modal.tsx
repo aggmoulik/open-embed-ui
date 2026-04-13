@@ -24,9 +24,15 @@ export function PreviewModal({
   currentConfig,
   currentContributions,
 }: PreviewModalProps) {
-  const { data: widget, loading: widgetLoading } = useWidget(currentConfig ? null : widgetId);
+  // When currentConfig + currentContributions are provided (widget builder),
+  // skip fetching widget and contributions entirely — the parent already has
+  // the data. This avoids a redundant /api/contributions call on every
+  // preview open.
+  const hasInlineData = !!(currentConfig && currentContributions);
+
+  const { data: widget, loading: widgetLoading } = useWidget(hasInlineData ? null : widgetId);
   const { data: allContributions, loading: contributionsLoading } = useContributions(
-    currentContributions ? { limit: 0 } : undefined,
+    hasInlineData ? null : undefined,
   );
 
   const config = currentConfig ?? widget?.config ?? {};
@@ -35,14 +41,6 @@ export function PreviewModal({
     if (currentContributions) return currentContributions;
 
     let result: Contribution[] = [...allContributions];
-
-    if (config.timeRange && config.timeRange !== 'all') {
-      const now = Date.now();
-      const ranges = { week: 7, month: 30, year: 365 };
-      const days = ranges[config.timeRange];
-      const since = now - days * 24 * 60 * 60 * 1000;
-      result = result.filter((c) => c.mergedAt && new Date(c.mergedAt).getTime() > since);
-    }
 
     result.sort((a, b) => {
       const aTime = a.mergedAt ? new Date(a.mergedAt).getTime() : 0;
@@ -60,12 +58,12 @@ export function PreviewModal({
     }
 
     return result;
-  }, [currentContributions, allContributions, config.timeRange, config.selectedPRs, config.maxItems]);
+  }, [currentContributions, allContributions, config.selectedPRs, config.maxItems]);
 
   if (!open) return null;
 
-  const loading = !currentConfig && (widgetLoading || contributionsLoading);
-  const hasData = currentConfig || widget;
+  const loading = !hasInlineData && (widgetLoading || contributionsLoading);
+  const hasData = hasInlineData || widget;
 
   return (
     <div
@@ -73,13 +71,13 @@ export function PreviewModal({
       onClick={onClose}
     >
       <div
-        className="flex w-full max-w-5xl flex-col overflow-hidden rounded-xl border bg-background shadow-2xl"
+        className="bg-background flex w-full max-w-5xl flex-col overflow-hidden rounded-xl border shadow-2xl"
         style={{ height: 'min(85vh, 750px)' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-muted-foreground">Widget Preview</span>
+            <span className="text-muted-foreground text-sm font-medium">Widget Preview</span>
             <Badge variant="outline" className="text-[10px]">
               {filteredContributions.length} PRs shown
             </Badge>
@@ -90,7 +88,7 @@ export function PreviewModal({
         </div>
 
         <div className="flex-1 overflow-auto p-4">
-          <div className="rounded-lg border bg-background p-4">
+          <div className="bg-background rounded-lg border p-4">
             {loading ? (
               <div className="space-y-3">
                 {Array.from({ length: 3 }).map((_, i) => (
@@ -100,7 +98,7 @@ export function PreviewModal({
             ) : hasData ? (
               <WidgetRenderer contributions={filteredContributions} config={config} />
             ) : (
-              <div className="flex items-center justify-center py-20 text-sm text-muted-foreground">
+              <div className="text-muted-foreground flex items-center justify-center py-20 text-sm">
                 Widget not found.
               </div>
             )}

@@ -15,7 +15,7 @@ export function SingleCardLayout({ contributions, titleOverrides }: Props) {
   const pr = contributions[0];
   if (!pr) return <div class="geu-empty">No contributions to display</div>;
 
-  const title = titleOverrides?.[pr.id] || pr.title;
+  const title = pr.titleOverride || titleOverrides?.[pr.id] || pr.title;
   const avatarUrl = `https://github.com/${pr.repoOwner}.png?size=48`;
 
   return (

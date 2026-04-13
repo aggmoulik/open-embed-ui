@@ -8,10 +8,12 @@
 
 import { VALID_LABELS } from '@github-embed-ui/types';
 
+export const TITLE_OVERRIDE_MAX = 200;
 export const DESCRIPTION_MAX = 500;
 export const BLOG_URL_MAX = 2048;
 
 export interface UpdateContributionInput {
+  titleOverride?: string | null;
   description?: string | null;
   blogUrl?: string | null;
   blogOpenInNewTab?: boolean;
@@ -42,6 +44,19 @@ export function validateUpdateContribution(body: unknown): ValidationResult {
   const input = body as Record<string, unknown>;
   const errors: Record<string, string> = {};
   const data: UpdateContributionInput = {};
+
+  if ('titleOverride' in input) {
+    const value = input.titleOverride;
+    if (value === null || value === '') {
+      data.titleOverride = null;
+    } else if (typeof value !== 'string') {
+      errors.titleOverride = 'titleOverride must be a string or null';
+    } else if (value.length > TITLE_OVERRIDE_MAX) {
+      errors.titleOverride = `titleOverride must be ${TITLE_OVERRIDE_MAX} characters or fewer`;
+    } else {
+      data.titleOverride = value;
+    }
+  }
 
   if ('description' in input) {
     const value = input.description;

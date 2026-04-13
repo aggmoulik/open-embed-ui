@@ -84,6 +84,7 @@ export function fetchContribution(id: string) {
 }
 
 export interface UpdateContributionPayload {
+  titleOverride?: string | null;
   description?: string | null;
   blogUrl?: string | null;
   blogOpenInNewTab?: boolean;

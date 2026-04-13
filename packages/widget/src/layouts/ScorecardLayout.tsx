@@ -48,7 +48,7 @@ export function ScorecardLayout({ contributions, titleOverrides }: Props) {
 
       <div class="geu-scorecard-grid">
         {contributions.map((c) => {
-          const title = titleOverrides?.[c.id] || c.title;
+          const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
           const labels = getDisplayLabels(title, c.labels);
           const cleanTitle = getCleanTitle(title, c.labels);
           const total = c.additions + c.deletions;

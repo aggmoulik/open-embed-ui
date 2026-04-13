@@ -17,11 +17,11 @@ function FeaturedCard({
   contribution: Contribution;
   titleOverride?: string;
 }) {
-  const displayTitle = titleOverride || contribution.title;
+  const displayTitle = contribution.titleOverride || titleOverride || contribution.title;
   const avatarUrl = `https://github.com/${contribution.repoOwner}.png?size=64`;
 
   return (
-    <div className="flex gap-4 rounded-xl border border-l-4 border-l-purple-500 bg-card p-5">
+    <div className="bg-card flex gap-4 rounded-xl border border-l-4 border-l-purple-500 p-5">
       <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
         <GitPullRequest className="size-5 text-purple-600 dark:text-purple-400" />
       </div>
@@ -34,7 +34,7 @@ function FeaturedCard({
         >
           {displayTitle}
         </a>
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 text-sm text-muted-foreground">
+        <div className="text-muted-foreground mt-1.5 flex flex-wrap items-center gap-x-3 text-sm">
           <a
             href={`https://github.com/${contribution.repo}`}
             target="_blank"
@@ -54,7 +54,7 @@ function FeaturedCard({
           <span>{contribution.changedFiles} files</span>
         </div>
         {contribution.mergedAt && (
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="text-muted-foreground mt-1 text-xs">
             Merged on{' '}
             <time dateTime={new Date(contribution.mergedAt).toISOString()}>
               {new Date(contribution.mergedAt).toLocaleDateString(undefined, {
@@ -120,7 +120,7 @@ export function HighlightLayout({ contributions, titleOverrides }: HighlightLayo
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm text-muted-foreground">
+    <div className="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm">
       No contributions match these filters.
     </div>
   );

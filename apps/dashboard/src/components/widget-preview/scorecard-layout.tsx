@@ -16,7 +16,7 @@ interface ScorecardLayoutProps {
 export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayoutProps) {
   if (contributions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm">
         No contributions match these filters.
       </div>
     );
@@ -35,11 +35,15 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
         </div>
         <div className="geu-scorecard-stats">
           <div className="geu-scorecard-stat">
-            <span className="geu-scorecard-stat-value geu-scorecard-add">+{formatNumber(totalAdd)}</span>
+            <span className="geu-scorecard-stat-value geu-scorecard-add">
+              +{formatNumber(totalAdd)}
+            </span>
             <span className="geu-scorecard-stat-label">added</span>
           </div>
           <div className="geu-scorecard-stat">
-            <span className="geu-scorecard-stat-value geu-scorecard-del">-{formatNumber(totalDel)}</span>
+            <span className="geu-scorecard-stat-value geu-scorecard-del">
+              -{formatNumber(totalDel)}
+            </span>
             <span className="geu-scorecard-stat-label">removed</span>
           </div>
           <div className="geu-scorecard-stat">
@@ -51,7 +55,7 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
 
       <div className="geu-scorecard-grid">
         {contributions.map((c) => {
-          const title = titleOverrides?.[c.id] || c.title;
+          const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
           const labels = getDisplayLabels(title, c.labels);
           const cleanTitle = getCleanTitle(title, c.labels);
           const total = c.additions + c.deletions;
@@ -68,11 +72,11 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
                       <span
                         key={label}
                         className="geu-scorecard-kind"
-                        data-lbl
                         style={{
-                          '--lbl-light': color.light,
-                          '--lbl-dark': color.dark,
-                        } as React.CSSProperties}
+                          backgroundColor: color.light,
+                          color: '#fff',
+                          borderColor: color.light,
+                        }}
                       >
                         {label}
                       </span>
@@ -80,7 +84,10 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
                   })}
                 </div>
                 {c.mergedAt && (
-                  <time className="geu-scorecard-date" dateTime={new Date(c.mergedAt).toISOString()}>
+                  <time
+                    className="geu-scorecard-date"
+                    dateTime={new Date(c.mergedAt).toISOString()}
+                  >
                     {shortDate(c.mergedAt)}
                   </time>
                 )}
@@ -104,14 +111,8 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
               </a>
               <div className="geu-scorecard-diff">
                 <div className="geu-scorecard-diff-bar">
-                  <div
-                    className="geu-scorecard-diff-add-seg"
-                    style={{ width: `${addPct}%` }}
-                  />
-                  <div
-                    className="geu-scorecard-diff-del-seg"
-                    style={{ width: `${delPct}%` }}
-                  />
+                  <div className="geu-scorecard-diff-add-seg" style={{ width: `${addPct}%` }} />
+                  <div className="geu-scorecard-diff-del-seg" style={{ width: `${delPct}%` }} />
                 </div>
                 <span className="geu-scorecard-diff-nums">
                   <span className="geu-scorecard-add">+{c.additions}</span>
@@ -131,8 +132,18 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
 function shortDate(iso: string | Date): string {
   const d = typeof iso === 'string' ? new Date(iso) : iso;
   const MONTHS = [
-    'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
+    'JAN',
+    'FEB',
+    'MAR',
+    'APR',
+    'MAY',
+    'JUN',
+    'JUL',
+    'AUG',
+    'SEP',
+    'OCT',
+    'NOV',
+    'DEC',
   ];
   return `${MONTHS[d.getMonth()]} ${String(d.getDate()).padStart(2, '0')}`;
 }

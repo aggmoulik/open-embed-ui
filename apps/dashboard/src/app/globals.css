@@ -127,16 +127,6 @@
   --rcpt-scanline: rgba(255, 255, 255, 0.022);
 }
 
-/* Label colors — driven by inline --lbl-light / --lbl-dark custom properties.
-   Doubled attribute selector boosts specificity above layout-specific badge
-   rules (e.g. .geu-devlog .geu-devlog-badge { border: 1px solid currentColor }). */
-[data-lbl][data-lbl] { --lbl-color: var(--lbl-light); color: var(--lbl-color); border-color: var(--lbl-color); }
-.dark [data-lbl][data-lbl] { --lbl-color: var(--lbl-dark); }
-
-/* Dot colors — same approach for background */
-[data-lbl-dot][data-lbl-dot] { --lbl-color: var(--lbl-light); background: var(--lbl-color); }
-.dark [data-lbl-dot][data-lbl-dot] { --lbl-color: var(--lbl-dark); }
-
 /* =========================================================================
    1. TERMINAL — Receipt (scalloped edges, barcode, receipt totals)
    ========================================================================= */
@@ -181,7 +171,7 @@
 .geu-terminal .geu-terminal-kind {
   flex-shrink: 0; display: inline-block; padding: 1px 5px; font-size: 9px;
   font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  border: 1px solid currentColor; background: transparent; line-height: 1.4;
+  border: 1px solid currentColor; line-height: 1.4;
 }
 .geu-terminal .geu-terminal-title {
   color: var(--rcpt-ink); text-decoration: none; font-size: 11px; line-height: 1.45;
@@ -255,16 +245,16 @@
 .geu-scorecard .geu-scorecard-del { color: var(--rcpt-del); }
 .geu-scorecard .geu-scorecard-grid { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 10px; }
 @media (min-width: 480px) { .geu-scorecard .geu-scorecard-grid { grid-template-columns: 1fr 1fr; } }
-.geu-scorecard .geu-scorecard-card { display: flex; flex-direction: column; padding: 10px 12px; background: var(--rcpt-card-bg); border: 1px solid var(--rcpt-rule); }
-.geu-scorecard .geu-scorecard-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
-.geu-scorecard .geu-scorecard-kind { display: inline-block; padding: 1px 5px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid currentColor; background: transparent; line-height: 1.4; }
+.geu-scorecard .geu-scorecard-card { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; background: var(--rcpt-card-bg); border: 1px solid var(--rcpt-rule); }
+.geu-scorecard .geu-scorecard-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.geu-scorecard .geu-scorecard-kind { display: inline-block; padding: 1px 5px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid currentColor; line-height: 1.4; }
 .geu-scorecard .geu-scorecard-card-date { font-size: 9px; color: var(--rcpt-dim); letter-spacing: 0.06em; }
 .geu-scorecard .geu-scorecard-card-title { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; font-size: 11px; line-height: 1.4; color: var(--rcpt-ink); text-decoration: none; }
 .geu-scorecard .geu-scorecard-card-title:hover { color: var(--rcpt-amber); text-decoration: underline; text-underline-offset: 2px; }
-.geu-scorecard .geu-scorecard-card-meta { margin-top: 4px; font-size: 9.5px; color: var(--rcpt-muted); }
+.geu-scorecard .geu-scorecard-card-meta { margin-top: 0; font-size: 9.5px; color: var(--rcpt-muted); }
 .geu-scorecard .geu-scorecard-card-repo { color: var(--rcpt-muted); text-decoration: none; }
 .geu-scorecard .geu-scorecard-card-repo:hover { color: var(--rcpt-ink); text-decoration: underline; text-underline-offset: 2px; }
-.geu-scorecard .geu-scorecard-card-diff { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 6px; }
+.geu-scorecard .geu-scorecard-card-diff { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 4px; }
 .geu-scorecard .geu-scorecard-diff-bar { flex: 1 1 auto; display: flex; height: 4px; background: var(--rcpt-rule); overflow: hidden; }
 .geu-scorecard .geu-scorecard-diff-add-seg { background: var(--rcpt-add); height: 100%; }
 .geu-scorecard .geu-scorecard-diff-del-seg { background: var(--rcpt-del); height: 100%; }
@@ -336,17 +326,39 @@
 .geu-proof .geu-proof-del { color: var(--rcpt-del); }
 .geu-proof .geu-proof-grid { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 12px; }
 @media (min-width: 480px) { .geu-proof .geu-proof-grid { grid-template-columns: 1fr 1fr; } }
-.geu-proof .geu-proof-card { display: flex; flex-direction: column; padding: 12px 14px; background: var(--rcpt-card-bg); border: 1px solid var(--rcpt-rule); }
-.geu-proof .geu-proof-card-badges { display: flex; gap: 6px; margin-bottom: 6px; }
+.geu-proof .geu-proof-card { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: var(--rcpt-card-bg); border: 1px solid var(--rcpt-rule); }
+.geu-proof .geu-proof-card-badges { display: flex; gap: 6px; }
 .geu-proof .geu-proof-badge { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid currentColor; }
 .geu-proof .geu-proof-card-title { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; font-size: 13px; font-weight: 600; line-height: 1.4; color: var(--rcpt-ink); text-decoration: none; }
 .geu-proof .geu-proof-card-title:hover { text-decoration: underline; text-underline-offset: 2px; }
-.geu-proof .geu-proof-card-desc { margin: 4px 0 0; font-size: 11px; color: var(--rcpt-muted); line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
-.geu-proof .geu-proof-card-meta { margin-top: 6px; font-size: 10px; }
+.geu-proof .geu-proof-card-desc { margin: 0; font-size: 11px; color: var(--rcpt-muted); line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+.geu-proof .geu-proof-card-meta { margin-top: 0; font-size: 10px; }
 .geu-proof .geu-proof-card-repo { color: var(--rcpt-dim); text-decoration: none; }
 .geu-proof .geu-proof-card-repo:hover { color: var(--rcpt-ink); text-decoration: underline; text-underline-offset: 2px; }
-.geu-proof .geu-proof-card-diff { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 8px; }
+.geu-proof .geu-proof-card-diff { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 4px; }
 .geu-proof .geu-proof-diff-bar { flex: 1 1 auto; display: flex; height: 4px; background: var(--rcpt-rule); overflow: hidden; }
 .geu-proof .geu-proof-diff-add-seg { background: var(--rcpt-add); height: 100%; }
 .geu-proof .geu-proof-diff-del-seg { background: var(--rcpt-del); height: 100%; }
 .geu-proof .geu-proof-card-nums { flex-shrink: 0; display: flex; gap: 6px; font-size: 10px; font-variant-numeric: tabular-nums; }
+
+/* =========================================================================
+   Label & dot colors — MUST be at the end of the file so they win by
+   source order over layout-specific badge rules with equal specificity.
+   ========================================================================= */
+[data-lbl][data-lbl] {
+  --lbl-color: var(--lbl-light);
+  background-color: var(--lbl-color);
+  color: #fff;
+  border-color: var(--lbl-color);
+}
+.dark [data-lbl][data-lbl] {
+  --lbl-color: var(--lbl-dark);
+  color: #000;
+}
+[data-lbl-dot][data-lbl-dot] {
+  --lbl-color: var(--lbl-light);
+  background: var(--lbl-color);
+}
+.dark [data-lbl-dot][data-lbl-dot] {
+  --lbl-color: var(--lbl-dark);
+}

@@ -17,15 +17,12 @@ import { Textarea } from '@github-embed-ui/ui/components/textarea';
 import { ExternalLink, Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Contribution } from '@/types';
-import {
-  PREDEFINED_LABELS,
-  LABELS_MAX_COUNT,
-  getDisplayLabels,
-} from '@github-embed-ui/types';
+import { PREDEFINED_LABELS, LABELS_MAX_COUNT, getDisplayLabels } from '@github-embed-ui/types';
 import { useUpdateContribution } from '@/hooks';
 import {
   BLOG_URL_MAX,
   DESCRIPTION_MAX,
+  TITLE_OVERRIDE_MAX,
   isSafeHttpUrl,
 } from '@/lib/validation/contribution';
 
@@ -37,6 +34,7 @@ interface ContributionEditDialogProps {
 }
 
 interface FormState {
+  titleOverride: string;
   description: string;
   blogUrl: string;
   blogOpenInNewTab: boolean;
@@ -45,6 +43,7 @@ interface FormState {
 
 function toFormState(c: Contribution | null): FormState {
   return {
+    titleOverride: c?.titleOverride ?? '',
     description: c?.description ?? '',
     blogUrl: c?.blogUrl ?? '',
     blogOpenInNewTab: c?.blogOpenInNewTab !== false,
@@ -67,12 +66,16 @@ export function ContributionEditDialog({
 
   const initial = useMemo(() => toFormState(contribution), [contribution]);
   const dirty =
+    form.titleOverride !== initial.titleOverride ||
     form.description !== initial.description ||
     form.blogUrl !== initial.blogUrl ||
     form.blogOpenInNewTab !== initial.blogOpenInNewTab ||
     JSON.stringify(form.labels) !== JSON.stringify(initial.labels);
 
   const clientError = useMemo(() => {
+    if (form.titleOverride.length > TITLE_OVERRIDE_MAX) {
+      return { field: 'titleOverride', msg: `${TITLE_OVERRIDE_MAX} characters max` };
+    }
     if (form.description.length > DESCRIPTION_MAX) {
       return { field: 'description', msg: `${DESCRIPTION_MAX} characters max` };
     }
@@ -117,6 +120,7 @@ export function ContributionEditDialog({
     if (clientError) return;
 
     const payload = {
+      titleOverride: form.titleOverride.trim() ? form.titleOverride.trim() : null,
       description: form.description.trim() ? form.description : null,
       blogUrl: form.blogUrl.trim() ? form.blogUrl : null,
       blogOpenInNewTab: form.blogOpenInNewTab,
@@ -161,6 +165,37 @@ export function ContributionEditDialog({
         </DialogHeader>
 
         <div className="grid gap-4">
+          {/* Title override */}
+          <div className="grid gap-1.5">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="titleOverride">Display Title</Label>
+              <span className="text-muted-foreground text-xs">
+                {form.titleOverride.length} / {TITLE_OVERRIDE_MAX}
+              </span>
+            </div>
+            <Input
+              id="titleOverride"
+              placeholder={contribution?.title ?? 'Custom display title...'}
+              value={form.titleOverride}
+              onChange={(e) => setForm((f) => ({ ...f, titleOverride: e.target.value }))}
+              aria-invalid={
+                clientError?.field === 'titleOverride' || Boolean(fieldErrors?.titleOverride)
+              }
+            />
+            {(clientError?.field === 'titleOverride' || fieldErrors?.titleOverride) && (
+              <p className="text-destructive text-xs">
+                {clientError?.field === 'titleOverride'
+                  ? clientError.msg
+                  : fieldErrors?.titleOverride}
+              </p>
+            )}
+            {!form.titleOverride && (
+              <p className="text-muted-foreground text-xs">
+                Leave empty to use the original GitHub PR title.
+              </p>
+            )}
+          </div>
+
           {/* Labels chip selector */}
           <div className="grid gap-1.5">
             <div className="flex items-center justify-between">
@@ -187,7 +222,7 @@ export function ContributionEditDialog({
                     key={labelDef.value}
                     type="button"
                     onClick={() => toggleLabel(labelDef.value)}
-                    className="rounded-sm border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider transition-colors"
+                    className="rounded-sm border px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase transition-colors"
                     style={{
                       color: selected ? '#fff' : labelDef.colorLight,
                       borderColor: labelDef.colorLight,
@@ -229,9 +264,7 @@ export function ContributionEditDialog({
             />
             {(clientError?.field === 'description' || fieldErrors?.description) && (
               <p className="text-destructive text-xs">
-                {clientError?.field === 'description'
-                  ? clientError.msg
-                  : fieldErrors?.description}
+                {clientError?.field === 'description' ? clientError.msg : fieldErrors?.description}
               </p>
             )}
           </div>

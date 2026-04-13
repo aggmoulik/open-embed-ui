@@ -9,7 +9,7 @@ interface PRCardProps {
 }
 
 export function PRCard({ contribution, compact, titleOverride, showDescription }: PRCardProps) {
-  const displayTitle = titleOverride || contribution.title;
+  const displayTitle = contribution.titleOverride || titleOverride || contribution.title;
   const avatarUrl = `https://github.com/${contribution.repoOwner}.png?size=32`;
 
   return (

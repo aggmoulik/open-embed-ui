@@ -16,7 +16,7 @@ export function HighlightLayout({ contributions, titleOverrides }: Props) {
   if (contributions.length === 0) return <div class="geu-empty">No contributions to display</div>;
 
   const featured = contributions[0];
-  const featuredTitle = titleOverrides?.[featured.id] || featured.title;
+  const featuredTitle = featured.titleOverride || titleOverrides?.[featured.id] || featured.title;
   const avatarUrl = `https://github.com/${featured.repoOwner}.png?size=48`;
 
   return (

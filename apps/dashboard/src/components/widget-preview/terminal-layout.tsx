@@ -21,7 +21,7 @@ interface TerminalLayoutProps {
 export function TerminalLayout({ contributions, titleOverrides }: TerminalLayoutProps) {
   if (contributions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm">
         No contributions match these filters.
       </div>
     );
@@ -70,7 +70,7 @@ export function TerminalLayout({ contributions, titleOverrides }: TerminalLayout
 
         <ol className="geu-terminal-items">
           {contributions.map((c, i) => {
-            const title = titleOverrides?.[c.id] || c.title;
+            const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
             const labels = getDisplayLabels(title, c.labels);
             const cleanTitle = getCleanTitle(title, c.labels);
             const hash = shortHash(c.id);
@@ -87,11 +87,11 @@ export function TerminalLayout({ contributions, titleOverrides }: TerminalLayout
                       <span
                         key={label}
                         className="geu-terminal-kind"
-                        data-lbl
                         style={{
-                          '--lbl-light': color.light,
-                          '--lbl-dark': color.dark,
-                        } as React.CSSProperties}
+                          backgroundColor: color.light,
+                          color: '#fff',
+                          borderColor: color.light,
+                        }}
                       >
                         {label}
                       </span>
@@ -132,14 +132,8 @@ export function TerminalLayout({ contributions, titleOverrides }: TerminalLayout
                 </div>
                 <div className="geu-terminal-diff">
                   <div className="geu-terminal-diff-bar">
-                    <div
-                      className="geu-terminal-diff-add-seg"
-                      style={{ width: `${addPct}%` }}
-                    />
-                    <div
-                      className="geu-terminal-diff-del-seg"
-                      style={{ width: `${delPct}%` }}
-                    />
+                    <div className="geu-terminal-diff-add-seg" style={{ width: `${addPct}%` }} />
+                    <div className="geu-terminal-diff-del-seg" style={{ width: `${delPct}%` }} />
                   </div>
                   <span className="geu-terminal-diff-nums">
                     <span className="geu-terminal-add">+{c.additions}</span>
@@ -152,10 +146,7 @@ export function TerminalLayout({ contributions, titleOverrides }: TerminalLayout
         </ol>
 
         <footer className="geu-terminal-footer">
-          <div
-            className="geu-terminal-dashes geu-terminal-dashes-double"
-            aria-hidden="true"
-          >
+          <div className="geu-terminal-dashes geu-terminal-dashes-double" aria-hidden="true">
             {'= '.repeat(22).trim()}
           </div>
           <div className="geu-terminal-total-row">
@@ -186,20 +177,13 @@ export function TerminalLayout({ contributions, titleOverrides }: TerminalLayout
               {formatNumber(totalAdd - totalDel)} LOC
             </span>
           </div>
-          <div
-            className="geu-terminal-dashes geu-terminal-dashes-double"
-            aria-hidden="true"
-          >
+          <div className="geu-terminal-dashes geu-terminal-dashes-double" aria-hidden="true">
             {'= '.repeat(22).trim()}
           </div>
           <div className="geu-terminal-kicker">** THANK YOU FOR MERGING **</div>
           <div className="geu-terminal-barcode" aria-hidden="true">
             {BARCODE_PATTERN.map((w, idx) => (
-              <span
-                key={idx}
-                className="geu-terminal-barcode-bar"
-                style={{ width: `${w}px` }}
-              />
+              <span key={idx} className="geu-terminal-barcode-bar" style={{ width: `${w}px` }} />
             ))}
           </div>
           <div className="geu-terminal-barcode-label">{receiptNo} · KEEP THIS RECEIPT</div>
@@ -237,8 +221,18 @@ function isoStamp(d: Date): string {
 function shortDate(iso: string | Date): string {
   const d = typeof iso === 'string' ? new Date(iso) : iso;
   const MONTHS = [
-    'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
+    'JAN',
+    'FEB',
+    'MAR',
+    'APR',
+    'MAY',
+    'JUN',
+    'JUL',
+    'AUG',
+    'SEP',
+    'OCT',
+    'NOV',
+    'DEC',
   ];
   return `${MONTHS[d.getMonth()]} ${String(d.getDate()).padStart(2, '0')}`;
 }
@@ -248,6 +242,6 @@ function formatNumber(n: number): string {
 }
 
 const BARCODE_PATTERN = [
-  1, 2, 1, 1, 3, 1, 2, 1, 1, 1, 2, 2, 1, 3, 1, 1, 1, 2, 1, 1, 3, 1, 2, 1, 1, 2,
-  1, 1, 3, 1, 1, 2, 1, 3, 1, 1, 2, 1, 1, 1, 2, 1, 3, 2, 1, 1, 1,
+  1, 2, 1, 1, 3, 1, 2, 1, 1, 1, 2, 2, 1, 3, 1, 1, 1, 2, 1, 1, 3, 1, 2, 1, 1, 2, 1, 1, 3, 1, 1, 2, 1,
+  3, 1, 1, 2, 1, 1, 1, 2, 1, 3, 2, 1, 1, 1,
 ];

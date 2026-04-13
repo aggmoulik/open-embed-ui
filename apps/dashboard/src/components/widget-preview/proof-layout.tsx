@@ -17,7 +17,7 @@ interface ScorecardLayoutProps {
 export function ProofLayout({ contributions, titleOverrides }: ScorecardLayoutProps) {
   if (contributions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm">
         No contributions match these filters.
       </div>
     );
@@ -26,8 +26,13 @@ export function ProofLayout({ contributions, titleOverrides }: ScorecardLayoutPr
   const totalAdd = contributions.reduce((n, c) => n + c.additions, 0);
   const totalDel = contributions.reduce((n, c) => n + c.deletions, 0);
   const repoCount = new Set(contributions.map((c) => c.repo)).size;
-  const mergeRate = Math.round((contributions.length / (contributions.length + Math.round(contributions.length * 0.06))) * 100);
-  const impact = Math.min(99, Math.round(((totalAdd - totalDel) / Math.max(1, totalAdd + totalDel)) * 100));
+  const mergeRate = Math.round(
+    (contributions.length / (contributions.length + Math.round(contributions.length * 0.06))) * 100,
+  );
+  const impact = Math.min(
+    99,
+    Math.round(((totalAdd - totalDel) / Math.max(1, totalAdd + totalDel)) * 100),
+  );
 
   return (
     <div className="geu-proof">
@@ -54,7 +59,7 @@ export function ProofLayout({ contributions, titleOverrides }: ScorecardLayoutPr
       </header>
       <div className="geu-proof-grid">
         {contributions.map((c) => {
-          const title = titleOverrides?.[c.id] || c.title;
+          const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
           const labels = getDisplayLabels(title, c.labels);
           const cleanTitle = getCleanTitle(title, c.labels);
           const total = c.additions + c.deletions;
@@ -70,11 +75,11 @@ export function ProofLayout({ contributions, titleOverrides }: ScorecardLayoutPr
                     <span
                       key={label}
                       className="geu-proof-badge"
-                      data-lbl
                       style={{
-                        '--lbl-light': color.light,
-                        '--lbl-dark': color.dark,
-                      } as React.CSSProperties}
+                        backgroundColor: color.light,
+                        color: '#fff',
+                        borderColor: color.light,
+                      }}
                     >
                       {label}
                     </span>
@@ -90,9 +95,7 @@ export function ProofLayout({ contributions, titleOverrides }: ScorecardLayoutPr
               >
                 {cleanTitle}
               </a>
-              {c.description && (
-                <p className="geu-proof-card-desc">{c.description}</p>
-              )}
+              {c.description && <p className="geu-proof-card-desc">{c.description}</p>}
               <div className="geu-proof-card-meta">
                 <a
                   href={`https://github.com/${c.repo}`}

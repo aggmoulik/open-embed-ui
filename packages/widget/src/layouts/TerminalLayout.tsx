@@ -68,7 +68,7 @@ export function TerminalLayout({ contributions, titleOverrides }: Props) {
 
         <ol class="geu-terminal-items">
           {contributions.map((c, i) => {
-            const title = titleOverrides?.[c.id] || c.title;
+            const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
             const labels = getDisplayLabels(title, c.labels);
             const cleanTitle = getCleanTitle(title, c.labels);
             const hash = shortHash(c.id);

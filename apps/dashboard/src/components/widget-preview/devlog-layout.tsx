@@ -16,7 +16,7 @@ interface LogLayoutProps {
 export function DevlogLayout({ contributions, titleOverrides }: LogLayoutProps) {
   if (contributions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm">
         No contributions match these filters.
       </div>
     );
@@ -26,7 +26,7 @@ export function DevlogLayout({ contributions, titleOverrides }: LogLayoutProps) 
     <div className="geu-devlog">
       <div className="geu-devlog-line" />
       {contributions.map((c) => {
-        const title = titleOverrides?.[c.id] || c.title;
+        const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
         const labels = getDisplayLabels(title, c.labels);
         const cleanTitle = getCleanTitle(title, c.labels);
         const total = c.additions + c.deletions;
@@ -38,11 +38,9 @@ export function DevlogLayout({ contributions, titleOverrides }: LogLayoutProps) 
           <div key={c.id} className="geu-devlog-entry">
             <div
               className="geu-devlog-dot"
-              data-lbl-dot
               style={{
-                '--lbl-light': dotColor.light,
-                '--lbl-dark': dotColor.dark,
-              } as React.CSSProperties}
+                background: dotColor.light,
+              }}
             />
             <div className="geu-devlog-content">
               <div className="geu-devlog-badges">
@@ -52,11 +50,11 @@ export function DevlogLayout({ contributions, titleOverrides }: LogLayoutProps) 
                     <span
                       key={label}
                       className="geu-devlog-badge"
-                      data-lbl
                       style={{
-                        '--lbl-light': color.light,
-                        '--lbl-dark': color.dark,
-                      } as React.CSSProperties}
+                        backgroundColor: color.light,
+                        color: '#fff',
+                        borderColor: color.light,
+                      }}
                     >
                       {label}
                     </span>
@@ -72,9 +70,7 @@ export function DevlogLayout({ contributions, titleOverrides }: LogLayoutProps) 
               >
                 {cleanTitle}
               </a>
-              {c.description && (
-                <p className="geu-devlog-desc">{c.description}</p>
-              )}
+              {c.description && <p className="geu-devlog-desc">{c.description}</p>}
               <div className="geu-devlog-meta">
                 <a
                   href={`https://github.com/${c.repo}`}

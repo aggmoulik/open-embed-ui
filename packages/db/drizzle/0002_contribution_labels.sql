@@ -11,3 +11,5 @@
 -- Hand-written migration (same approach as 0001_pr_metadata.sql).
 
 ALTER TABLE `contributions` ADD COLUMN `labels` text;
+--> statement-breakpoint
+ALTER TABLE `contributions` ADD COLUMN `title_override` text;

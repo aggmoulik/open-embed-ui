@@ -55,6 +55,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
   // Build patch with only the fields the client sent.
   const patch: Record<string, unknown> = { updatedAt: new Date() };
+  if ('titleOverride' in result.data) patch.titleOverride = result.data.titleOverride;
   if ('description' in result.data) patch.description = result.data.description;
   if ('blogUrl' in result.data) patch.blogUrl = result.data.blogUrl;
   if ('blogOpenInNewTab' in result.data) patch.blogOpenInNewTab = result.data.blogOpenInNewTab;

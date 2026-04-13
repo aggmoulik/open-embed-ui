@@ -40,6 +40,8 @@ export interface WidgetConfig {
 export interface BaseContribution {
   id: string;
   title: string;
+  /** User-set display title. Null = use original GitHub PR title. */
+  titleOverride?: string | null;
   url: string;
   repo: string;
   repoOwner: string;

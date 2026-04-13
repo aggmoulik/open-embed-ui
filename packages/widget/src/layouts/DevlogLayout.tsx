@@ -22,7 +22,7 @@ export function DevlogLayout({ contributions, titleOverrides }: Props) {
     <div class="geu-devlog">
       <div class="geu-devlog-line" />
       {contributions.map((c) => {
-        const title = titleOverrides?.[c.id] || c.title;
+        const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
         const labels = getDisplayLabels(title, c.labels);
         const cleanTitle = getCleanTitle(title, c.labels);
         const total = c.additions + c.deletions;

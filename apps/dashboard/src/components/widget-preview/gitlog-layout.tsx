@@ -17,7 +17,7 @@ interface TerminalLayoutProps {
 export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutProps) {
   if (contributions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm">
         No contributions match these filters.
       </div>
     );
@@ -25,16 +25,19 @@ export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutPr
 
   const totalAdd = contributions.reduce((n, c) => n + c.additions, 0);
   const totalDel = contributions.reduce((n, c) => n + c.deletions, 0);
-  const mergeRate = Math.round((contributions.length / (contributions.length + Math.round(contributions.length * 0.06))) * 100);
-  const impact = Math.min(99, Math.round(((totalAdd - totalDel) / Math.max(1, totalAdd + totalDel)) * 100));
+  const mergeRate = Math.round(
+    (contributions.length / (contributions.length + Math.round(contributions.length * 0.06))) * 100,
+  );
+  const impact = Math.min(
+    99,
+    Math.round(((totalAdd - totalDel) / Math.max(1, totalAdd + totalDel)) * 100),
+  );
 
   return (
     <div className="geu-gitlog">
       <div className="geu-gitlog-cmd">
         <span className="geu-gitlog-prompt">$</span>{' '}
-        <span className="geu-gitlog-cmd-text">
-          git log --author=contributor --merged --oneline
-        </span>
+        <span className="geu-gitlog-cmd-text">git log --author=contributor --merged --oneline</span>
       </div>
       <div className="geu-gitlog-stats-row">
         <span className="geu-gitlog-stats-item">
@@ -52,7 +55,7 @@ export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutPr
       </div>
       <div className="geu-gitlog-entries">
         {contributions.map((c) => {
-          const title = titleOverrides?.[c.id] || c.title;
+          const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
           const labels = getDisplayLabels(title, c.labels);
           const cleanTitle = getCleanTitle(title, c.labels);
           const hash = shortHash(c.id);
@@ -63,11 +66,9 @@ export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutPr
               <div className="geu-gitlog-entry-main">
                 <span
                   className="geu-gitlog-dot"
-                  data-lbl-dot
                   style={{
-                    '--lbl-light': dotColor.light,
-                    '--lbl-dark': dotColor.dark,
-                  } as React.CSSProperties}
+                    background: dotColor.light,
+                  }}
                 />
                 <span className="geu-gitlog-hash">{hash}</span>
                 <a
@@ -80,9 +81,7 @@ export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutPr
                   {cleanTitle}
                 </a>
               </div>
-              {c.description && (
-                <div className="geu-gitlog-desc">{c.description}</div>
-              )}
+              {c.description && <div className="geu-gitlog-desc">{c.description}</div>}
             </div>
           );
         })}

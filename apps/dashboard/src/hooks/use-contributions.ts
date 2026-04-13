@@ -26,36 +26,39 @@ interface UseContributionsReturn {
  * Uses an AbortController per request so a stale response from an earlier
  * filter value can't clobber a newer one.
  */
-export function useContributions(filters?: ContributionFilters): UseContributionsReturn {
+/**
+ * Pass `null` as filters to skip fetching entirely (the hook returns empty
+ * data and loading=false). Useful when the caller already has contributions
+ * from another source and doesn't need a server round-trip.
+ */
+export function useContributions(filters?: ContributionFilters | null): UseContributionsReturn {
+  const skip = filters === null;
   const [data, setData] = useState<Contribution[]>([]);
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!skip);
   const [error, setError] = useState<string | null>(null);
 
-  // Serialize the filter object so the effect dep is stable across renders
-  // (object identity changes every render; the string only changes when a
-  // filter value actually changes).
-  const filterKey = JSON.stringify(filters ?? {});
+  const filterKey = skip ? '__skip__' : JSON.stringify(filters ?? {});
 
-  // Track the active request so we can abort on filter change. We don't
-  // depend on fetch's AbortSignal here (the api-client doesn't forward one),
-  // so instead we tag each request with a monotonically-increasing id and
-  // drop responses that don't match the latest.
   const requestIdRef = useRef(0);
 
   const runFetch = useCallback(() => {
+    if (skip) {
+      setLoading(false);
+      return;
+    }
     const myRequestId = ++requestIdRef.current;
     setLoading(true);
     setError(null);
 
-    fetchContributions(filters)
+    fetchContributions(filters ?? undefined)
       .then((res) => {
-        if (requestIdRef.current !== myRequestId) return; // superseded
+        if (requestIdRef.current !== myRequestId) return;
         setData(res.data);
         setTotal(res.pagination.total);
       })
       .catch((err) => {
-        if (requestIdRef.current !== myRequestId) return; // superseded
+        if (requestIdRef.current !== myRequestId) return;
         setError(err instanceof ApiError ? err.message : 'Failed to fetch contributions');
       })
       .finally(() => {
@@ -63,7 +66,7 @@ export function useContributions(filters?: ContributionFilters): UseContribution
         setLoading(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterKey]);
+  }, [filterKey, skip]);
 
   useEffect(() => {
     runFetch();

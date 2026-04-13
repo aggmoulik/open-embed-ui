@@ -18,7 +18,7 @@ export function TimelineLayout({ contributions, titleOverrides }: Props) {
     <div class="geu-timeline">
       <div class="geu-timeline-line" />
       {contributions.map((c) => {
-        const title = titleOverrides?.[c.id] || c.title;
+        const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
         const avatarUrl = `https://github.com/${c.repoOwner}.png?size=32`;
         return (
           <div key={c.id} class="geu-timeline-item">

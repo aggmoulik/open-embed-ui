@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@github-embed-ui/ui/components/button';
 import { Input } from '@github-embed-ui/ui/components/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@github-embed-ui/ui/components/card';
-import { Badge } from '@github-embed-ui/ui/components/badge';
 import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
 import {
   ArrowLeft,
@@ -26,8 +25,6 @@ import {
   GitBranch,
   Award,
   Check,
-  X,
-  Pencil,
   Code,
   Eye,
 } from 'lucide-react';
@@ -55,8 +52,6 @@ const LAYOUTS = [
   { value: 'proof' as const, label: 'Proof of Work', icon: Award },
 ];
 
-const TIME_RANGES = ['week', 'month', 'year', 'all'] as const;
-
 export default function WidgetBuilderPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -76,8 +71,6 @@ export default function WidgetBuilderPage() {
   const [saving, setSaving] = useState(false);
   const [showEmbed, setShowEmbed] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [editingTitle, setEditingTitle] = useState<string | null>(null);
-  const [editTitleValue, setEditTitleValue] = useState('');
 
   useEffect(() => {
     if (widget) {
@@ -94,26 +87,14 @@ export default function WidgetBuilderPage() {
     return Array.from(set).sort();
   }, [allContributions]);
 
-  // All PRs sorted by date (time range applied)
+  // All PRs sorted by merge date
   const allSortedPRs = useMemo(() => {
-    let result: Contribution[] = [...allContributions];
-
-    if (config.timeRange && config.timeRange !== 'all') {
-      const now = Date.now();
-      const ranges = { week: 7, month: 30, year: 365 };
-      const days = ranges[config.timeRange];
-      const since = now - days * 24 * 60 * 60 * 1000;
-      result = result.filter((c) => c.mergedAt && new Date(c.mergedAt).getTime() > since);
-    }
-
-    result.sort((a, b) => {
+    return [...allContributions].sort((a, b) => {
       const aTime = a.mergedAt ? new Date(a.mergedAt).getTime() : 0;
       const bTime = b.mergedAt ? new Date(b.mergedAt).getTime() : 0;
       return bTime - aTime;
     });
-
-    return result;
-  }, [allContributions, config.timeRange]);
+  }, [allContributions]);
 
   // PR selector list — filtered by repo badges (for browsing/selecting)
   const candidatePRs = useMemo(() => {
@@ -167,29 +148,6 @@ export default function WidgetBuilderPage() {
       }
       return { ...prev, selectedPRs: next };
     });
-  }
-
-  function startEditTitle(prId: string, currentTitle: string) {
-    setEditingTitle(prId);
-    setEditTitleValue(config.titleOverrides?.[prId] ?? currentTitle);
-  }
-
-  function saveTitle(prId: string) {
-    setConfig((prev) => {
-      const overrides = { ...(prev.titleOverrides ?? {}) };
-      const original = allContributions.find((c) => c.id === prId)?.title ?? '';
-      if (editTitleValue.trim() && editTitleValue.trim() !== original) {
-        overrides[prId] = editTitleValue.trim();
-      } else {
-        delete overrides[prId];
-      }
-      return { ...prev, titleOverrides: Object.keys(overrides).length > 0 ? overrides : undefined };
-    });
-    setEditingTitle(null);
-  }
-
-  function cancelEditTitle() {
-    setEditingTitle(null);
   }
 
   async function handleSave() {
@@ -266,14 +224,14 @@ export default function WidgetBuilderPage() {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-6 lg:flex-row">
+      <div className="mt-4 flex flex-col gap-4 lg:flex-row">
         {/* Config Panel (left) */}
-        <div className="w-full shrink-0 space-y-4 lg:w-64">
+        <div className="w-full shrink-0 space-y-3 lg:w-60">
           <Card>
-            <CardHeader className="p-4 pb-2">
+            <CardHeader className="px-3 py-2 pb-1">
               <CardTitle className="text-sm">Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 p-4 pt-0">
+            <CardContent className="space-y-2 px-3 pt-0 pb-3">
               <div>
                 <label className="text-muted-foreground mb-1 block text-xs font-medium">Name</label>
                 <Input
@@ -298,10 +256,10 @@ export default function WidgetBuilderPage() {
           </Card>
 
           <Card>
-            <CardHeader className="p-4 pb-2">
+            <CardHeader className="px-3 py-2 pb-1">
               <CardTitle className="text-sm">Layout</CardTitle>
             </CardHeader>
-            <CardContent className="p-4 pt-0">
+            <CardContent className="px-3 pt-0 pb-3">
               <div className="flex flex-wrap gap-1.5">
                 {LAYOUTS.map((l) => (
                   <Button
@@ -320,30 +278,10 @@ export default function WidgetBuilderPage() {
           </Card>
 
           <Card>
-            <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-sm">Time Range</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <div className="flex flex-wrap gap-2">
-                {TIME_RANGES.map((t) => (
-                  <Button
-                    key={t}
-                    variant={config.timeRange === t ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setConfig((prev) => ({ ...prev, timeRange: t }))}
-                  >
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="p-4 pb-2">
+            <CardHeader className="px-3 py-2 pb-1">
               <CardTitle className="text-sm">Max Items</CardTitle>
             </CardHeader>
-            <CardContent className="p-4 pt-0">
+            <CardContent className="px-3 pt-0 pb-3">
               <Input
                 type="number"
                 min={1}
@@ -414,7 +352,6 @@ export default function WidgetBuilderPage() {
               <div className="max-h-[calc(100vh-300px)] space-y-1.5 overflow-y-auto rounded-lg border p-3">
                 {candidatePRs.map((pr) => {
                   const selected = isPRSelected(pr.id);
-                  const hasOverride = !!config.titleOverrides?.[pr.id];
                   const displayTitle = config.titleOverrides?.[pr.id] || pr.title;
                   const avatarUrl = `https://github.com/${pr.repoOwner}.png?size=32`;
 
@@ -441,44 +378,7 @@ export default function WidgetBuilderPage() {
 
                       {/* PR info */}
                       <div className="min-w-0 flex-1">
-                        {editingTitle === pr.id ? (
-                          <div className="flex items-center gap-1">
-                            <Input
-                              value={editTitleValue}
-                              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                setEditTitleValue(e.target.value)
-                              }
-                              className="h-7 text-xs"
-                              autoFocus
-                              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                                if (e.key === 'Enter') saveTitle(pr.id);
-                                if (e.key === 'Escape') cancelEditTitle();
-                              }}
-                            />
-                            <Button variant="ghost" size="icon-xs" onClick={() => saveTitle(pr.id)}>
-                              <Check className="size-3" />
-                            </Button>
-                            <Button variant="ghost" size="icon-xs" onClick={cancelEditTitle}>
-                              <X className="size-3" />
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-1.5">
-                            <span className="line-clamp-1 text-xs font-medium">{displayTitle}</span>
-                            <button
-                              onClick={() => startEditTitle(pr.id, pr.title)}
-                              title="Edit title"
-                              className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
-                            >
-                              <Pencil className="text-muted-foreground hover:text-foreground size-3" />
-                            </button>
-                            {hasOverride && (
-                              <Badge variant="outline" className="px-1 py-0 text-[9px]">
-                                edited
-                              </Badge>
-                            )}
-                          </div>
-                        )}
+                        <span className="line-clamp-1 text-xs font-medium">{displayTitle}</span>
                         <div className="text-muted-foreground mt-0.5 flex items-center gap-2 text-[10px]">
                           <span className="flex items-center gap-1">
                             <img

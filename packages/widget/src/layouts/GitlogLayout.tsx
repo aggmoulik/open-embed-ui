@@ -47,7 +47,7 @@ export function GitlogLayout({ contributions, titleOverrides }: Props) {
       </div>
       <div class="geu-gitlog-entries">
         {contributions.map((c) => {
-          const title = titleOverrides?.[c.id] || c.title;
+          const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
           const labels = getDisplayLabels(title, c.labels);
           const cleanTitle = getCleanTitle(title, c.labels);
           const hash = shortHash(c.id);

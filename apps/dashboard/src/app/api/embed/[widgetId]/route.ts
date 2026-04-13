@@ -58,6 +58,7 @@ export async function GET(
       contributions: filtered.map((c) => ({
         id: c.id,
         title: c.title,
+        titleOverride: c.titleOverride ?? null,
         url: c.url,
         repo: c.repo,
         repoOwner: c.repoOwner,

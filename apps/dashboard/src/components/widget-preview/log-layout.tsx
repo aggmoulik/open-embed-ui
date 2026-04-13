@@ -17,7 +17,7 @@ interface LogLayoutProps {
 export function LogLayout({ contributions, titleOverrides }: LogLayoutProps) {
   if (contributions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center text-sm">
         No contributions match these filters.
       </div>
     );
@@ -50,7 +50,7 @@ export function LogLayout({ contributions, titleOverrides }: LogLayoutProps) {
 
       <ul className="geu-log-list">
         {contributions.map((c) => {
-          const title = titleOverrides?.[c.id] || c.title;
+          const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
           const labels = getDisplayLabels(title, c.labels);
           const cleanTitle = getCleanTitle(title, c.labels);
           const hash = shortHash(c.id);
@@ -64,11 +64,11 @@ export function LogLayout({ contributions, titleOverrides }: LogLayoutProps) {
                   <span
                     key={label}
                     className="geu-log-kind"
-                    data-lbl
                     style={{
-                      '--lbl-light': color.light,
-                      '--lbl-dark': color.dark,
-                    } as React.CSSProperties}
+                      backgroundColor: color.light,
+                      color: '#fff',
+                      borderColor: color.light,
+                    }}
                   >
                     {label}
                   </span>
@@ -119,8 +119,18 @@ function shortHash(id: string): string {
 function shortDate(iso: string | Date): string {
   const d = typeof iso === 'string' ? new Date(iso) : iso;
   const MONTHS = [
-    'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
+    'JAN',
+    'FEB',
+    'MAR',
+    'APR',
+    'MAY',
+    'JUN',
+    'JUL',
+    'AUG',
+    'SEP',
+    'OCT',
+    'NOV',
+    'DEC',
   ];
   return `${MONTHS[d.getMonth()]} ${String(d.getDate()).padStart(2, '0')}`;
 }
