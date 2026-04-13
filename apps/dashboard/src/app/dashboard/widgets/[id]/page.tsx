@@ -302,13 +302,13 @@ export default function WidgetBuilderPage() {
               <CardTitle className="text-sm">Layout</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
-              <div className="grid grid-cols-4 gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {LAYOUTS.map((l) => (
                   <Button
                     key={l.value}
                     variant={config.layout === l.value ? 'default' : 'outline'}
                     size="sm"
-                    className="gap-1.5"
+                    className="h-7 gap-1 px-2 text-xs"
                     onClick={() => setConfig((prev) => ({ ...prev, layout: l.value }))}
                   >
                     <l.icon className="size-3" />
