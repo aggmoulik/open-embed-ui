@@ -6,7 +6,13 @@ export type WidgetLayout =
   | 'marquee'
   | 'carousel'
   | 'masonry'
-  | 'highlight';
+  | 'highlight'
+  | 'terminal'
+  | 'log'
+  | 'scorecard'
+  | 'gitlog'
+  | 'devlog'
+  | 'proof';
 
 export interface WidgetConfig {
   theme?: 'light' | 'dark' | 'system';

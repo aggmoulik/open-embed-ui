@@ -20,6 +20,12 @@ const layoutImports: Record<WidgetLayout, () => Promise<{ [key: string]: Compone
   carousel: () => import('./layouts/CarouselLayout'),
   masonry: () => import('./layouts/MasonryLayout'),
   highlight: () => import('./layouts/HighlightLayout'),
+  terminal: () => import('./layouts/TerminalLayout'),
+  log: () => import('./layouts/LogLayout'),
+  scorecard: () => import('./layouts/ScorecardLayout'),
+  gitlog: () => import('./layouts/GitlogLayout'),
+  devlog: () => import('./layouts/DevlogLayout'),
+  proof: () => import('./layouts/ProofLayout'),
 };
 
 const layoutExportNames: Record<WidgetLayout, string> = {
@@ -31,6 +37,12 @@ const layoutExportNames: Record<WidgetLayout, string> = {
   carousel: 'CarouselLayout',
   masonry: 'MasonryLayout',
   highlight: 'HighlightLayout',
+  terminal: 'TerminalLayout',
+  log: 'LogLayout',
+  scorecard: 'ScorecardLayout',
+  gitlog: 'GitlogLayout',
+  devlog: 'DevlogLayout',
+  proof: 'ProofLayout',
 };
 
 export function Widget({ options }: WidgetProps) {

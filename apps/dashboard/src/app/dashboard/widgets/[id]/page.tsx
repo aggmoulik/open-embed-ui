@@ -19,6 +19,12 @@ import {
   Presentation,
   LayoutDashboard,
   Star,
+  Receipt,
+  ScrollText,
+  Trophy,
+  TerminalSquare,
+  GitBranch,
+  Award,
   Check,
   X,
   Pencil,
@@ -41,6 +47,12 @@ const LAYOUTS = [
   { value: 'carousel' as const, label: 'Carousel', icon: Presentation },
   { value: 'masonry' as const, label: 'Masonry', icon: LayoutDashboard },
   { value: 'highlight' as const, label: 'Highlight', icon: Star },
+  { value: 'terminal' as const, label: 'Receipt', icon: Receipt },
+  { value: 'log' as const, label: 'Log', icon: ScrollText },
+  { value: 'scorecard' as const, label: 'Scorecard', icon: Trophy },
+  { value: 'gitlog' as const, label: 'Git Log', icon: TerminalSquare },
+  { value: 'devlog' as const, label: 'Dev Log', icon: GitBranch },
+  { value: 'proof' as const, label: 'Proof of Work', icon: Award },
 ];
 
 const TIME_RANGES = ['week', 'month', 'year', 'all'] as const;

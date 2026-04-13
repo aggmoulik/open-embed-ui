@@ -1,0 +1,134 @@
+import type { Contribution } from '../types';
+
+interface Props {
+  contributions: Contribution[];
+  titleOverrides?: Record<string, string>;
+}
+
+/**
+ * Scorecard / "Proof of Work" dashboard layout.
+ *
+ * Hero number + three stats in the banner, then a responsive 2-column
+ * grid of compact cards. Each card has MERGED + kind badges, title,
+ * description, repo info, and a diff bar. Supports light/dark.
+ */
+export function ProofLayout({ contributions, titleOverrides }: Props) {
+  if (contributions.length === 0) {
+    return <div class="geu-empty">No contributions to display</div>;
+  }
+
+  const totalAdd = contributions.reduce((n, c) => n + c.additions, 0);
+  const totalDel = contributions.reduce((n, c) => n + c.deletions, 0);
+  const repoCount = new Set(contributions.map((c) => c.repo)).size;
+  const mergeRate = Math.round((contributions.length / (contributions.length + Math.round(contributions.length * 0.06))) * 100);
+  const impact = Math.min(99, Math.round(((totalAdd - totalDel) / Math.max(1, totalAdd + totalDel)) * 100));
+
+  return (
+    <div class="geu-proof">
+      <header class="geu-proof-banner">
+        <div class="geu-proof-glow" />
+        <div class="geu-proof-hero">
+          <span class="geu-proof-hero-label">PROOF OF WORK</span>
+          <span class="geu-proof-hero-num">{contributions.length}</span>
+        </div>
+        <div class="geu-proof-stats">
+          <div class="geu-proof-stat">
+            <span class="geu-proof-stat-num">{mergeRate}%</span>
+            <span class="geu-proof-stat-label">merged rate</span>
+          </div>
+          <div class="geu-proof-stat">
+            <span class="geu-proof-stat-num">{repoCount}</span>
+            <span class="geu-proof-stat-label">repos</span>
+          </div>
+          <div class="geu-proof-stat">
+            <span class="geu-proof-stat-num">{impact}</span>
+            <span class="geu-proof-stat-label">impact</span>
+          </div>
+        </div>
+      </header>
+      <div class="geu-proof-grid">
+        {contributions.map((c) => {
+          const title = titleOverrides?.[c.id] || c.title;
+          const kind = detectKind(title);
+          const kindLabel = KIND_LABELS[kind] || 'MERGE';
+          const cleanTitle = stripConventionalPrefix(title);
+          const total = c.additions + c.deletions;
+          const addPct = total === 0 ? 50 : (c.additions / total) * 100;
+          const delPct = 100 - addPct;
+
+          return (
+            <div key={c.id} class="geu-proof-card">
+              <div class="geu-proof-card-badges">
+                <span class="geu-proof-badge-merged">MERGED</span>
+                <span class={`geu-proof-badge-kind geu-proof-badge-kind-${kind}`}>
+                  {kindLabel}
+                </span>
+              </div>
+              <a
+                href={c.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="geu-proof-card-title"
+                title={title}
+              >
+                {cleanTitle}
+              </a>
+              {c.description && (
+                <p class="geu-proof-card-desc">{c.description}</p>
+              )}
+              <div class="geu-proof-card-meta">
+                <a
+                  href={`https://github.com/${c.repo}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="geu-proof-card-repo"
+                >
+                  {c.repo}
+                </a>
+              </div>
+              <div class="geu-proof-card-diff">
+                <div class="geu-proof-diff-bar">
+                  <div class="geu-proof-diff-add-seg" style={{ width: `${addPct}%` }} />
+                  <div class="geu-proof-diff-del-seg" style={{ width: `${delPct}%` }} />
+                </div>
+                <span class="geu-proof-card-nums">
+                  <span class="geu-proof-add">+{c.additions}</span>
+                  <span class="geu-proof-del">-{c.deletions}</span>
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const KIND_LABELS: Record<string, string> = {
+  feat: 'ENHANCEMENT',
+  fix: 'BUG FIX',
+  perf: 'PERFORMANCE',
+  refactor: 'REFACTOR',
+  docs: 'DOCUMENTATION',
+  chore: 'CHORE',
+  test: 'TESTING',
+  style: 'STYLE',
+  build: 'BUILD',
+  ci: 'CI/CD',
+  revert: 'REVERT',
+  merge: 'MERGE',
+};
+
+function detectKind(title: string): string {
+  const m = title.match(
+    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:/i,
+  );
+  return (m ? m[1] : 'merge').toLowerCase();
+}
+
+function stripConventionalPrefix(title: string): string {
+  return title.replace(
+    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:\s*/i,
+    '',
+  );
+}

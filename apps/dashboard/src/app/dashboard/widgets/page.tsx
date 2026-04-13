@@ -22,6 +22,12 @@ import {
   Presentation,
   LayoutDashboard,
   Star,
+  Receipt,
+  ScrollText,
+  Trophy,
+  TerminalSquare,
+  GitBranch,
+  Award,
 } from 'lucide-react';
 import { useWidgets } from '@/hooks';
 import { deleteWidget } from '@/lib/api-client';
@@ -40,6 +46,12 @@ const layoutIcons = {
   carousel: Presentation,
   masonry: LayoutDashboard,
   highlight: Star,
+  terminal: Receipt,
+  log: ScrollText,
+  scorecard: Trophy,
+  gitlog: TerminalSquare,
+  devlog: GitBranch,
+  proof: Award,
 };
 
 export default function WidgetsPage() {

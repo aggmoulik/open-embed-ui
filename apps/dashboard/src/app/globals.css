@@ -84,3 +84,309 @@
 .animate-marquee-reverse:hover {
   animation-play-state: paused;
 }
+/* Receipt-family + screenshot-family layout preview styles — mirrors widget.css */
+/* =========================================================================
+   Receipt-family + screenshot-family layouts.
+   Shared tokens, light default, `.dark` ancestor overrides.
+   ========================================================================= */
+
+.geu-terminal, .geu-log, .geu-scorecard,
+.geu-gitlog, .geu-devlog, .geu-proof {
+  --rcpt-bg: #fafaf8;
+  --rcpt-ink: #1a1a18;
+  --rcpt-muted: #71746f;
+  --rcpt-dim: #a3a6a0;
+  --rcpt-add: #16a34a;
+  --rcpt-del: #dc2626;
+  --rcpt-amber: #b45309;
+  --rcpt-rule: #e5e5e3;
+  --rcpt-card-bg: #f0f0ee;
+  --rcpt-badge-merged: #16a34a;
+  --rcpt-scanline: rgba(0, 0, 0, 0.018);
+  font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', 'Menlo', 'Cascadia Code', 'DejaVu Sans Mono', monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--rcpt-ink);
+  letter-spacing: 0.01em;
+}
+.dark .geu-terminal, .dark .geu-log, .dark .geu-scorecard,
+.dark .geu-gitlog, .dark .geu-devlog, .dark .geu-proof {
+  --rcpt-bg: #090a0b;
+  --rcpt-ink: #d4d4d2;
+  --rcpt-muted: #6f7270;
+  --rcpt-dim: #3a3d3a;
+  --rcpt-add: #4ade80;
+  --rcpt-del: #f87171;
+  --rcpt-amber: #e8b547;
+  --rcpt-rule: #1a1d1a;
+  --rcpt-card-bg: #111311;
+  --rcpt-badge-merged: #4ade80;
+  --rcpt-scanline: rgba(255, 255, 255, 0.022);
+}
+
+/* Kind colors — light */
+[class*="kind-feat"]  { color: #0d9488; }
+[class*="kind-fix"]   { color: #dc2626; }
+[class*="kind-perf"]  { color: #b45309; }
+[class*="kind-refactor"] { color: #2563eb; }
+[class*="kind-docs"]  { color: #7c3aed; }
+[class*="kind-chore"] { color: #64748b; }
+[class*="kind-test"]  { color: #ea580c; }
+[class*="kind-style"] { color: #db2777; }
+[class*="kind-build"] { color: #0284c7; }
+[class*="kind-ci"]    { color: #65a30d; }
+[class*="kind-revert"]{ color: #ef4444; }
+[class*="kind-merge"] { color: var(--rcpt-muted); }
+/* Kind colors — dark */
+.dark [class*="kind-feat"]  { color: #2dd4bf; }
+.dark [class*="kind-fix"]   { color: #f87171; }
+.dark [class*="kind-perf"]  { color: #e8b547; }
+.dark [class*="kind-refactor"] { color: #60a5fa; }
+.dark [class*="kind-docs"]  { color: #c4b5fd; }
+.dark [class*="kind-chore"] { color: #94a3b8; }
+.dark [class*="kind-test"]  { color: #fb923c; }
+.dark [class*="kind-style"] { color: #f472b6; }
+.dark [class*="kind-build"] { color: #38bdf8; }
+.dark [class*="kind-ci"]    { color: #a3e635; }
+.dark [class*="kind-revert"]{ color: #fca5a5; }
+
+/* Dot colors — light */
+[class*="dot-feat"]  { background: #0d9488; }
+[class*="dot-fix"]   { background: #dc2626; }
+[class*="dot-perf"]  { background: #b45309; }
+[class*="dot-refactor"] { background: #2563eb; }
+[class*="dot-docs"]  { background: #7c3aed; }
+[class*="dot-chore"] { background: #64748b; }
+[class*="dot-test"]  { background: #ea580c; }
+[class*="dot-style"] { background: #db2777; }
+[class*="dot-build"] { background: #0284c7; }
+[class*="dot-ci"]    { background: #65a30d; }
+[class*="dot-revert"]{ background: #ef4444; }
+/* Dot colors — dark */
+.dark [class*="dot-feat"]  { background: #2dd4bf; }
+.dark [class*="dot-fix"]   { background: #f87171; }
+.dark [class*="dot-perf"]  { background: #e8b547; }
+.dark [class*="dot-refactor"] { background: #60a5fa; }
+.dark [class*="dot-docs"]  { background: #c4b5fd; }
+.dark [class*="dot-chore"] { background: #94a3b8; }
+.dark [class*="dot-test"]  { background: #fb923c; }
+.dark [class*="dot-style"] { background: #f472b6; }
+.dark [class*="dot-build"] { background: #38bdf8; }
+.dark [class*="dot-ci"]    { background: #a3e635; }
+.dark [class*="dot-revert"]{ background: #fca5a5; }
+
+/* =========================================================================
+   1. TERMINAL — Receipt (scalloped edges, barcode, receipt totals)
+   ========================================================================= */
+
+.geu-terminal {
+  position: relative; margin: 0 auto; max-width: 420px; font-size: 11px; line-height: 1.5;
+}
+.geu-terminal .geu-terminal-paper {
+  position: relative; padding: 20px 22px 26px; background: var(--rcpt-bg);
+  overflow: hidden; box-shadow: inset 0 0 120px 0 rgba(232, 181, 71, 0.015);
+}
+.geu-terminal .geu-terminal-scanlines {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(to bottom, var(--rcpt-scanline) 0, var(--rcpt-scanline) 1px, transparent 1px, transparent 3px);
+  background-size: 100% 3px; opacity: 0.8;
+}
+.geu-terminal .geu-terminal-tear {
+  height: 10px; background-color: var(--rcpt-bg);
+  --mask: radial-gradient(circle at 5px 0, transparent 5px, #000 5.4px);
+  -webkit-mask-image: var(--mask); mask-image: var(--mask);
+  -webkit-mask-size: 10px 10px; mask-size: 10px 10px;
+  -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
+}
+.geu-terminal .geu-terminal-tear-top { -webkit-mask-position: 0 0; mask-position: 0 0; }
+.geu-terminal .geu-terminal-tear-bottom { transform: scaleY(-1); }
+
+.geu-terminal .geu-terminal-header { position: relative; text-align: center; }
+.geu-terminal .geu-terminal-brand { font-size: 13px; font-weight: 700; letter-spacing: 0.18em; color: var(--rcpt-ink); }
+.geu-terminal .geu-terminal-rcpt { margin-top: 2px; font-size: 10px; color: var(--rcpt-amber); letter-spacing: 0.1em; }
+.geu-terminal .geu-terminal-dashes { margin: 10px 0 8px; color: var(--rcpt-dim); font-size: 10px; white-space: nowrap; overflow: hidden; user-select: none; }
+.geu-terminal .geu-terminal-dashes-double { color: var(--rcpt-muted); }
+.geu-terminal .geu-terminal-meta { margin: 0; padding: 0 2px; text-align: left; font-size: 10px; color: var(--rcpt-ink); }
+.geu-terminal .geu-terminal-meta-row { display: flex; justify-content: space-between; gap: 12px; padding: 1px 0; }
+.geu-terminal .geu-terminal-meta-row dt { color: var(--rcpt-muted); letter-spacing: 0.1em; margin: 0; }
+.geu-terminal .geu-terminal-meta-row dd { margin: 0; color: var(--rcpt-ink); letter-spacing: 0.05em; }
+
+.geu-terminal .geu-terminal-items { list-style: none; padding: 0; margin: 0; }
+.geu-terminal .geu-terminal-item { position: relative; padding: 9px 0 11px; border-bottom: 1px dashed var(--rcpt-rule); }
+.geu-terminal .geu-terminal-item:last-child { border-bottom: none; padding-bottom: 6px; }
+.geu-terminal .geu-terminal-line-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.geu-terminal .geu-terminal-idx { flex-shrink: 0; color: var(--rcpt-muted); font-size: 10px; width: 18px; text-align: right; }
+.geu-terminal .geu-terminal-kind {
+  flex-shrink: 0; display: inline-block; padding: 1px 5px; font-size: 9px;
+  font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  border: 1px solid currentColor; background: transparent; line-height: 1.4;
+}
+.geu-terminal .geu-terminal-title {
+  color: var(--rcpt-ink); text-decoration: none; font-size: 11px; line-height: 1.45;
+  overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; flex: 1 1 auto; min-width: 0;
+}
+.geu-terminal .geu-terminal-title:hover { color: var(--rcpt-amber); text-decoration: underline; text-underline-offset: 2px; }
+.geu-terminal .geu-terminal-line-mid { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-left: 26px; margin-top: 2px; font-size: 9.5px; color: var(--rcpt-muted); }
+.geu-terminal .geu-terminal-hash { color: var(--rcpt-amber); letter-spacing: 0.05em; }
+.geu-terminal .geu-terminal-sep { color: var(--rcpt-dim); }
+.geu-terminal .geu-terminal-repo { color: var(--rcpt-muted); text-decoration: none; }
+.geu-terminal .geu-terminal-repo:hover { color: var(--rcpt-ink); text-decoration: underline; text-underline-offset: 2px; }
+.geu-terminal .geu-terminal-date { color: var(--rcpt-dim); letter-spacing: 0.08em; }
+
+.geu-terminal .geu-terminal-diff { display: flex; align-items: center; gap: 10px; margin-top: 6px; margin-left: 26px; }
+.geu-terminal .geu-terminal-diff-bar { flex: 1 1 auto; display: flex; height: 4px; background: var(--rcpt-rule); overflow: hidden; }
+.geu-terminal .geu-terminal-diff-add-seg { background: var(--rcpt-add); height: 100%; }
+.geu-terminal .geu-terminal-diff-del-seg { background: var(--rcpt-del); height: 100%; }
+.geu-terminal .geu-terminal-diff-nums { flex-shrink: 0; display: flex; gap: 8px; font-size: 9.5px; letter-spacing: 0.03em; font-variant-numeric: tabular-nums; }
+.geu-terminal .geu-terminal-add { color: var(--rcpt-add); }
+.geu-terminal .geu-terminal-del { color: var(--rcpt-del); }
+
+.geu-terminal .geu-terminal-footer { margin-top: 6px; text-align: center; }
+.geu-terminal .geu-terminal-total-row { display: flex; justify-content: space-between; padding: 2px 2px; font-size: 10px; letter-spacing: 0.06em; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
+.geu-terminal .geu-terminal-total-row span:first-child { color: var(--rcpt-muted); }
+.geu-terminal .geu-terminal-total-row .geu-terminal-total-value { color: var(--rcpt-ink); font-weight: 600; }
+.geu-terminal .geu-terminal-total-row-grand { margin-top: 4px; padding-top: 6px; border-top: 1px dashed var(--rcpt-rule); font-size: 11px; }
+.geu-terminal .geu-terminal-total-row-grand span:first-child { color: var(--rcpt-amber); font-weight: 700; letter-spacing: 0.12em; }
+.geu-terminal .geu-terminal-total-row-grand .geu-terminal-total-value { color: var(--rcpt-amber); font-weight: 700; }
+.geu-terminal .geu-terminal-kicker { margin-top: 14px; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; color: var(--rcpt-ink); }
+.geu-terminal .geu-terminal-barcode { margin: 14px auto 6px; display: flex; align-items: stretch; justify-content: center; gap: 1px; height: 38px; padding: 0 8px; }
+.geu-terminal .geu-terminal-barcode-bar { display: inline-block; background: var(--rcpt-ink); height: 100%; }
+.geu-terminal .geu-terminal-barcode-label { font-size: 9px; letter-spacing: 0.35em; color: var(--rcpt-muted); margin-top: 2px; }
+
+/* =========================================================================
+   2. LOG — Receipt-family compact one-line-per-entry
+   ========================================================================= */
+
+.geu-log { background: var(--rcpt-bg); }
+.geu-log .geu-log-header { display: flex; gap: 16px; padding: 10px 12px; border-bottom: 1px solid var(--rcpt-rule); background: var(--rcpt-card-bg); }
+.geu-log .geu-log-stat { display: flex; align-items: baseline; gap: 5px; font-size: 14px; font-weight: 700; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
+.geu-log .geu-log-stat small { font-size: 9px; font-weight: 400; color: var(--rcpt-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.geu-log .geu-log-stat-add { color: var(--rcpt-add); }
+.geu-log .geu-log-stat-del { color: var(--rcpt-del); }
+.geu-log .geu-log-rows { list-style: none; padding: 0; margin: 0; }
+.geu-log .geu-log-row { display: flex; align-items: baseline; gap: 8px; padding: 5px 12px; border-bottom: 1px solid var(--rcpt-rule); font-size: 11px; white-space: nowrap; }
+.geu-log .geu-log-row:last-child { border-bottom: none; }
+.geu-log .geu-log-hash { flex-shrink: 0; width: 62px; color: var(--rcpt-amber); letter-spacing: 0.03em; }
+.geu-log .geu-log-kind { flex-shrink: 0; display: inline-block; width: 58px; padding: 0 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid currentColor; text-align: center; line-height: 1.5; }
+.geu-log .geu-log-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--rcpt-ink); text-decoration: none; }
+.geu-log .geu-log-title:hover { color: var(--rcpt-amber); text-decoration: underline; text-underline-offset: 2px; }
+.geu-log .geu-log-repo { flex-shrink: 0; max-width: 140px; overflow: hidden; text-overflow: ellipsis; color: var(--rcpt-muted); font-size: 10px; }
+.geu-log .geu-log-adds { flex-shrink: 0; width: 50px; text-align: right; color: var(--rcpt-add); font-size: 10px; font-variant-numeric: tabular-nums; }
+.geu-log .geu-log-dels { flex-shrink: 0; width: 50px; text-align: right; color: var(--rcpt-del); font-size: 10px; font-variant-numeric: tabular-nums; }
+.geu-log .geu-log-date { flex-shrink: 0; width: 50px; text-align: right; color: var(--rcpt-dim); font-size: 9.5px; letter-spacing: 0.06em; }
+
+/* =========================================================================
+   3. SCORECARD — Receipt-family stats banner + card grid
+   ========================================================================= */
+
+.geu-scorecard { background: var(--rcpt-bg); }
+.geu-scorecard .geu-scorecard-banner { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 16px 18px; border-bottom: 1px solid var(--rcpt-rule); }
+.geu-scorecard .geu-scorecard-hero { display: flex; flex-direction: column; }
+.geu-scorecard .geu-scorecard-hero-num { font-size: 36px; font-weight: 800; line-height: 1; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
+.geu-scorecard .geu-scorecard-hero-label { font-size: 9px; color: var(--rcpt-muted); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px; }
+.geu-scorecard .geu-scorecard-stats { display: flex; gap: 18px; }
+.geu-scorecard .geu-scorecard-stat { display: flex; flex-direction: column; align-items: flex-end; }
+.geu-scorecard .geu-scorecard-stat-num { font-size: 18px; font-weight: 700; line-height: 1.2; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
+.geu-scorecard .geu-scorecard-stat-label { font-size: 9px; color: var(--rcpt-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+.geu-scorecard .geu-scorecard-add { color: var(--rcpt-add); }
+.geu-scorecard .geu-scorecard-del { color: var(--rcpt-del); }
+.geu-scorecard .geu-scorecard-grid { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 10px; }
+@media (min-width: 480px) { .geu-scorecard .geu-scorecard-grid { grid-template-columns: 1fr 1fr; } }
+.geu-scorecard .geu-scorecard-card { padding: 10px 12px; background: var(--rcpt-card-bg); border: 1px solid var(--rcpt-rule); }
+.geu-scorecard .geu-scorecard-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.geu-scorecard .geu-scorecard-kind { display: inline-block; padding: 1px 5px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid currentColor; background: transparent; line-height: 1.4; }
+.geu-scorecard .geu-scorecard-card-date { font-size: 9px; color: var(--rcpt-dim); letter-spacing: 0.06em; }
+.geu-scorecard .geu-scorecard-card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 11px; line-height: 1.4; color: var(--rcpt-ink); text-decoration: none; }
+.geu-scorecard .geu-scorecard-card-title:hover { color: var(--rcpt-amber); text-decoration: underline; text-underline-offset: 2px; }
+.geu-scorecard .geu-scorecard-card-meta { margin-top: 4px; font-size: 9.5px; color: var(--rcpt-muted); }
+.geu-scorecard .geu-scorecard-card-repo { color: var(--rcpt-muted); text-decoration: none; }
+.geu-scorecard .geu-scorecard-card-repo:hover { color: var(--rcpt-ink); text-decoration: underline; text-underline-offset: 2px; }
+.geu-scorecard .geu-scorecard-card-diff { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.geu-scorecard .geu-scorecard-diff-bar { flex: 1 1 auto; display: flex; height: 4px; background: var(--rcpt-rule); overflow: hidden; }
+.geu-scorecard .geu-scorecard-diff-add-seg { background: var(--rcpt-add); height: 100%; }
+.geu-scorecard .geu-scorecard-diff-del-seg { background: var(--rcpt-del); height: 100%; }
+.geu-scorecard .geu-scorecard-card-nums { flex-shrink: 0; display: flex; gap: 6px; font-size: 9.5px; font-variant-numeric: tabular-nums; }
+
+/* =========================================================================
+   4. GITLOG — CLI git-log output (screenshot 3)
+   ========================================================================= */
+
+.geu-gitlog { background: var(--rcpt-bg); padding: 16px 18px; }
+.geu-gitlog .geu-gitlog-cmd { font-size: 12px; color: var(--rcpt-muted); margin-bottom: 8px; }
+.geu-gitlog .geu-gitlog-prompt { color: var(--rcpt-add); font-weight: 700; }
+.geu-gitlog .geu-gitlog-cmd-text { color: var(--rcpt-dim); }
+.geu-gitlog .geu-gitlog-stats-row { display: flex; gap: 16px; padding: 8px 0; margin-bottom: 12px; border-bottom: 1px solid var(--rcpt-rule); }
+.geu-gitlog .geu-gitlog-stats-item { display: flex; gap: 5px; align-items: baseline; }
+.geu-gitlog .geu-gitlog-stats-label { color: var(--rcpt-amber); font-size: 11px; font-weight: 600; }
+.geu-gitlog .geu-gitlog-stats-val { color: var(--rcpt-ink); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.geu-gitlog .geu-gitlog-entries { display: flex; flex-direction: column; }
+.geu-gitlog .geu-gitlog-entry { padding: 10px 0; border-bottom: 1px solid var(--rcpt-rule); }
+.geu-gitlog .geu-gitlog-entry:last-child { border-bottom: none; }
+.geu-gitlog .geu-gitlog-entry-main { display: flex; align-items: center; gap: 8px; }
+.geu-gitlog .geu-gitlog-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--rcpt-muted); }
+.geu-gitlog .geu-gitlog-hash { flex-shrink: 0; color: var(--rcpt-dim); font-size: 11px; letter-spacing: 0.04em; }
+.geu-gitlog .geu-gitlog-title { color: var(--rcpt-ink); text-decoration: none; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1 1 auto; min-width: 0; }
+.geu-gitlog .geu-gitlog-title:hover { text-decoration: underline; text-underline-offset: 2px; }
+.geu-gitlog .geu-gitlog-desc { margin-top: 3px; padding-left: 24px; font-size: 11px; color: var(--rcpt-muted); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+/* =========================================================================
+   5. DEVLOG — Vertical timeline with badges + diff bars (screenshot 2)
+   ========================================================================= */
+
+.geu-devlog { position: relative; background: var(--rcpt-bg); padding: 16px 16px 16px 32px; }
+.geu-devlog .geu-devlog-line { position: absolute; top: 0; bottom: 0; left: 22px; width: 1px; background: var(--rcpt-rule); }
+.geu-devlog .geu-devlog-entry { position: relative; padding: 14px 0; }
+.geu-devlog .geu-devlog-dot { position: absolute; left: -18px; top: 18px; width: 10px; height: 10px; border-radius: 50%; background: var(--rcpt-muted); z-index: 1; box-shadow: 0 0 0 3px var(--rcpt-bg); }
+.geu-devlog .geu-devlog-content { padding-left: 8px; }
+.geu-devlog .geu-devlog-badges { display: flex; gap: 6px; margin-bottom: 6px; }
+.geu-devlog .geu-devlog-badge-merged { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid var(--rcpt-badge-merged); color: var(--rcpt-badge-merged); }
+.geu-devlog .geu-devlog-badge-kind { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid currentColor; }
+.geu-devlog .geu-devlog-title { display: block; font-size: 13px; font-weight: 600; color: var(--rcpt-ink); text-decoration: none; line-height: 1.4; }
+.geu-devlog .geu-devlog-title:hover { text-decoration: underline; text-underline-offset: 2px; }
+.geu-devlog .geu-devlog-desc { margin: 4px 0 0; font-size: 11px; color: var(--rcpt-muted); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.geu-devlog .geu-devlog-meta { margin-top: 6px; font-size: 10px; }
+.geu-devlog .geu-devlog-repo { color: var(--rcpt-dim); text-decoration: none; }
+.geu-devlog .geu-devlog-repo:hover { color: var(--rcpt-ink); text-decoration: underline; text-underline-offset: 2px; }
+.geu-devlog .geu-devlog-diff { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.geu-devlog .geu-devlog-diff-bar { flex: 1 1 auto; display: flex; height: 4px; background: var(--rcpt-rule); overflow: hidden; }
+.geu-devlog .geu-devlog-diff-add { background: var(--rcpt-add); height: 100%; }
+.geu-devlog .geu-devlog-diff-del { background: var(--rcpt-del); height: 100%; }
+.geu-devlog .geu-devlog-diff-nums { flex-shrink: 0; display: flex; gap: 8px; font-size: 10px; font-variant-numeric: tabular-nums; }
+.geu-devlog .geu-devlog-add { color: var(--rcpt-add); }
+.geu-devlog .geu-devlog-del { color: var(--rcpt-del); }
+
+/* =========================================================================
+   6. PROOF — "Proof of Work" dashboard (screenshot 1)
+   ========================================================================= */
+
+.geu-proof { background: var(--rcpt-bg); }
+.geu-proof .geu-proof-banner { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 20px 20px 18px; border-bottom: 1px solid var(--rcpt-rule); overflow: hidden; }
+.geu-proof .geu-proof-glow { position: absolute; top: -40px; left: -40px; width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, rgba(232, 181, 71, 0.12) 0%, transparent 70%); pointer-events: none; }
+.dark .geu-proof .geu-proof-glow { background: radial-gradient(circle, rgba(232, 181, 71, 0.08) 0%, transparent 70%); }
+.geu-proof .geu-proof-hero { display: flex; flex-direction: column; position: relative; z-index: 1; }
+.geu-proof .geu-proof-hero-label { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; color: var(--rcpt-amber); text-transform: uppercase; margin-bottom: 2px; }
+.geu-proof .geu-proof-hero-num { font-size: 42px; font-weight: 800; line-height: 1; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
+.geu-proof .geu-proof-stats { display: flex; gap: 20px; position: relative; z-index: 1; }
+.geu-proof .geu-proof-stat { display: flex; flex-direction: column; align-items: flex-end; }
+.geu-proof .geu-proof-stat-num { font-size: 22px; font-weight: 700; line-height: 1.2; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
+.geu-proof .geu-proof-stat-label { font-size: 9px; color: var(--rcpt-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+.geu-proof .geu-proof-add { color: var(--rcpt-add); }
+.geu-proof .geu-proof-del { color: var(--rcpt-del); }
+.geu-proof .geu-proof-grid { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 12px; }
+@media (min-width: 480px) { .geu-proof .geu-proof-grid { grid-template-columns: 1fr 1fr; } }
+.geu-proof .geu-proof-card { padding: 12px 14px; background: var(--rcpt-card-bg); border: 1px solid var(--rcpt-rule); }
+.geu-proof .geu-proof-card-badges { display: flex; gap: 6px; margin-bottom: 6px; }
+.geu-proof .geu-proof-badge-merged { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid var(--rcpt-badge-merged); color: var(--rcpt-badge-merged); }
+.geu-proof .geu-proof-badge-kind { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid currentColor; }
+.geu-proof .geu-proof-card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 13px; font-weight: 600; line-height: 1.4; color: var(--rcpt-ink); text-decoration: none; }
+.geu-proof .geu-proof-card-title:hover { text-decoration: underline; text-underline-offset: 2px; }
+.geu-proof .geu-proof-card-desc { margin: 4px 0 0; font-size: 11px; color: var(--rcpt-muted); line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.geu-proof .geu-proof-card-meta { margin-top: 6px; font-size: 10px; }
+.geu-proof .geu-proof-card-repo { color: var(--rcpt-dim); text-decoration: none; }
+.geu-proof .geu-proof-card-repo:hover { color: var(--rcpt-ink); text-decoration: underline; text-underline-offset: 2px; }
+.geu-proof .geu-proof-card-diff { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.geu-proof .geu-proof-diff-bar { flex: 1 1 auto; display: flex; height: 4px; background: var(--rcpt-rule); overflow: hidden; }
+.geu-proof .geu-proof-diff-add-seg { background: var(--rcpt-add); height: 100%; }
+.geu-proof .geu-proof-diff-del-seg { background: var(--rcpt-del); height: 100%; }
+.geu-proof .geu-proof-card-nums { flex-shrink: 0; display: flex; gap: 6px; font-size: 10px; font-variant-numeric: tabular-nums; }
