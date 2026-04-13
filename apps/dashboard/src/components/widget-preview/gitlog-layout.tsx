@@ -1,3 +1,4 @@
+import { getDisplayLabels, getLabelColor, getCleanTitle } from '@github-embed-ui/types';
 import type { Contribution } from '@/types';
 
 interface TerminalLayoutProps {
@@ -6,7 +7,7 @@ interface TerminalLayoutProps {
 }
 
 /**
- * Dashboard preview mirror of `packages/widget/src/layouts/TerminalLayout.tsx`.
+ * Dashboard preview mirror of `packages/widget/src/layouts/GitlogLayout.tsx`.
  *
  * CLI git-log layout. Renders merged PRs as terminal output of
  * `git log --merged --oneline`. Header with command + stats line, then
@@ -52,14 +53,22 @@ export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutPr
       <div className="geu-gitlog-entries">
         {contributions.map((c) => {
           const title = titleOverrides?.[c.id] || c.title;
-          const kind = detectKind(title);
-          const cleanTitle = stripConventionalPrefix(title);
+          const labels = getDisplayLabels(title, c.labels);
+          const cleanTitle = getCleanTitle(title, c.labels);
           const hash = shortHash(c.id);
+          const dotColor = getLabelColor(labels[0]);
 
           return (
             <div key={c.id} className="geu-gitlog-entry">
               <div className="geu-gitlog-entry-main">
-                <span className={`geu-gitlog-dot geu-gitlog-dot-${kind}`} />
+                <span
+                  className="geu-gitlog-dot"
+                  data-lbl-dot
+                  style={{
+                    '--lbl-light': dotColor.light,
+                    '--lbl-dark': dotColor.dark,
+                  } as React.CSSProperties}
+                />
                 <span className="geu-gitlog-hash">{hash}</span>
                 <a
                   href={c.url}
@@ -82,21 +91,7 @@ export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutPr
   );
 }
 
-// --- helpers (mirrors packages/widget/src/layouts/TerminalLayout.tsx) ----
-
-function detectKind(title: string): string {
-  const m = title.match(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:/i,
-  );
-  return (m ? m[1] : 'merge').toLowerCase();
-}
-
-function stripConventionalPrefix(title: string): string {
-  return title.replace(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:\s*/i,
-    '',
-  );
-}
+// --- helpers (mirrors packages/widget/src/layouts/GitlogLayout.tsx) ----
 
 function shortHash(id: string): string {
   let h = 5381;

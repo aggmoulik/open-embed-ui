@@ -108,6 +108,9 @@ export const contributions = sqliteTable('contributions', {
   description: text('description'),
   blogUrl: text('blog_url'),
   blogOpenInNewTab: integer('blog_open_in_new_tab', { mode: 'boolean' }).notNull().default(true),
+  // User-chosen labels (feature 13). Max 2 items from a predefined set.
+  // Null = auto-detect from title at render time.
+  labels: text('labels', { mode: 'json' }).$type<string[]>(),
   deletedAt: integer('deleted_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()

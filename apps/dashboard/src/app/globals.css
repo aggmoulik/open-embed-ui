@@ -85,6 +85,9 @@
   animation-play-state: paused;
 }
 /* Receipt-family + screenshot-family layout preview styles — mirrors widget.css */
+
+/* Receipt-family + screenshot-family layout preview styles — mirrors widget.css */
+
 /* =========================================================================
    Receipt-family + screenshot-family layouts.
    Shared tokens, light default, `.dark` ancestor overrides.
@@ -124,56 +127,14 @@
   --rcpt-scanline: rgba(255, 255, 255, 0.022);
 }
 
-/* Kind colors — light */
-[class*="kind-feat"]  { color: #0d9488; }
-[class*="kind-fix"]   { color: #dc2626; }
-[class*="kind-perf"]  { color: #b45309; }
-[class*="kind-refactor"] { color: #2563eb; }
-[class*="kind-docs"]  { color: #7c3aed; }
-[class*="kind-chore"] { color: #64748b; }
-[class*="kind-test"]  { color: #ea580c; }
-[class*="kind-style"] { color: #db2777; }
-[class*="kind-build"] { color: #0284c7; }
-[class*="kind-ci"]    { color: #65a30d; }
-[class*="kind-revert"]{ color: #ef4444; }
-[class*="kind-merge"] { color: var(--rcpt-muted); }
-/* Kind colors — dark */
-.dark [class*="kind-feat"]  { color: #2dd4bf; }
-.dark [class*="kind-fix"]   { color: #f87171; }
-.dark [class*="kind-perf"]  { color: #e8b547; }
-.dark [class*="kind-refactor"] { color: #60a5fa; }
-.dark [class*="kind-docs"]  { color: #c4b5fd; }
-.dark [class*="kind-chore"] { color: #94a3b8; }
-.dark [class*="kind-test"]  { color: #fb923c; }
-.dark [class*="kind-style"] { color: #f472b6; }
-.dark [class*="kind-build"] { color: #38bdf8; }
-.dark [class*="kind-ci"]    { color: #a3e635; }
-.dark [class*="kind-revert"]{ color: #fca5a5; }
+/* Label colors — driven by inline --lbl-light / --lbl-dark custom properties.
+   Components set both values; CSS picks the right one based on theme. */
+[data-lbl] { --lbl-color: var(--lbl-light); color: var(--lbl-color); border-color: var(--lbl-color); }
+.dark [data-lbl] { --lbl-color: var(--lbl-dark); }
 
-/* Dot colors — light */
-[class*="dot-feat"]  { background: #0d9488; }
-[class*="dot-fix"]   { background: #dc2626; }
-[class*="dot-perf"]  { background: #b45309; }
-[class*="dot-refactor"] { background: #2563eb; }
-[class*="dot-docs"]  { background: #7c3aed; }
-[class*="dot-chore"] { background: #64748b; }
-[class*="dot-test"]  { background: #ea580c; }
-[class*="dot-style"] { background: #db2777; }
-[class*="dot-build"] { background: #0284c7; }
-[class*="dot-ci"]    { background: #65a30d; }
-[class*="dot-revert"]{ background: #ef4444; }
-/* Dot colors — dark */
-.dark [class*="dot-feat"]  { background: #2dd4bf; }
-.dark [class*="dot-fix"]   { background: #f87171; }
-.dark [class*="dot-perf"]  { background: #e8b547; }
-.dark [class*="dot-refactor"] { background: #60a5fa; }
-.dark [class*="dot-docs"]  { background: #c4b5fd; }
-.dark [class*="dot-chore"] { background: #94a3b8; }
-.dark [class*="dot-test"]  { background: #fb923c; }
-.dark [class*="dot-style"] { background: #f472b6; }
-.dark [class*="dot-build"] { background: #38bdf8; }
-.dark [class*="dot-ci"]    { background: #a3e635; }
-.dark [class*="dot-revert"]{ background: #fca5a5; }
+/* Dot colors — same custom-property approach but for background */
+[data-lbl-dot] { --lbl-color: var(--lbl-light); background: var(--lbl-color); }
+.dark [data-lbl-dot] { --lbl-color: var(--lbl-dark); }
 
 /* =========================================================================
    1. TERMINAL — Receipt (scalloped edges, barcode, receipt totals)
@@ -340,8 +301,7 @@
 .geu-devlog .geu-devlog-dot { position: absolute; left: -18px; top: 18px; width: 10px; height: 10px; border-radius: 50%; background: var(--rcpt-muted); z-index: 1; box-shadow: 0 0 0 3px var(--rcpt-bg); }
 .geu-devlog .geu-devlog-content { padding-left: 8px; }
 .geu-devlog .geu-devlog-badges { display: flex; gap: 6px; margin-bottom: 6px; }
-.geu-devlog .geu-devlog-badge-merged { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid var(--rcpt-badge-merged); color: var(--rcpt-badge-merged); }
-.geu-devlog .geu-devlog-badge-kind { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid currentColor; }
+.geu-devlog .geu-devlog-badge { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid currentColor; }
 .geu-devlog .geu-devlog-title { display: block; font-size: 13px; font-weight: 600; color: var(--rcpt-ink); text-decoration: none; line-height: 1.4; }
 .geu-devlog .geu-devlog-title:hover { text-decoration: underline; text-underline-offset: 2px; }
 .geu-devlog .geu-devlog-desc { margin: 4px 0 0; font-size: 11px; color: var(--rcpt-muted); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
@@ -377,8 +337,7 @@
 @media (min-width: 480px) { .geu-proof .geu-proof-grid { grid-template-columns: 1fr 1fr; } }
 .geu-proof .geu-proof-card { padding: 12px 14px; background: var(--rcpt-card-bg); border: 1px solid var(--rcpt-rule); }
 .geu-proof .geu-proof-card-badges { display: flex; gap: 6px; margin-bottom: 6px; }
-.geu-proof .geu-proof-badge-merged { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid var(--rcpt-badge-merged); color: var(--rcpt-badge-merged); }
-.geu-proof .geu-proof-badge-kind { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid currentColor; }
+.geu-proof .geu-proof-badge { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid currentColor; }
 .geu-proof .geu-proof-card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 13px; font-weight: 600; line-height: 1.4; color: var(--rcpt-ink); text-decoration: none; }
 .geu-proof .geu-proof-card-title:hover { text-decoration: underline; text-underline-offset: 2px; }
 .geu-proof .geu-proof-card-desc { margin: 4px 0 0; font-size: 11px; color: var(--rcpt-muted); line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }

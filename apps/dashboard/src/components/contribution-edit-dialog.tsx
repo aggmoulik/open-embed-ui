@@ -14,9 +14,14 @@ import { Checkbox } from '@github-embed-ui/ui/components/checkbox';
 import { Input } from '@github-embed-ui/ui/components/input';
 import { Label } from '@github-embed-ui/ui/components/label';
 import { Textarea } from '@github-embed-ui/ui/components/textarea';
-import { ExternalLink, Loader2 } from 'lucide-react';
+import { ExternalLink, Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Contribution } from '@/types';
+import {
+  PREDEFINED_LABELS,
+  LABELS_MAX_COUNT,
+  getDisplayLabels,
+} from '@github-embed-ui/types';
 import { useUpdateContribution } from '@/hooks';
 import {
   BLOG_URL_MAX,
@@ -35,27 +40,18 @@ interface FormState {
   description: string;
   blogUrl: string;
   blogOpenInNewTab: boolean;
+  labels: string[];
 }
 
 function toFormState(c: Contribution | null): FormState {
   return {
     description: c?.description ?? '',
     blogUrl: c?.blogUrl ?? '',
-    // Default true for new rows and for rows imported before this column
-    // existed (old rows return undefined from the API).
     blogOpenInNewTab: c?.blogOpenInNewTab !== false,
+    labels: c?.labels && c.labels.length > 0 ? [...c.labels] : [],
   };
 }
 
-/**
- * Modal editor for a single contribution's user-authored fields
- * (description, blog URL, blog open-in-new-tab). Plain text only — no
- * markdown.
- *
- * The dialog is controlled by the parent so the list can open/close it
- * imperatively. `onSaved` is called with the server-returned contribution
- * on a successful save; the parent uses that to refresh its local cache.
- */
 export function ContributionEditDialog({
   contribution,
   open,
@@ -65,7 +61,6 @@ export function ContributionEditDialog({
   const [form, setForm] = useState<FormState>(() => toFormState(contribution));
   const { save, saving, fieldErrors } = useUpdateContribution();
 
-  // Reset the form whenever a different contribution is opened.
   useEffect(() => {
     setForm(toFormState(contribution));
   }, [contribution]);
@@ -74,10 +69,9 @@ export function ContributionEditDialog({
   const dirty =
     form.description !== initial.description ||
     form.blogUrl !== initial.blogUrl ||
-    form.blogOpenInNewTab !== initial.blogOpenInNewTab;
+    form.blogOpenInNewTab !== initial.blogOpenInNewTab ||
+    JSON.stringify(form.labels) !== JSON.stringify(initial.labels);
 
-  // Client-side mirror of server validation — instant feedback. The server
-  // is still the source of truth; any mismatch shows up via `fieldErrors`.
   const clientError = useMemo(() => {
     if (form.description.length > DESCRIPTION_MAX) {
       return { field: 'description', msg: `${DESCRIPTION_MAX} characters max` };
@@ -93,6 +87,31 @@ export function ContributionEditDialog({
     return null;
   }, [form]);
 
+  // What auto-detection would produce (shown as a hint).
+  const autoDetected = useMemo(
+    () => (contribution ? getDisplayLabels(contribution.title) : ['MERGED']),
+    [contribution],
+  );
+
+  function toggleLabel(value: string) {
+    setForm((f) => {
+      const idx = f.labels.indexOf(value);
+      if (idx >= 0) {
+        // Remove
+        return { ...f, labels: f.labels.filter((l) => l !== value) };
+      }
+      if (f.labels.length >= LABELS_MAX_COUNT) {
+        // At max — replace last
+        return { ...f, labels: [f.labels[0], value] };
+      }
+      return { ...f, labels: [...f.labels, value] };
+    });
+  }
+
+  function clearLabels() {
+    setForm((f) => ({ ...f, labels: [] }));
+  }
+
   async function handleSave() {
     if (!contribution) return;
     if (clientError) return;
@@ -101,6 +120,7 @@ export function ContributionEditDialog({
       description: form.description.trim() ? form.description : null,
       blogUrl: form.blogUrl.trim() ? form.blogUrl : null,
       blogOpenInNewTab: form.blogOpenInNewTab,
+      labels: form.labels.length > 0 ? form.labels : null,
     };
 
     const updated = await save(contribution.id, payload);
@@ -135,12 +155,61 @@ export function ContributionEditDialog({
                 <ExternalLink className="ml-1 inline size-3" />
               </a>
             ) : (
-              'Add a short brief and blog link for this PR.'
+              'Add a short brief, labels, and blog link for this PR.'
             )}
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4">
+          {/* Labels chip selector */}
+          <div className="grid gap-1.5">
+            <div className="flex items-center justify-between">
+              <Label>Labels</Label>
+              <span className="text-muted-foreground text-xs">
+                {form.labels.length} / {LABELS_MAX_COUNT}
+                {form.labels.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearLabels}
+                    className="text-muted-foreground hover:text-foreground ml-2 inline-flex items-center gap-0.5 underline"
+                  >
+                    <X className="size-3" />
+                    Clear
+                  </button>
+                )}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {PREDEFINED_LABELS.map((labelDef) => {
+                const selected = form.labels.includes(labelDef.value);
+                return (
+                  <button
+                    key={labelDef.value}
+                    type="button"
+                    onClick={() => toggleLabel(labelDef.value)}
+                    className="rounded-sm border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider transition-colors"
+                    style={{
+                      color: selected ? '#fff' : labelDef.colorLight,
+                      borderColor: labelDef.colorLight,
+                      backgroundColor: selected ? labelDef.colorLight : 'transparent',
+                    }}
+                  >
+                    {labelDef.value}
+                  </button>
+                );
+              })}
+            </div>
+            {form.labels.length === 0 && (
+              <p className="text-muted-foreground text-xs">
+                Auto-detected: {autoDetected.join(' + ')}
+              </p>
+            )}
+            {fieldErrors?.labels && (
+              <p className="text-destructive text-xs">{fieldErrors.labels}</p>
+            )}
+          </div>
+
+          {/* Description */}
           <div className="grid gap-1.5">
             <div className="flex items-center justify-between">
               <Label htmlFor="description">Description</Label>
@@ -151,7 +220,7 @@ export function ContributionEditDialog({
             <Textarea
               id="description"
               rows={3}
-              placeholder="A short brief of what this PR did…"
+              placeholder="A short brief of what this PR did..."
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               aria-invalid={
@@ -167,12 +236,13 @@ export function ContributionEditDialog({
             )}
           </div>
 
+          {/* Blog URL */}
           <div className="grid gap-1.5">
             <Label htmlFor="blogUrl">Blog URL</Label>
             <Input
               id="blogUrl"
               type="url"
-              placeholder="https://…"
+              placeholder="https://..."
               value={form.blogUrl}
               onChange={(e) => setForm((f) => ({ ...f, blogUrl: e.target.value }))}
               aria-invalid={clientError?.field === 'blogUrl' || Boolean(fieldErrors?.blogUrl)}

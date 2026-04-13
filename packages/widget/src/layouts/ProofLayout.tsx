@@ -1,3 +1,4 @@
+import { getDisplayLabels, getLabelColor, getCleanTitle } from '../labels';
 import type { Contribution } from '../types';
 
 interface Props {
@@ -9,8 +10,8 @@ interface Props {
  * Scorecard / "Proof of Work" dashboard layout.
  *
  * Hero number + three stats in the banner, then a responsive 2-column
- * grid of compact cards. Each card has MERGED + kind badges, title,
- * description, repo info, and a diff bar. Supports light/dark.
+ * grid of compact cards. Each card has label badges, title, description,
+ * repo info, and a diff bar. Supports light/dark.
  */
 export function ProofLayout({ contributions, titleOverrides }: Props) {
   if (contributions.length === 0) {
@@ -49,9 +50,8 @@ export function ProofLayout({ contributions, titleOverrides }: Props) {
       <div class="geu-proof-grid">
         {contributions.map((c) => {
           const title = titleOverrides?.[c.id] || c.title;
-          const kind = detectKind(title);
-          const kindLabel = KIND_LABELS[kind] || 'MERGE';
-          const cleanTitle = stripConventionalPrefix(title);
+          const labels = getDisplayLabels(title, c.labels);
+          const cleanTitle = getCleanTitle(title, c.labels);
           const total = c.additions + c.deletions;
           const addPct = total === 0 ? 50 : (c.additions / total) * 100;
           const delPct = 100 - addPct;
@@ -59,10 +59,22 @@ export function ProofLayout({ contributions, titleOverrides }: Props) {
           return (
             <div key={c.id} class="geu-proof-card">
               <div class="geu-proof-card-badges">
-                <span class="geu-proof-badge-merged">MERGED</span>
-                <span class={`geu-proof-badge-kind geu-proof-badge-kind-${kind}`}>
-                  {kindLabel}
-                </span>
+                {labels.map((label) => {
+                  const color = getLabelColor(label);
+                  return (
+                    <span
+                      key={label}
+                      class="geu-proof-badge"
+                      data-lbl
+                      style={{
+                        '--lbl-light': color.light,
+                        '--lbl-dark': color.dark,
+                      }}
+                    >
+                      {label}
+                    </span>
+                  );
+                })}
               </div>
               <a
                 href={c.url}
@@ -101,34 +113,5 @@ export function ProofLayout({ contributions, titleOverrides }: Props) {
         })}
       </div>
     </div>
-  );
-}
-
-const KIND_LABELS: Record<string, string> = {
-  feat: 'ENHANCEMENT',
-  fix: 'BUG FIX',
-  perf: 'PERFORMANCE',
-  refactor: 'REFACTOR',
-  docs: 'DOCUMENTATION',
-  chore: 'CHORE',
-  test: 'TESTING',
-  style: 'STYLE',
-  build: 'BUILD',
-  ci: 'CI/CD',
-  revert: 'REVERT',
-  merge: 'MERGE',
-};
-
-function detectKind(title: string): string {
-  const m = title.match(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:/i,
-  );
-  return (m ? m[1] : 'merge').toLowerCase();
-}
-
-function stripConventionalPrefix(title: string): string {
-  return title.replace(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:\s*/i,
-    '',
   );
 }

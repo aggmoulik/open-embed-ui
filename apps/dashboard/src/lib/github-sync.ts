@@ -73,8 +73,8 @@ export async function syncGitHubContributions(userId: string, accessToken: strin
   // metadata (description, blog_url, blog_open_in_new_tab) on every sync.
   //
   // The `set` clause below MUST only contain GitHub-sourced columns. Do not
-  // add `description`, `blogUrl`, or `blogOpenInNewTab` here — those are
-  // user-authored and must survive re-syncs untouched. There is a
+  // add `description`, `blogUrl`, `blogOpenInNewTab`, or `labels` here —
+  // those are user-authored and must survive re-syncs untouched. There is a
   // regression test that asserts this; if you change this code, make sure
   // the test still passes.
   //

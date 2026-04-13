@@ -87,6 +87,7 @@ export interface UpdateContributionPayload {
   description?: string | null;
   blogUrl?: string | null;
   blogOpenInNewTab?: boolean;
+  labels?: string[] | null;
 }
 
 export function updateContribution(id: string, data: UpdateContributionPayload) {

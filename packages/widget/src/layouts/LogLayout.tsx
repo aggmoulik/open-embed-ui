@@ -1,3 +1,4 @@
+import { getDisplayLabels, getLabelColor, getCleanTitle } from '../labels';
 import type { Contribution } from '../types';
 
 interface Props {
@@ -45,14 +46,29 @@ export function LogLayout({ contributions, titleOverrides }: Props) {
       <ul class="geu-log-list">
         {contributions.map((c) => {
           const title = titleOverrides?.[c.id] || c.title;
-          const kind = detectKind(title);
-          const cleanTitle = stripConventionalPrefix(title);
+          const labels = getDisplayLabels(title, c.labels);
+          const cleanTitle = getCleanTitle(title, c.labels);
           const hash = shortHash(c.id);
 
           return (
             <li key={c.id} class="geu-log-row">
               <span class="geu-log-hash">#{hash}</span>
-              <span class={`geu-log-kind geu-log-kind-${kind}`}>{kind}</span>
+              {labels.map((label) => {
+                const color = getLabelColor(label);
+                return (
+                  <span
+                    key={label}
+                    class="geu-log-kind"
+                    data-lbl
+                    style={{
+                      '--lbl-light': color.light,
+                      '--lbl-dark': color.dark,
+                    }}
+                  >
+                    {label}
+                  </span>
+                );
+              })}
               <a
                 href={c.url}
                 target="_blank"
@@ -86,20 +102,6 @@ export function LogLayout({ contributions, titleOverrides }: Props) {
 }
 
 // --- helpers ---------------------------------------------------------------
-
-function detectKind(title: string): string {
-  const m = title.match(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:/i,
-  );
-  return (m ? m[1] : 'merge').toLowerCase();
-}
-
-function stripConventionalPrefix(title: string): string {
-  return title.replace(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:\s*/i,
-    '',
-  );
-}
 
 function shortHash(id: string): string {
   let h = 5381;

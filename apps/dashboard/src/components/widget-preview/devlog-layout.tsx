@@ -1,3 +1,4 @@
+import { getDisplayLabels, getLabelColor, getCleanTitle } from '@github-embed-ui/types';
 import type { Contribution } from '@/types';
 
 interface LogLayoutProps {
@@ -6,12 +7,11 @@ interface LogLayoutProps {
 }
 
 /**
- * Dashboard preview mirror of `packages/widget/src/layouts/LogLayout.tsx`.
+ * Dashboard preview mirror of `packages/widget/src/layouts/DevlogLayout.tsx`.
  *
  * Vertical timeline layout with diff bars. Thin vertical line on the left,
- * colored dots per entry, MERGED badge + kind badge, title, description,
- * repo, and a proportional green/red diff bar.
- * Supports light/dark via `.dark` ancestor.
+ * colored dots per entry, label badges, title, description, repo, and a
+ * proportional green/red diff bar. Supports light/dark via `.dark` ancestor.
  */
 export function DevlogLayout({ contributions, titleOverrides }: LogLayoutProps) {
   if (contributions.length === 0) {
@@ -27,22 +27,41 @@ export function DevlogLayout({ contributions, titleOverrides }: LogLayoutProps) 
       <div className="geu-devlog-line" />
       {contributions.map((c) => {
         const title = titleOverrides?.[c.id] || c.title;
-        const kind = detectKind(title);
-        const kindLabel = KIND_LABELS[kind] || 'MERGE';
-        const cleanTitle = stripConventionalPrefix(title);
+        const labels = getDisplayLabels(title, c.labels);
+        const cleanTitle = getCleanTitle(title, c.labels);
         const total = c.additions + c.deletions;
         const addPct = total === 0 ? 50 : (c.additions / total) * 100;
         const delPct = 100 - addPct;
+        const dotColor = getLabelColor(labels[0]);
 
         return (
           <div key={c.id} className="geu-devlog-entry">
-            <div className={`geu-devlog-dot geu-devlog-dot-${kind}`} />
+            <div
+              className="geu-devlog-dot"
+              data-lbl-dot
+              style={{
+                '--lbl-light': dotColor.light,
+                '--lbl-dark': dotColor.dark,
+              } as React.CSSProperties}
+            />
             <div className="geu-devlog-content">
               <div className="geu-devlog-badges">
-                <span className="geu-devlog-badge-merged">MERGED</span>
-                <span className={`geu-devlog-badge-kind geu-devlog-badge-kind-${kind}`}>
-                  {kindLabel}
-                </span>
+                {labels.map((label) => {
+                  const color = getLabelColor(label);
+                  return (
+                    <span
+                      key={label}
+                      className="geu-devlog-badge"
+                      data-lbl
+                      style={{
+                        '--lbl-light': color.light,
+                        '--lbl-dark': color.dark,
+                      } as React.CSSProperties}
+                    >
+                      {label}
+                    </span>
+                  );
+                })}
               </div>
               <a
                 href={c.url}
@@ -81,36 +100,5 @@ export function DevlogLayout({ contributions, titleOverrides }: LogLayoutProps) 
         );
       })}
     </div>
-  );
-}
-
-// --- helpers (mirrors packages/widget/src/layouts/LogLayout.tsx) -----------
-
-const KIND_LABELS: Record<string, string> = {
-  feat: 'ENHANCEMENT',
-  fix: 'BUG FIX',
-  perf: 'PERFORMANCE',
-  refactor: 'REFACTOR',
-  docs: 'DOCUMENTATION',
-  chore: 'CHORE',
-  test: 'TESTING',
-  style: 'STYLE',
-  build: 'BUILD',
-  ci: 'CI/CD',
-  revert: 'REVERT',
-  merge: 'MERGE',
-};
-
-function detectKind(title: string): string {
-  const m = title.match(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:/i,
-  );
-  return (m ? m[1] : 'merge').toLowerCase();
-}
-
-function stripConventionalPrefix(title: string): string {
-  return title.replace(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:\s*/i,
-    '',
   );
 }

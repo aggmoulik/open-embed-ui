@@ -66,6 +66,7 @@ export async function GET(
         additions: c.additions,
         deletions: c.deletions,
         changedFiles: c.changedFiles,
+        labels: c.labels ?? null,
       })),
       user: user
         ? { name: user.name, image: user.image, githubUsername: user.githubUsername }

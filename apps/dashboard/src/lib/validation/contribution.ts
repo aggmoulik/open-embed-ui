@@ -1,11 +1,12 @@
 /**
- * Validators for the contribution PATCH endpoint (feature 11).
+ * Validators for the contribution PATCH endpoint (features 11 + 13).
  *
  * Hand-rolled to match the existing dashboard convention (see
  * `apps/dashboard/src/app/api/profile/route.ts`) and avoid pulling in zod
- * for a single endpoint. Keep this file dependency-free so it stays
- * edge-runtime safe.
+ * for a single endpoint. Edge-runtime safe.
  */
+
+import { VALID_LABELS } from '@github-embed-ui/types';
 
 export const DESCRIPTION_MAX = 500;
 export const BLOG_URL_MAX = 2048;
@@ -14,6 +15,7 @@ export interface UpdateContributionInput {
   description?: string | null;
   blogUrl?: string | null;
   blogOpenInNewTab?: boolean;
+  labels?: string[] | null;
 }
 
 export type ValidationResult =
@@ -66,6 +68,24 @@ export function validateUpdateContribution(body: unknown): ValidationResult {
       errors.blogUrl = 'blogUrl must be a valid http or https URL';
     } else {
       data.blogUrl = value;
+    }
+  }
+
+  if ('labels' in input) {
+    const value = input.labels;
+    if (value === null) {
+      data.labels = null;
+    } else if (!Array.isArray(value)) {
+      errors.labels = 'labels must be an array or null';
+    } else if (value.length > 2) {
+      errors.labels = 'maximum 2 labels allowed';
+    } else {
+      const invalid = value.filter((v: unknown) => typeof v !== 'string' || !VALID_LABELS.has(v));
+      if (invalid.length > 0) {
+        errors.labels = `invalid label(s): ${invalid.join(', ')}`;
+      } else {
+        data.labels = value as string[];
+      }
     }
   }
 

@@ -1,3 +1,4 @@
+import { getDisplayLabels, getLabelColor, getCleanTitle } from '../labels';
 import type { Contribution } from '../types';
 
 interface Props {
@@ -68,8 +69,8 @@ export function TerminalLayout({ contributions, titleOverrides }: Props) {
         <ol class="geu-terminal-items">
           {contributions.map((c, i) => {
             const title = titleOverrides?.[c.id] || c.title;
-            const kind = detectKind(title);
-            const cleanTitle = stripConventionalPrefix(title);
+            const labels = getDisplayLabels(title, c.labels);
+            const cleanTitle = getCleanTitle(title, c.labels);
             const hash = shortHash(c.id);
             const total = c.additions + c.deletions;
             const addPct = total === 0 ? 50 : (c.additions / total) * 100;
@@ -78,7 +79,22 @@ export function TerminalLayout({ contributions, titleOverrides }: Props) {
               <li key={c.id} class="geu-terminal-item">
                 <div class="geu-terminal-line-top">
                   <span class="geu-terminal-idx">{String(i + 1).padStart(2, '0')}</span>
-                  <span class={`geu-terminal-kind geu-terminal-kind-${kind}`}>{kind}</span>
+                  {labels.map((label) => {
+                    const color = getLabelColor(label);
+                    return (
+                      <span
+                        key={label}
+                        class="geu-terminal-kind"
+                        data-lbl
+                        style={{
+                          '--lbl-light': color.light,
+                          '--lbl-dark': color.dark,
+                        }}
+                      >
+                        {label}
+                      </span>
+                    );
+                  })}
                   <a
                     href={c.url}
                     target="_blank"
@@ -184,25 +200,6 @@ export function TerminalLayout({ contributions, titleOverrides }: Props) {
 }
 
 // --- helpers -------------------------------------------------------------
-
-/**
- * Conventional-commits prefix → receipt "SKU" line. Falls back to "merge"
- * for PRs that don't follow the convention.
- */
-function detectKind(title: string): string {
-  const m = title.match(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:/i,
-  );
-  return (m ? m[1] : 'merge').toLowerCase();
-}
-
-/** Strip the "feat: " / "fix(scope): " prefix so the title line reads cleanly. */
-function stripConventionalPrefix(title: string): string {
-  return title.replace(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:\s*/i,
-    '',
-  );
-}
 
 /** djb2-ish deterministic 7-char hex from the PR id. */
 function shortHash(id: string): string {

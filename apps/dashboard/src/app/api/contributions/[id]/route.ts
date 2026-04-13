@@ -58,6 +58,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if ('description' in result.data) patch.description = result.data.description;
   if ('blogUrl' in result.data) patch.blogUrl = result.data.blogUrl;
   if ('blogOpenInNewTab' in result.data) patch.blogOpenInNewTab = result.data.blogOpenInNewTab;
+  if ('labels' in result.data) patch.labels = result.data.labels;
 
   const [updated] = await db
     .update(contributions)

@@ -1,3 +1,15 @@
+export {
+  PREDEFINED_LABELS,
+  VALID_LABELS,
+  LABELS_MAX_COUNT,
+  PREFIX_TO_LABEL,
+  getLabelColor,
+  detectPrefix,
+  getDisplayLabels,
+  getCleanTitle,
+} from './labels';
+export type { LabelDef } from './labels';
+
 export type WidgetLayout =
   | 'grid'
   | 'list'
@@ -42,4 +54,6 @@ export interface BaseContribution {
   blogUrl?: string | null;
   /** Whether the blog link should open in a new tab. Defaults to true. */
   blogOpenInNewTab?: boolean;
+  /** Up to 2 predefined labels. Null = auto-detect from title. */
+  labels?: string[] | null;
 }

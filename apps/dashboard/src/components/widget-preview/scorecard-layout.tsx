@@ -1,3 +1,4 @@
+import { getDisplayLabels, getLabelColor, getCleanTitle } from '@github-embed-ui/types';
 import type { Contribution } from '@/types';
 
 interface ScorecardLayoutProps {
@@ -51,8 +52,8 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
       <div className="geu-scorecard-grid">
         {contributions.map((c) => {
           const title = titleOverrides?.[c.id] || c.title;
-          const kind = detectKind(title);
-          const cleanTitle = stripConventionalPrefix(title);
+          const labels = getDisplayLabels(title, c.labels);
+          const cleanTitle = getCleanTitle(title, c.labels);
           const total = c.additions + c.deletions;
           const addPct = total === 0 ? 50 : (c.additions / total) * 100;
           const delPct = 100 - addPct;
@@ -60,7 +61,24 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
           return (
             <div key={c.id} className="geu-scorecard-card">
               <div className="geu-scorecard-card-top">
-                <span className={`geu-scorecard-kind geu-scorecard-kind-${kind}`}>{kind}</span>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  {labels.map((label) => {
+                    const color = getLabelColor(label);
+                    return (
+                      <span
+                        key={label}
+                        className="geu-scorecard-kind"
+                        data-lbl
+                        style={{
+                          '--lbl-light': color.light,
+                          '--lbl-dark': color.dark,
+                        } as React.CSSProperties}
+                      >
+                        {label}
+                      </span>
+                    );
+                  })}
+                </div>
                 {c.mergedAt && (
                   <time className="geu-scorecard-date" dateTime={new Date(c.mergedAt).toISOString()}>
                     {shortDate(c.mergedAt)}
@@ -109,28 +127,6 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
 }
 
 // --- helpers (mirrors packages/widget/src/layouts/ScorecardLayout.tsx) -----
-
-function detectKind(title: string): string {
-  const m = title.match(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:/i,
-  );
-  return (m ? m[1] : 'merge').toLowerCase();
-}
-
-function stripConventionalPrefix(title: string): string {
-  return title.replace(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:\s*/i,
-    '',
-  );
-}
-
-function shortHash(id: string): string {
-  let h = 5381;
-  for (let i = 0; i < id.length; i++) {
-    h = ((h << 5) + h + id.charCodeAt(i)) | 0;
-  }
-  return (h >>> 0).toString(16).padStart(8, '0').slice(0, 7);
-}
 
 function shortDate(iso: string | Date): string {
   const d = typeof iso === 'string' ? new Date(iso) : iso;

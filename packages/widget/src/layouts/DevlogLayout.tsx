@@ -1,3 +1,4 @@
+import { getDisplayLabels, getLabelColor, getCleanTitle } from '../labels';
 import type { Contribution } from '../types';
 
 interface Props {
@@ -8,9 +9,9 @@ interface Props {
 /**
  * Vertical timeline layout with diff bars.
  *
- * Thin vertical line on the left, colored dots per entry, MERGED badge +
- * kind badge, title, description, repo, and a proportional green/red diff
- * bar. Supports light/dark via `.dark` ancestor.
+ * Thin vertical line on the left, colored dots per entry, label badges,
+ * title, description, repo, and a proportional green/red diff bar.
+ * Supports light/dark via `.dark` ancestor.
  */
 export function DevlogLayout({ contributions, titleOverrides }: Props) {
   if (contributions.length === 0) {
@@ -22,22 +23,41 @@ export function DevlogLayout({ contributions, titleOverrides }: Props) {
       <div class="geu-devlog-line" />
       {contributions.map((c) => {
         const title = titleOverrides?.[c.id] || c.title;
-        const kind = detectKind(title);
-        const kindLabel = KIND_LABELS[kind] || 'MERGE';
-        const cleanTitle = stripConventionalPrefix(title);
+        const labels = getDisplayLabels(title, c.labels);
+        const cleanTitle = getCleanTitle(title, c.labels);
         const total = c.additions + c.deletions;
         const addPct = total === 0 ? 50 : (c.additions / total) * 100;
         const delPct = 100 - addPct;
+        const dotColor = getLabelColor(labels[0]);
 
         return (
           <div key={c.id} class="geu-devlog-entry">
-            <div class={`geu-devlog-dot geu-devlog-dot-${kind}`} />
+            <div
+              class="geu-devlog-dot"
+              data-lbl-dot
+              style={{
+                '--lbl-light': dotColor.light,
+                '--lbl-dark': dotColor.dark,
+              }}
+            />
             <div class="geu-devlog-content">
               <div class="geu-devlog-badges">
-                <span class="geu-devlog-badge-merged">MERGED</span>
-                <span class={`geu-devlog-badge-kind geu-devlog-badge-kind-${kind}`}>
-                  {kindLabel}
-                </span>
+                {labels.map((label) => {
+                  const color = getLabelColor(label);
+                  return (
+                    <span
+                      key={label}
+                      class="geu-devlog-badge"
+                      data-lbl
+                      style={{
+                        '--lbl-light': color.light,
+                        '--lbl-dark': color.dark,
+                      }}
+                    >
+                      {label}
+                    </span>
+                  );
+                })}
               </div>
               <a
                 href={c.url}
@@ -76,34 +96,5 @@ export function DevlogLayout({ contributions, titleOverrides }: Props) {
         );
       })}
     </div>
-  );
-}
-
-const KIND_LABELS: Record<string, string> = {
-  feat: 'ENHANCEMENT',
-  fix: 'BUG FIX',
-  perf: 'PERFORMANCE',
-  refactor: 'REFACTOR',
-  docs: 'DOCUMENTATION',
-  chore: 'CHORE',
-  test: 'TESTING',
-  style: 'STYLE',
-  build: 'BUILD',
-  ci: 'CI/CD',
-  revert: 'REVERT',
-  merge: 'MERGE',
-};
-
-function detectKind(title: string): string {
-  const m = title.match(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:/i,
-  );
-  return (m ? m[1] : 'merge').toLowerCase();
-}
-
-function stripConventionalPrefix(title: string): string {
-  return title.replace(
-    /^(feat|fix|chore|docs|refactor|perf|test|style|build|ci|revert)(?:\([^)]*\))?:\s*/i,
-    '',
   );
 }
