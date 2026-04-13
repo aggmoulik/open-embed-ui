@@ -340,13 +340,14 @@
 }
 
 /* Label colors — driven by inline --lbl-light / --lbl-dark custom properties.
-   Components set both values; CSS picks the right one based on theme. */
-[data-lbl] { --lbl-color: var(--lbl-light); color: var(--lbl-color); border-color: var(--lbl-color); }
-.dark [data-lbl] { --lbl-color: var(--lbl-dark); }
+   Doubled attribute selector boosts specificity above layout-specific badge
+   rules (e.g. .geu-devlog .geu-devlog-badge { border: 1px solid currentColor }). */
+[data-lbl][data-lbl] { --lbl-color: var(--lbl-light); color: var(--lbl-color); border-color: var(--lbl-color); }
+.dark [data-lbl][data-lbl] { --lbl-color: var(--lbl-dark); }
 
-/* Dot colors — same custom-property approach but for background */
-[data-lbl-dot] { --lbl-color: var(--lbl-light); background: var(--lbl-color); }
-.dark [data-lbl-dot] { --lbl-color: var(--lbl-dark); }
+/* Dot colors — same approach for background */
+[data-lbl-dot][data-lbl-dot] { --lbl-color: var(--lbl-light); background: var(--lbl-color); }
+.dark [data-lbl-dot][data-lbl-dot] { --lbl-color: var(--lbl-dark); }
 
 /* =========================================================================
    1. TERMINAL — Receipt (scalloped edges, barcode, receipt totals)
