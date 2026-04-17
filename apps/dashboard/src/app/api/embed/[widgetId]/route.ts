@@ -1,6 +1,5 @@
-import { db, widgets, contributions, users, embeds } from '@/lib/db';
-import { eq, and, desc, isNull } from 'drizzle-orm';
-import type { WidgetConfig } from '@/types';
+import { db, embeds, getEmbedPayload } from '@/lib/db';
+import { eq } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,76 +9,20 @@ export async function GET(
 ) {
   const { widgetId } = await params;
 
-  const widget = await db.query.widgets.findFirst({
-    where: and(eq(widgets.id, widgetId), eq(widgets.isPublic, true), isNull(widgets.deletedAt)),
-  });
-
-  if (!widget) {
+  const payload = await getEmbedPayload(widgetId);
+  if (!payload) {
     return Response.json({ error: 'Widget not found' }, { status: 404, headers: corsHeaders() });
   }
 
-  const config: WidgetConfig = (widget.config as WidgetConfig) ?? {};
-
-  const [user, prs] = await Promise.all([
-    db.query.users.findFirst({ where: and(eq(users.id, widget.userId), isNull(users.deletedAt)) }),
-    db
-      .select()
-      .from(contributions)
-      .where(and(eq(contributions.userId, widget.userId), isNull(contributions.deletedAt)))
-      .orderBy(desc(contributions.mergedAt)),
-  ]);
-
-  // Apply filters
-  let filtered = prs;
-
-  if (config.timeRange && config.timeRange !== 'all') {
-    const now = Date.now();
-    const ranges = { week: 7, month: 30, year: 365 };
-    const days = ranges[config.timeRange];
-    const since = new Date(now - days * 24 * 60 * 60 * 1000);
-    filtered = filtered.filter((c) => c.mergedAt && c.mergedAt >= since);
-  }
-
-  if (config.selectedPRs && config.selectedPRs.length > 0) {
-    const selectedSet = new Set(config.selectedPRs);
-    filtered = filtered.filter((c) => selectedSet.has(c.id));
-  }
-
-  if (config.maxItems) {
-    filtered = filtered.slice(0, config.maxItems);
-  }
-
-  // Increment view count async
+  // Increment view count async (side effect specific to the live API; not part of the payload)
   incrementViewCount(widgetId);
 
-  return Response.json(
-    {
-      widget: { name: widget.name, config },
-      contributions: filtered.map((c) => ({
-        id: c.id,
-        title: c.title,
-        titleOverride: c.titleOverride ?? null,
-        url: c.url,
-        repo: c.repo,
-        repoOwner: c.repoOwner,
-        repoName: c.repoName,
-        mergedAt: c.mergedAt?.toISOString() ?? null,
-        additions: c.additions,
-        deletions: c.deletions,
-        changedFiles: c.changedFiles,
-        labels: c.labels ?? null,
-      })),
-      user: user
-        ? { name: user.name, image: user.image, githubUsername: user.githubUsername }
-        : null,
+  return Response.json(payload, {
+    headers: {
+      ...corsHeaders(),
+      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
     },
-    {
-      headers: {
-        ...corsHeaders(),
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-      },
-    },
-  );
+  });
 }
 
 export async function OPTIONS() {

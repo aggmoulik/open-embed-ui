@@ -54,7 +54,21 @@ export function Widget({ options }: WidgetProps) {
   const baseUrl = options.baseUrl || '';
 
   useEffect(() => {
-    fetch(`${baseUrl}/api/embed/${options.widgetId}`)
+    // Static mode: fetch from a pre-exported JSON file (no API needed).
+    // API mode: fetch from `${baseUrl}/api/embed/${widgetId}`.
+    const url = options.dataSrc
+      ? options.dataSrc
+      : options.widgetId
+        ? `${baseUrl}/api/embed/${options.widgetId}`
+        : null;
+
+    if (!url) {
+      setError('Widget requires either `widgetId` or `dataSrc`.');
+      setLoading(false);
+      return;
+    }
+
+    fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error(`Failed to load widget (${res.status})`);
         return res.json();
@@ -62,7 +76,7 @@ export function Widget({ options }: WidgetProps) {
       .then(setData)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [options.widgetId, baseUrl]);
+  }, [options.widgetId, options.dataSrc, baseUrl]);
 
   useEffect(() => {
     if (!data) return;

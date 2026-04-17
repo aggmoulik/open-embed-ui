@@ -21,9 +21,12 @@
     "db:studio": "pnpm --filter @github-embed-ui/db db:studio",
     "db:seed": "pnpm --filter @github-embed-ui/db db:seed",
     "setup": "pnpm install && cp -n packages/db/.env.example packages/db/.env && cp -n apps/dashboard/.env.example apps/dashboard/.env && pnpm db:push",
-    "ui:add": "pnpm --filter @github-embed-ui/ui shadcn add"
+    "ui:add": "pnpm --filter @github-embed-ui/ui shadcn add",
+    "export:widget": "tsx --env-file=packages/db/.env scripts/export-widget.ts"
   },
   "devDependencies": {
+    "@github-embed-ui/db": "workspace:*",
+    "tsx": "4.21.0",
     "turbo": "2.9.3"
   }
 }

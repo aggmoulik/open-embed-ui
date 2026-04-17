@@ -1,0 +1,101 @@
+{
+  "widget": {
+    "name": "Sample Static Widget",
+    "config": {
+      "layout": "scorecard",
+      "theme": "system",
+      "maxItems": 6
+    }
+  },
+  "contributions": [
+    {
+      "id": "pr-1",
+      "title": "feat: add dark mode support",
+      "titleOverride": null,
+      "url": "https://github.com/example/repo/pull/101",
+      "repo": "example/repo",
+      "repoOwner": "example",
+      "repoName": "repo",
+      "mergedAt": "2026-04-10T14:32:00.000Z",
+      "additions": 412,
+      "deletions": 87,
+      "changedFiles": 14,
+      "labels": ["feat", "ui"]
+    },
+    {
+      "id": "pr-2",
+      "title": "fix: hydration mismatch on initial load",
+      "titleOverride": null,
+      "url": "https://github.com/example/another/pull/57",
+      "repo": "example/another",
+      "repoOwner": "example",
+      "repoName": "another",
+      "mergedAt": "2026-04-08T09:11:00.000Z",
+      "additions": 34,
+      "deletions": 21,
+      "changedFiles": 3,
+      "labels": ["fix"]
+    },
+    {
+      "id": "pr-3",
+      "title": "perf: lazy-load heavy chart component",
+      "titleOverride": null,
+      "url": "https://github.com/example/dashboard/pull/812",
+      "repo": "example/dashboard",
+      "repoOwner": "example",
+      "repoName": "dashboard",
+      "mergedAt": "2026-04-05T18:45:00.000Z",
+      "additions": 156,
+      "deletions": 89,
+      "changedFiles": 7,
+      "labels": ["perf"]
+    },
+    {
+      "id": "pr-4",
+      "title": "docs: clarify SSR setup for Next.js 15",
+      "titleOverride": null,
+      "url": "https://github.com/example/docs/pull/24",
+      "repo": "example/docs",
+      "repoOwner": "example",
+      "repoName": "docs",
+      "mergedAt": "2026-04-02T11:00:00.000Z",
+      "additions": 78,
+      "deletions": 12,
+      "changedFiles": 2,
+      "labels": ["docs"]
+    },
+    {
+      "id": "pr-5",
+      "title": "refactor: extract auth client into its own package",
+      "titleOverride": null,
+      "url": "https://github.com/example/monorepo/pull/445",
+      "repo": "example/monorepo",
+      "repoOwner": "example",
+      "repoName": "monorepo",
+      "mergedAt": "2026-03-28T16:20:00.000Z",
+      "additions": 891,
+      "deletions": 723,
+      "changedFiles": 31,
+      "labels": ["refactor"]
+    },
+    {
+      "id": "pr-6",
+      "title": "chore: bump deps and pin pnpm to 9.x",
+      "titleOverride": null,
+      "url": "https://github.com/example/repo/pull/118",
+      "repo": "example/repo",
+      "repoOwner": "example",
+      "repoName": "repo",
+      "mergedAt": "2026-03-22T08:30:00.000Z",
+      "additions": 12,
+      "deletions": 12,
+      "changedFiles": 4,
+      "labels": ["chore"]
+    }
+  ],
+  "user": {
+    "name": "Moulik Aggarwal",
+    "image": "https://avatars.githubusercontent.com/u/1?v=4",
+    "githubUsername": "moulikaggarwal"
+  }
+}
