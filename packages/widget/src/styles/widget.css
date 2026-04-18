@@ -295,9 +295,20 @@
   @apply flex items-center justify-center py-12 text-sm text-gray-400;
 }
 
-/* Error */
+/* Error (legacy — kept for back-compat) */
 .geu-error {
   @apply text-center py-8 text-sm text-red-500;
+}
+
+/* Empty / error placeholders — neutral and compact so they do not
+   dominate a host page. Variants: -blocked, -not-found, -unavailable,
+   -config. All share the base style; variants can override if needed. */
+.geu-empty {
+  @apply flex items-center justify-center py-8 px-4 text-center text-sm text-gray-500
+         border border-dashed border-gray-200 rounded-md;
+}
+.dark .geu-empty {
+  @apply text-gray-400 border-gray-800;
 }
 
 /* =========================================================================

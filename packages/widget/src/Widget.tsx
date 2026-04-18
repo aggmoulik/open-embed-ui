@@ -46,9 +46,11 @@ const layoutExportNames: Record<WidgetLayout, string> = {
   proof: 'ProofLayout',
 };
 
+type ErrorKind = 'blocked' | 'not-found' | 'unavailable' | 'config';
+
 export function Widget({ options }: WidgetProps) {
   const [data, setData] = useState<WidgetData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [errorKind, setErrorKind] = useState<ErrorKind | null>(null);
   const [loading, setLoading] = useState(true);
   const [LayoutComponent, setLayoutComponent] = useState<ComponentType<LayoutProps> | null>(null);
 
@@ -64,18 +66,37 @@ export function Widget({ options }: WidgetProps) {
         : null;
 
     if (!url) {
-      setError('Widget requires either `widgetId` or `dataSrc`.');
+      setErrorKind('config');
       setLoading(false);
       return;
     }
 
     fetch(url)
       .then((res) => {
-        if (!res.ok) throw new Error(`Failed to load widget (${res.status})`);
+        if (res.status === 403) {
+          // Origin not on the widget's allowlist. Log once for the dev;
+          // user-facing text is deliberately neutral (no data leak).
+          console.warn(
+            '[GitHub Embed UI] This domain is not on the widget\'s allowlist. ' +
+              'Ask the widget owner to add your domain in the dashboard.',
+          );
+          throw new WidgetError('blocked');
+        }
+        if (res.status === 404) throw new WidgetError('not-found');
+        if (!res.ok) throw new WidgetError('unavailable');
         return res.json();
       })
       .then(setData)
-      .catch((err) => setError(err.message))
+      .catch((err) => {
+        // CORS failures reject as TypeError before we can read the
+        // status code — surface as "unavailable" with a console hint.
+        if (err instanceof WidgetError) {
+          setErrorKind(err.kind);
+        } else {
+          console.warn('[GitHub Embed UI] Fetch failed — likely a CORS or network error.', err);
+          setErrorKind('unavailable');
+        }
+      })
       .finally(() => setLoading(false));
   }, [options.widgetId, options.dataSrc, baseUrl]);
 
@@ -89,7 +110,7 @@ export function Widget({ options }: WidgetProps) {
   }, [data]);
 
   if (loading) return <div class="geu-loading">Loading...</div>;
-  if (error) return <div class="geu-error">{error}</div>;
+  if (errorKind) return <ErrorPlaceholder kind={errorKind} />;
   if (!data || !LayoutComponent) return null;
 
   const titleOverrides = data.widget.config.titleOverrides;
@@ -106,6 +127,28 @@ export function Widget({ options }: WidgetProps) {
       >
         Powered by GitHub Embed UI
       </a>
+    </div>
+  );
+}
+
+class WidgetError extends Error {
+  constructor(public kind: ErrorKind) {
+    super(kind);
+  }
+}
+
+function ErrorPlaceholder({ kind }: { kind: ErrorKind }) {
+  // Keep text minimal and neutral. No widget id, no owner info, no
+  // hints that could help an attacker enumerate widgets.
+  const messages: Record<ErrorKind, string> = {
+    blocked: 'This widget is not available on this site.',
+    'not-found': 'Widget not found.',
+    unavailable: 'Widget unavailable.',
+    config: 'Widget configuration error. Check the embed snippet.',
+  };
+  return (
+    <div class={`geu-empty geu-empty-${kind}`} role="status" aria-live="polite">
+      {messages[kind]}
     </div>
   );
 }

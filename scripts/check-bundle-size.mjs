@@ -28,8 +28,10 @@ const BUDGETS = {
   'index.mjs': 11 * 1024,
   // ESM core shared chunk (Preact + theme bridge + mount + Widget).
   coreChunk: 12 * 1024,
-  // Per-layout chunks (largest layouts are scorecard/proof at ~1.5 KB).
-  layoutChunk: 2 * 1024,
+  // Per-layout chunks. Most are < 1.5 KB; TerminalLayout acts as the
+  // shared chunk for the receipt-family group after Rollup dedup, so
+  // the ceiling is 3 KB to accommodate it.
+  layoutChunk: 3 * 1024,
 };
 
 // Chunk names that count as "core" (shared runtime), not per-layout.
