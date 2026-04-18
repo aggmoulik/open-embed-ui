@@ -134,7 +134,13 @@ export function createWidget(data: { name: string; description?: string; config:
 
 export function updateWidget(
   id: string,
-  data: Partial<{ name: string; description: string; config: WidgetConfig; isPublic: boolean }>,
+  data: Partial<{
+    name: string;
+    description: string;
+    config: WidgetConfig;
+    isPublic: boolean;
+    allowedOrigins: string[] | null;
+  }>,
 ) {
   return apiFetch<DataResponse<Widget>>(`/api/widgets/${id}`, {
     method: 'PATCH',

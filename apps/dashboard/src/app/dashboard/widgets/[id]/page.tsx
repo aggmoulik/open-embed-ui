@@ -33,6 +33,7 @@ import { createWidget } from '@/lib/api-client';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
 import { PreviewModal } from '@/components/preview-modal';
 import { toast } from 'sonner';
+import { isValidOriginEntry } from '@/lib/db';
 import type { WidgetConfig, Contribution } from '@/types';
 
 const LAYOUTS = [
@@ -68,6 +69,9 @@ export default function WidgetBuilderPage() {
     timeRange: 'all',
     maxItems: 10,
   });
+  // Origin allowlist — multi-line input, one entry per line. Empty
+  // string = unrestricted (mapped to null on save).
+  const [allowedOriginsText, setAllowedOriginsText] = useState('');
   const [saving, setSaving] = useState(false);
   const [showEmbed, setShowEmbed] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -79,8 +83,24 @@ export default function WidgetBuilderPage() {
       setConfig(
         widget.config ?? { theme: 'system', layout: 'grid', timeRange: 'all', maxItems: 10 },
       );
+      setAllowedOriginsText((widget.allowedOrigins ?? []).join('\n'));
     }
   }, [widget]);
+
+  // Live validation of the textarea — invalid lines highlighted before save.
+  const originLines = useMemo(
+    () =>
+      allowedOriginsText
+        .split('\n')
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0),
+    [allowedOriginsText],
+  );
+  const invalidOrigins = useMemo(
+    () => originLines.filter((s) => !isValidOriginEntry(s)),
+    [originLines],
+  );
+  const hasOriginErrors = invalidOrigins.length > 0;
 
   const repos = useMemo(() => {
     const set = new Set(allContributions.map((c) => c.repo));
@@ -152,8 +172,15 @@ export default function WidgetBuilderPage() {
 
   async function handleSave() {
     if (!name.trim()) return;
+    if (hasOriginErrors) {
+      toast.error(`Fix invalid origin(s): ${invalidOrigins.join(', ')}`);
+      return;
+    }
     setSaving(true);
     try {
+      // Empty text → null (unrestricted). Otherwise array of trimmed entries.
+      const allowedOrigins = originLines.length > 0 ? originLines : null;
+
       if (isNew) {
         const res = await createWidget({
           name: name.trim(),
@@ -163,7 +190,12 @@ export default function WidgetBuilderPage() {
         toast.success('Widget created');
         router.push(`/dashboard/widgets/${res.data.id}`);
       } else {
-        await update({ name: name.trim(), description: description.trim() || undefined, config });
+        await update({
+          name: name.trim(),
+          description: description.trim() || undefined,
+          config,
+          allowedOrigins,
+        });
         toast.success('Widget updated');
       }
     } catch {
@@ -297,6 +329,53 @@ export default function WidgetBuilderPage() {
               />
             </CardContent>
           </Card>
+
+          {!isNew && (
+            <Card>
+              <CardHeader className="px-3 py-2 pb-1">
+                <CardTitle className="text-sm">Allowed Origins</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 px-3 pt-0 pb-3">
+                <p className="text-muted-foreground text-[11px] leading-snug">
+                  Restrict embedding to specific domains. Leave empty for unrestricted (any site).
+                  One per line. Examples:
+                  <br />
+                  <code className="text-[10px]">https://example.com</code>
+                  <br />
+                  <code className="text-[10px]">*.example.com</code>
+                  <br />
+                  <code className="text-[10px]">http://localhost:*</code>
+                </p>
+                <textarea
+                  value={allowedOriginsText}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setAllowedOriginsText(e.target.value)
+                  }
+                  placeholder="https://yoursite.com"
+                  rows={4}
+                  className={`w-full rounded-md border bg-transparent px-2 py-1.5 font-mono text-xs outline-none ${
+                    hasOriginErrors
+                      ? 'border-destructive focus:ring-destructive/20 focus:ring-2'
+                      : 'border-input focus:ring-ring/20 focus:ring-2'
+                  }`}
+                />
+                {hasOriginErrors ? (
+                  <p className="text-destructive text-[11px]">
+                    Invalid: {invalidOrigins.slice(0, 3).join(', ')}
+                    {invalidOrigins.length > 3 ? ` +${invalidOrigins.length - 3}` : ''}
+                  </p>
+                ) : originLines.length > 0 ? (
+                  <p className="text-muted-foreground text-[11px]">
+                    {originLines.length} origin{originLines.length === 1 ? '' : 's'} allowed
+                  </p>
+                ) : (
+                  <p className="text-muted-foreground text-[11px]">
+                    Unrestricted — any site can embed this widget
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Center: Repo Filter + PR Selector + Preview */}

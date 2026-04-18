@@ -34,5 +34,5 @@ export type {
 } from './queries/embed';
 
 // Origin allowlist matcher — used by embed-api worker and dashboard /api/embed
-export { parseOrigin, matchesAllowlist } from './lib/origin-match';
+export { parseOrigin, matchesAllowlist, isValidOriginEntry } from './lib/origin-match';
 export type { ParsedOrigin } from './lib/origin-match';

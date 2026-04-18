@@ -108,6 +108,19 @@ function compileEntry(entry: string): Matcher | null {
 }
 
 /**
+ * Returns true iff `entry` is a syntactically valid allowlist entry —
+ * one of: exact `https://...` origin, `*.subdomain` wildcard, or
+ * `http://localhost:*` form. Used for client-side input validation in
+ * the dashboard UI so users get instant feedback before saving.
+ *
+ * Mirrors `compileEntry` exactly — kept as a separate public surface
+ * so the matcher's internals stay private.
+ */
+export function isValidOriginEntry(entry: string): boolean {
+  return compileEntry(entry) !== null;
+}
+
+/**
  * Returns true iff the parsed origin satisfies at least one allowlist
  * entry. An empty or missing allowlist returns true (back-compat: a
  * widget with no allowlist is unrestricted).

@@ -30,6 +30,15 @@ export interface Widget {
   description?: string | null;
   config: WidgetConfig;
   isPublic: boolean;
+  /**
+   * Per-widget origin allowlist enforced at /api/embed/:id and on the
+   * embed-api worker. `null` = unrestricted (any origin can fetch).
+   * Each entry is one of:
+   *   - "https://exact.com"      exact origin
+   *   - "*.example.com"          wildcard subdomain (apex NOT included)
+   *   - "http://localhost:*"     any port on localhost
+   */
+  allowedOrigins?: string[] | null;
   createdAt: Date;
   updatedAt: Date;
 }

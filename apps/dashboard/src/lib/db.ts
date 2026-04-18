@@ -1,4 +1,10 @@
-export { db, getEmbedPayload, parseOrigin, matchesAllowlist } from '@github-embed-ui/db';
+export {
+  db,
+  getEmbedPayload,
+  parseOrigin,
+  matchesAllowlist,
+  isValidOriginEntry,
+} from '@github-embed-ui/db';
 export type {
   EmbedPayload,
   EmbedPayloadResult,
