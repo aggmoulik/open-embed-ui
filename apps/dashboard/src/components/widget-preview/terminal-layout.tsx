@@ -1,5 +1,6 @@
 import { getDisplayLabels, getLabelColor, getCleanTitle } from '@github-embed-ui/types';
 import type { Contribution } from '@/types';
+import { safeHref } from '@/lib/validation/contribution';
 
 interface TerminalLayoutProps {
   contributions: Contribution[];
@@ -98,7 +99,7 @@ export function TerminalLayout({ contributions, titleOverrides }: TerminalLayout
                     );
                   })}
                   <a
-                    href={c.url}
+                    href={safeHref(c.url)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="geu-terminal-title"
@@ -111,7 +112,7 @@ export function TerminalLayout({ contributions, titleOverrides }: TerminalLayout
                   <span className="geu-terminal-hash">#{hash}</span>
                   <span className="geu-terminal-sep">·</span>
                   <a
-                    href={`https://github.com/${c.repo}`}
+                    href={safeHref(`https://github.com/${c.repo}`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="geu-terminal-repo"

@@ -1,5 +1,6 @@
 import { getDisplayLabels, getLabelColor, getCleanTitle } from '@github-embed-ui/types';
 import type { Contribution } from '@/types';
+import { safeHref } from '@/lib/validation/contribution';
 
 interface TerminalLayoutProps {
   contributions: Contribution[];
@@ -72,7 +73,7 @@ export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutPr
                 />
                 <span className="geu-gitlog-hash">{hash}</span>
                 <a
-                  href={c.url}
+                  href={safeHref(c.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="geu-gitlog-title"

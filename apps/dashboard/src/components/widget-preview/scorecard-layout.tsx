@@ -1,5 +1,6 @@
 import { getDisplayLabels, getLabelColor, getCleanTitle } from '@github-embed-ui/types';
 import type { Contribution } from '@/types';
+import { safeHref } from '@/lib/validation/contribution';
 
 interface ScorecardLayoutProps {
   contributions: Contribution[];
@@ -93,7 +94,7 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
                 )}
               </div>
               <a
-                href={c.url}
+                href={safeHref(c.url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="geu-scorecard-title"
@@ -102,7 +103,7 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
                 {cleanTitle}
               </a>
               <a
-                href={`https://github.com/${c.repo}`}
+                href={safeHref(`https://github.com/${c.repo}`)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="geu-scorecard-repo"

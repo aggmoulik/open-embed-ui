@@ -1,5 +1,6 @@
 import { getDisplayLabels, getLabelColor, getCleanTitle } from '../labels';
 import type { Contribution } from '../types';
+import { safeHref } from '../lib/url-safe';
 
 interface Props {
   contributions: Contribution[];
@@ -70,7 +71,7 @@ export function LogLayout({ contributions, titleOverrides }: Props) {
                 );
               })}
               <a
-                href={c.url}
+                href={safeHref(c.url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="geu-log-title"
@@ -79,7 +80,7 @@ export function LogLayout({ contributions, titleOverrides }: Props) {
                 {cleanTitle}
               </a>
               <a
-                href={`https://github.com/${c.repo}`}
+                href={safeHref(`https://github.com/${c.repo}`)}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="geu-log-repo"

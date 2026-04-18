@@ -1,4 +1,5 @@
 import type { Contribution } from '../types';
+import { safeHref, safeImgSrc } from '../lib/url-safe';
 
 const PR_ICON = (
   <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -22,12 +23,12 @@ export function SingleCardLayout({ contributions, titleOverrides }: Props) {
     <div class="geu-single">
       <div class="geu-single-icon">{PR_ICON}</div>
       <div class="geu-card-content">
-        <a href={pr.url} target="_blank" rel="noopener noreferrer" class="geu-card-title geu-card-title-large">
+        <a href={safeHref(pr.url)} target="_blank" rel="noopener noreferrer" class="geu-card-title geu-card-title-large">
           {title}
         </a>
         <div class="geu-card-meta" style={{ fontSize: '13px', marginTop: '6px' }}>
-          <a href={`https://github.com/${pr.repo}`} target="_blank" rel="noopener noreferrer" class="geu-card-repo">
-            <img src={avatarUrl} alt="" class="geu-card-avatar geu-card-avatar-large" loading="lazy" />
+          <a href={safeHref(`https://github.com/${pr.repo}`)} target="_blank" rel="noopener noreferrer" class="geu-card-repo">
+            <img src={safeImgSrc(avatarUrl)} alt="" class="geu-card-avatar geu-card-avatar-large" loading="lazy" />
             {pr.repo}
           </a>
           <span class="geu-additions">+{pr.additions}</span>

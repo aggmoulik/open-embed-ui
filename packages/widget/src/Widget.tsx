@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'preact/hooks';
 import type { ComponentType } from 'preact';
 import type { WidgetData, WidgetOptions, WidgetLayout, Contribution } from './types';
+import { safeHref } from './lib/url-safe';
 
 interface WidgetProps {
   options: WidgetOptions;
@@ -98,7 +99,7 @@ export function Widget({ options }: WidgetProps) {
     <div>
       <LayoutComponent contributions={contributions} titleOverrides={titleOverrides} />
       <a
-        href={baseUrl || 'https://github.com/moulikaggarwal/github-embed-ui'}
+        href={safeHref(baseUrl) === '#' ? 'https://github.com/moulikaggarwal/github-embed-ui' : baseUrl}
         target="_blank"
         rel="noopener noreferrer"
         class="geu-footer"

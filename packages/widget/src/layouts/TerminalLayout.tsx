@@ -1,5 +1,6 @@
 import { getDisplayLabels, getLabelColor, getCleanTitle } from '../labels';
 import type { Contribution } from '../types';
+import { safeHref } from '../lib/url-safe';
 
 interface Props {
   contributions: Contribution[];
@@ -96,7 +97,7 @@ export function TerminalLayout({ contributions, titleOverrides }: Props) {
                     );
                   })}
                   <a
-                    href={c.url}
+                    href={safeHref(c.url)}
                     target="_blank"
                     rel="noopener noreferrer"
                     class="geu-terminal-title"
@@ -109,7 +110,7 @@ export function TerminalLayout({ contributions, titleOverrides }: Props) {
                   <span class="geu-terminal-hash">#{hash}</span>
                   <span class="geu-terminal-sep">·</span>
                   <a
-                    href={`https://github.com/${c.repo}`}
+                    href={safeHref(`https://github.com/${c.repo}`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     class="geu-terminal-repo"

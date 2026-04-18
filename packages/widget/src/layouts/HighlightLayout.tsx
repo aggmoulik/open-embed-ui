@@ -1,5 +1,6 @@
 import { PRCard } from '../components/PRCard';
 import type { Contribution } from '../types';
+import { safeHref, safeImgSrc } from '../lib/url-safe';
 
 const PR_ICON = (
   <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -25,7 +26,7 @@ export function HighlightLayout({ contributions, titleOverrides }: Props) {
         <div class="geu-highlight-icon">{PR_ICON}</div>
         <div class="geu-card-content">
           <a
-            href={featured.url}
+            href={safeHref(featured.url)}
             target="_blank"
             rel="noopener noreferrer"
             class="geu-card-title geu-card-title-large"
@@ -34,12 +35,12 @@ export function HighlightLayout({ contributions, titleOverrides }: Props) {
           </a>
           <div class="geu-card-meta" style={{ fontSize: '13px', marginTop: '6px' }}>
             <a
-              href={`https://github.com/${featured.repo}`}
+              href={safeHref(`https://github.com/${featured.repo}`)}
               target="_blank"
               rel="noopener noreferrer"
               class="geu-card-repo"
             >
-              <img src={avatarUrl} alt="" class="geu-card-avatar geu-card-avatar-large" loading="lazy" />
+              <img src={safeImgSrc(avatarUrl)} alt="" class="geu-card-avatar geu-card-avatar-large" loading="lazy" />
               {featured.repo}
             </a>
             <span class="geu-additions">+{featured.additions}</span>

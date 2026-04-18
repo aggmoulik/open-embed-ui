@@ -1,5 +1,6 @@
 import { GitPullRequest } from 'lucide-react';
 import type { Contribution } from '@/types';
+import { safeHref, safeImgSrc } from '@/lib/validation/contribution';
 
 interface SingleCardLayoutProps {
   contributions: Contribution[];
@@ -21,7 +22,7 @@ export function SingleCardLayout({ contributions, titleOverrides }: SingleCardLa
         </div>
         <div className="min-w-0 flex-1">
           <a
-            href={pr.url}
+            href={safeHref(pr.url)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-base font-semibold hover:underline"
@@ -30,13 +31,13 @@ export function SingleCardLayout({ contributions, titleOverrides }: SingleCardLa
           </a>
           <div className="text-muted-foreground mt-1.5 flex flex-wrap items-center gap-x-3 text-sm">
             <a
-              href={`https://github.com/${pr.repo}`}
+              href={safeHref(`https://github.com/${pr.repo}`)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 font-medium hover:underline"
             >
               <img
-                src={avatarUrl}
+                src={safeImgSrc(avatarUrl)}
                 alt={pr.repoOwner}
                 className="size-5 rounded-full"
                 loading="lazy"

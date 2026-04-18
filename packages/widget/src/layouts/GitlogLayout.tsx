@@ -1,5 +1,6 @@
 import { getDisplayLabels, getLabelColor, getCleanTitle } from '../labels';
 import type { Contribution } from '../types';
+import { safeHref } from '../lib/url-safe';
 
 interface Props {
   contributions: Contribution[];
@@ -66,7 +67,7 @@ export function GitlogLayout({ contributions, titleOverrides }: Props) {
                 />
                 <span class="geu-gitlog-hash">{hash}</span>
                 <a
-                  href={c.url}
+                  href={safeHref(c.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="geu-gitlog-title"

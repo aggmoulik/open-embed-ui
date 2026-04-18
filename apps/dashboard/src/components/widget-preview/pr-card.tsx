@@ -1,5 +1,6 @@
 import { GitPullRequest } from 'lucide-react';
 import type { Contribution } from '@/types';
+import { safeHref, safeImgSrc } from '@/lib/validation/contribution';
 
 interface PRCardProps {
   contribution: Contribution;
@@ -18,7 +19,7 @@ export function PRCard({ contribution, compact, titleOverride, showDescription }
         <GitPullRequest className="mt-0.5 size-4 shrink-0 text-purple-500" />
         <div className="min-w-0 flex-1">
           <a
-            href={contribution.url}
+            href={safeHref(contribution.url)}
             target="_blank"
             rel="noopener noreferrer"
             className={`font-medium hover:underline ${compact ? 'text-xs' : 'text-sm'} line-clamp-1`}
@@ -27,13 +28,13 @@ export function PRCard({ contribution, compact, titleOverride, showDescription }
           </a>
           <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
             <a
-              href={`https://github.com/${contribution.repo}`}
+              href={safeHref(`https://github.com/${contribution.repo}`)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1 hover:underline"
             >
               <img
-                src={avatarUrl}
+                src={safeImgSrc(avatarUrl)}
                 alt={contribution.repoOwner}
                 className="size-4 rounded-full"
                 loading="lazy"

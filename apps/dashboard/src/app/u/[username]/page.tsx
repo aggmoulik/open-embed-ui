@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { WidgetRenderer } from '@/components/widget-preview/widget-renderer';
 import type { Contribution } from '@/types';
+import { safeHref, safeImgSrc } from '@/lib/validation/contribution';
 
 interface Props {
   params: Promise<{ username: string }>;
@@ -54,9 +55,9 @@ export default async function PublicProfilePage({ params }: Props) {
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Profile Header */}
         <div className="flex items-center gap-4">
-          {user.image && (
+          {user.image && safeImgSrc(user.image) && (
             <img
-              src={user.image}
+              src={safeImgSrc(user.image)}
               alt={user.name}
               className="border-border size-16 rounded-full border-2 sm:size-20"
             />
@@ -64,7 +65,7 @@ export default async function PublicProfilePage({ params }: Props) {
           <div>
             <h1 className="text-2xl font-bold sm:text-3xl">{user.name}</h1>
             <a
-              href={`https://github.com/${username}`}
+              href={safeHref(`https://github.com/${encodeURIComponent(username)}`)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground text-sm hover:underline"
@@ -110,7 +111,11 @@ export default async function PublicProfilePage({ params }: Props) {
         {/* Footer */}
         <div className="mt-8 text-center">
           <a
-            href={process.env.NEXT_PUBLIC_APP_URL ?? '/'}
+            href={
+              safeHref(process.env.NEXT_PUBLIC_APP_URL) === '#'
+                ? '/'
+                : (process.env.NEXT_PUBLIC_APP_URL ?? '/')
+            }
             className="text-muted-foreground text-xs hover:underline"
           >
             Powered by GitHub Embed UI

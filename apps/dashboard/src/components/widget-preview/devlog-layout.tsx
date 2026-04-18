@@ -1,5 +1,6 @@
 import { getDisplayLabels, getLabelColor, getCleanTitle } from '@github-embed-ui/types';
 import type { Contribution } from '@/types';
+import { safeHref } from '@/lib/validation/contribution';
 
 interface LogLayoutProps {
   contributions: Contribution[];
@@ -62,7 +63,7 @@ export function DevlogLayout({ contributions, titleOverrides }: LogLayoutProps) 
                 })}
               </div>
               <a
-                href={c.url}
+                href={safeHref(c.url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="geu-devlog-title"
@@ -73,7 +74,7 @@ export function DevlogLayout({ contributions, titleOverrides }: LogLayoutProps) 
               {c.description && <p className="geu-devlog-desc">{c.description}</p>}
               <div className="geu-devlog-meta">
                 <a
-                  href={`https://github.com/${c.repo}`}
+                  href={safeHref(`https://github.com/${c.repo}`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="geu-devlog-repo"

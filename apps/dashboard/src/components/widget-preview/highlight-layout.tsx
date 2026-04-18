@@ -4,6 +4,7 @@ import { GitPullRequest } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@github-embed-ui/ui/components/tabs';
 import { PRCard } from './pr-card';
 import type { Contribution } from '@/types';
+import { safeHref, safeImgSrc } from '@/lib/validation/contribution';
 
 interface HighlightLayoutProps {
   contributions: Contribution[];
@@ -27,7 +28,7 @@ function FeaturedCard({
       </div>
       <div className="min-w-0 flex-1">
         <a
-          href={contribution.url}
+          href={safeHref(contribution.url)}
           target="_blank"
           rel="noopener noreferrer"
           className="text-base font-semibold hover:underline"
@@ -36,13 +37,13 @@ function FeaturedCard({
         </a>
         <div className="text-muted-foreground mt-1.5 flex flex-wrap items-center gap-x-3 text-sm">
           <a
-            href={`https://github.com/${contribution.repo}`}
+            href={safeHref(`https://github.com/${contribution.repo}`)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 font-medium hover:underline"
           >
             <img
-              src={avatarUrl}
+              src={safeImgSrc(avatarUrl)}
               alt={contribution.repoOwner}
               className="size-5 rounded-full"
               loading="lazy"

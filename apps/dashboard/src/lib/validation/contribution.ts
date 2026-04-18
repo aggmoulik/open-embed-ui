@@ -137,3 +137,23 @@ export function isSafeHttpUrl(value: string): boolean {
   }
   return url.protocol === 'http:' || url.protocol === 'https:';
 }
+
+/**
+ * Returns the URL if it parses as http(s); otherwise '#'. Use for
+ * `<a href={safeHref(...)}>` defense-in-depth at render time, even
+ * when the API write boundary already rejects unsafe schemes.
+ */
+export function safeHref(value: string | undefined | null): string {
+  if (!value) return '#';
+  return isSafeHttpUrl(value) ? value : '#';
+}
+
+/**
+ * Returns the URL if it parses as http(s); otherwise empty string.
+ * Use for `<img src={safeImgSrc(...)}>` so the browser does not render
+ * a broken-image icon for a `#` src.
+ */
+export function safeImgSrc(value: string | undefined | null): string {
+  if (!value) return '';
+  return isSafeHttpUrl(value) ? value : '';
+}

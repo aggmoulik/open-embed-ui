@@ -1,4 +1,5 @@
 import type { Contribution } from '../types';
+import { safeHref, safeImgSrc } from '../lib/url-safe';
 
 const PR_ICON = (
   <svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16">
@@ -21,7 +22,7 @@ export function PRCard({ contribution, titleOverride, compact }: PRCardProps) {
       <span class="geu-card-icon">{PR_ICON}</span>
       <div class="geu-card-content">
         <a
-          href={contribution.url}
+          href={safeHref(contribution.url)}
           target="_blank"
           rel="noopener noreferrer"
           class={`geu-card-title ${compact ? 'geu-card-title-compact' : ''}`}
@@ -30,12 +31,12 @@ export function PRCard({ contribution, titleOverride, compact }: PRCardProps) {
         </a>
         <div class="geu-card-meta">
           <a
-            href={`https://github.com/${contribution.repo}`}
+            href={safeHref(`https://github.com/${contribution.repo}`)}
             target="_blank"
             rel="noopener noreferrer"
             class="geu-card-repo"
           >
-            <img src={avatarUrl} alt="" class="geu-card-avatar" loading="lazy" />
+            <img src={safeImgSrc(avatarUrl)} alt="" class="geu-card-avatar" loading="lazy" />
             {contribution.repo}
           </a>
           <span class="geu-additions">+{contribution.additions}</span>

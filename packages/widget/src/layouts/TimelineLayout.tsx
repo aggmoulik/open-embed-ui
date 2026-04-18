@@ -1,4 +1,5 @@
 import type { Contribution } from '../types';
+import { safeHref, safeImgSrc } from '../lib/url-safe';
 
 const PR_ICON_SM = (
   <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12">
@@ -24,12 +25,12 @@ export function TimelineLayout({ contributions, titleOverrides }: Props) {
           <div key={c.id} class="geu-timeline-item">
             <div class="geu-timeline-dot">{PR_ICON_SM}</div>
             <div class="geu-card-content">
-              <a href={c.url} target="_blank" rel="noopener noreferrer" class="geu-card-title">
+              <a href={safeHref(c.url)} target="_blank" rel="noopener noreferrer" class="geu-card-title">
                 {title}
               </a>
               <div class="geu-card-meta">
-                <a href={`https://github.com/${c.repo}`} target="_blank" rel="noopener noreferrer" class="geu-card-repo">
-                  <img src={avatarUrl} alt="" class="geu-card-avatar" loading="lazy" />
+                <a href={safeHref(`https://github.com/${c.repo}`)} target="_blank" rel="noopener noreferrer" class="geu-card-repo">
+                  <img src={safeImgSrc(avatarUrl)} alt="" class="geu-card-avatar" loading="lazy" />
                   {c.repo}
                 </a>
                 <span class="geu-additions">+{c.additions}</span>

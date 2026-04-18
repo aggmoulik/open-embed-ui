@@ -1,5 +1,6 @@
 import { GitPullRequest } from 'lucide-react';
 import type { Contribution } from '@/types';
+import { safeHref, safeImgSrc } from '@/lib/validation/contribution';
 
 interface TimelineLayoutProps {
   contributions: Contribution[];
@@ -22,7 +23,7 @@ export function TimelineLayout({ contributions, titleOverrides }: TimelineLayout
             </div>
             <div className="min-w-0 flex-1 pt-0.5">
               <a
-                href={c.url}
+                href={safeHref(c.url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="line-clamp-1 text-sm font-medium hover:underline"
@@ -31,13 +32,13 @@ export function TimelineLayout({ contributions, titleOverrides }: TimelineLayout
               </a>
               <div className="text-muted-foreground mt-0.5 flex flex-wrap items-center gap-x-2 text-xs">
                 <a
-                  href={`https://github.com/${c.repo}`}
+                  href={safeHref(`https://github.com/${c.repo}`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1 hover:underline"
                 >
                   <img
-                    src={avatarUrl}
+                    src={safeImgSrc(avatarUrl)}
                     alt={c.repoOwner}
                     className="size-4 rounded-full"
                     loading="lazy"
