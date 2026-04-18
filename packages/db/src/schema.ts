@@ -79,6 +79,13 @@ export const widgets = sqliteTable('widgets', {
   description: text('description'),
   config: text('config', { mode: 'json' }).$type<WidgetConfig>(),
   isPublic: integer('is_public', { mode: 'boolean' }).notNull().default(true),
+  // Per-widget origin allowlist enforced by the embed-api worker and the
+  // dashboard's /api/embed route. Each entry is either an exact origin
+  // (e.g. "https://aggmoulik.github.io") or a wildcard subdomain
+  // (e.g. "*.aggmoulik.com"). When `null`, the widget is unrestricted —
+  // any origin can fetch the payload (back-compat for existing widgets
+  // and the default for new widgets unless the owner opts in).
+  allowedOrigins: text('allowed_origins', { mode: 'json' }).$type<string[]>(),
   deletedAt: integer('deleted_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
