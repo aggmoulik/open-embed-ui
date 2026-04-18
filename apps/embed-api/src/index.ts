@@ -13,10 +13,16 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
+interface RateLimit {
+  limit(opts: { key: string }): Promise<{ success: boolean }>;
+}
+
 interface Env {
   TURSO_DATABASE_URL: string;
   TURSO_AUTH_TOKEN: string;
   ASSETS: Fetcher;
+  EMBED_RATE_LIMITER: RateLimit;
+  WIDGET_RATE_LIMITER: RateLimit;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -41,10 +47,24 @@ app.use(
 );
 
 app.get('/api/embed/:widgetId', async (c) => {
+  const widgetId = c.req.param('widgetId');
+
+  // Two-layer rate limiting before any DB work.
+  // Per-IP first (cheaper to fail fast on brute scrapers).
+  const ip = c.req.header('cf-connecting-ip') ?? '0.0.0.0';
+  const ipResult = await c.env.EMBED_RATE_LIMITER.limit({ key: ip });
+  if (!ipResult.success) {
+    return c.json({ error: 'Too many requests' }, 429, { 'Retry-After': '60' });
+  }
+
+  // Per-widget-ID second (prevents amplification via a single popular widget).
+  const widgetResult = await c.env.WIDGET_RATE_LIMITER.limit({ key: widgetId });
+  if (!widgetResult.success) {
+    return c.json({ error: 'Widget rate limit exceeded' }, 429, { 'Retry-After': '60' });
+  }
+
   // Lazy-load to avoid initializing drizzle/libsql at module top-level
   const { getEmbedPayload } = await import('@github-embed-ui/db');
-
-  const widgetId = c.req.param('widgetId');
   const payload = await getEmbedPayload(widgetId);
 
   if (!payload) {

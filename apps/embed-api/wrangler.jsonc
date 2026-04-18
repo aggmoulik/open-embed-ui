@@ -10,5 +10,26 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  // Per-key rate limits enforced at the Cloudflare edge. Free-tier
+  // Workers binding — no KV / Durable Objects required.
+  // Docs: https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
+  "ratelimits": [
+    {
+      // Per-IP: 300 requests / minute / IP across all /api/embed/* calls.
+      // Sized so a busy embed page (~10 widgets) loaded in many tabs is fine,
+      // but a scraping loop is throttled.
+      "name": "EMBED_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 300, "period": 60 }
+    },
+    {
+      // Per-widget-ID: 1000 requests / minute / widget. Stops one widget
+      // being weaponized as a bandwidth amplifier (e.g. embedded on a
+      // high-traffic site with the intent to drain our edge bandwidth).
+      "name": "WIDGET_RATE_LIMITER",
+      "namespace_id": "1002",
+      "simple": { "limit": 1000, "period": 60 }
+    }
+  ]
 }
