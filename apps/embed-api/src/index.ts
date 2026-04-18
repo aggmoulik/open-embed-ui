@@ -11,7 +11,7 @@
  */
 
 import { Hono } from 'hono';
-import { cors } from 'hono/cors';
+import { parseOrigin, matchesAllowlist } from '@github-embed-ui/db';
 
 interface RateLimit {
   limit(opts: { key: string }): Promise<{ success: boolean }>;
@@ -36,27 +36,42 @@ app.use('*', async (c, next) => {
   await next();
 });
 
-// SECURITY: `origin: '*'` is intentional — embedded widgets are loaded
-// from arbitrary third-party origins. This worker exposes ONLY the
-// public read-only embed payload, so the wildcard is the correct
-// policy. If the worker grows to host any authenticated route in the
-// future, scope this CORS middleware to /api/embed/* (already done) and
-// leave the new route to default same-origin policy.
+// SECURITY: CORS is handled per-request in the route handler so we can
+// set `Access-Control-Allow-Origin` dynamically based on the widget's
+// allowedOrigins allowlist. A blanket middleware with `origin: '*'`
+// would leak payloads of restricted widgets cross-origin.
 //
-// Mirror of apps/dashboard/src/app/api/embed/[widgetId]/route.ts —
-// keep in lock-step with that file's CORS contract.
-app.use(
-  '/api/embed/*',
-  cors({
-    origin: '*',
-    allowMethods: ['GET', 'OPTIONS'],
-    allowHeaders: ['Content-Type'],
-    maxAge: 86400,
-  }),
-);
+// For widgets with NULL allowedOrigins (unrestricted), we still return
+// `*`. For restricted widgets, we reflect the matched Origin header
+// only if it's in the allowlist.
+//
+// OPTIONS preflight is handled below as a dedicated route.
+//
+// Mirror of apps/dashboard/src/app/api/embed/[widgetId]/route.ts — keep
+// the access-control contract in lock-step.
+
+// OPTIONS preflight for /api/embed/*. We don't know the widget's
+// allowlist here (URL parse would add latency to every preflight), so
+// echo the Origin header back. The actual GET handler enforces the
+// allowlist, so a preflight "success" does not grant access.
+app.options('/api/embed/*', (c) => {
+  const origin = c.req.header('origin') ?? '*';
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '86400',
+      Vary: 'Origin',
+    },
+  });
+});
 
 app.get('/api/embed/:widgetId', async (c) => {
   const widgetId = c.req.param('widgetId');
+  const originHeader = c.req.header('origin') ?? null;
+  const parsedOrigin = parseOrigin(originHeader);
 
   // Two-layer rate limiting before any DB work.
   // Per-IP first (cheaper to fail fast on brute scrapers).
@@ -74,17 +89,46 @@ app.get('/api/embed/:widgetId', async (c) => {
 
   // Lazy-load to avoid initializing drizzle/libsql at module top-level
   const { getEmbedPayload } = await import('@github-embed-ui/db');
-  const payload = await getEmbedPayload(widgetId);
+  const result = await getEmbedPayload(widgetId);
 
-  if (!payload) {
+  if (!result) {
     return c.json({ error: 'Widget not found' }, 404);
   }
+
+  const { payload, allowedOrigins } = result;
+
+  // Enforce per-widget origin allowlist.
+  if (!matchesAllowlist(parsedOrigin, allowedOrigins)) {
+    // 403 — origin not authorized. Deliberately no payload leak.
+    // `Vary: Origin` ensures the CF edge cache does not serve this
+    // rejection to an allowed origin.
+    return new Response(JSON.stringify({ error: 'Origin not authorized for this widget' }), {
+      status: 403,
+      headers: {
+        'Content-Type': 'application/json',
+        Vary: 'Origin',
+        // No ACAO header — browser blocks the 403 body from JS access.
+      },
+    });
+  }
+
+  // Compute the exact ACAO value:
+  //   - Unrestricted widget (null allowlist)   → `*`
+  //   - Restricted widget with matching origin → echo the origin
+  const acao =
+    allowedOrigins && allowedOrigins.length > 0 && originHeader ? originHeader : '*';
 
   // Fire-and-forget view count update (non-critical)
   c.executionCtx.waitUntil(incrementViewCount(widgetId));
 
   return c.json(payload, 200, {
     'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+    'Access-Control-Allow-Origin': acao,
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    // Essential: CF edge caches vary per Origin so a restricted-widget
+    // response is not served cross-origin to a different requester.
+    Vary: 'Origin',
   });
 });
 

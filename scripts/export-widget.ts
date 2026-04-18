@@ -164,17 +164,22 @@ async function main() {
 
   // 2. Fetch payload (same code path the API uses)
   console.log('  ↻ Fetching widget payload…');
-  const payload = await getEmbedPayload(args.widgetId, {
+  const result = await getEmbedPayload(args.widgetId, {
     ignorePublicFlag: args.ignorePublic,
   });
 
-  if (!payload) {
+  if (!result) {
     console.error(
       `\n✗ Widget ${args.widgetId} not found or is marked private.\n` +
         '  Either set the widget to public in the dashboard, or use --ignore-public.\n',
     );
     process.exit(1);
   }
+
+  // Static export ignores allowedOrigins — by definition, the owner
+  // chose what to ship and where. The matcher only protects the live
+  // API surface, not owner-controlled static files.
+  const { payload } = result;
 
   console.log(
     `  ✓ Found widget "${payload.widget.name}" (${payload.contributions.length} contributions)`,

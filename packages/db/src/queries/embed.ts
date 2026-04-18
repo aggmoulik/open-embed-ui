@@ -52,7 +52,18 @@ export interface GetEmbedPayloadOptions {
 }
 
 /**
- * Returns the embed payload for a widget, or `null` if not found / not eligible.
+ * Internal shape returned by `getEmbedPayload`. Separates client-facing
+ * data (`payload`) from access-control metadata (`allowedOrigins`) that
+ * must NOT leak to the client.
+ */
+export interface EmbedPayloadResult {
+  payload: EmbedPayload;
+  allowedOrigins: string[] | null;
+}
+
+/**
+ * Returns the embed payload + access policy for a widget, or `null` if
+ * not found / not eligible.
  *
  * Eligibility (default):
  *   - widget exists
@@ -63,7 +74,7 @@ export interface GetEmbedPayloadOptions {
 export async function getEmbedPayload(
   widgetId: string,
   opts: GetEmbedPayloadOptions = {},
-): Promise<EmbedPayload | null> {
+): Promise<EmbedPayloadResult | null> {
   const widgetWhere = opts.ignorePublicFlag
     ? and(eq(widgets.id, widgetId), isNull(widgets.deletedAt))
     : and(eq(widgets.id, widgetId), eq(widgets.isPublic, true), isNull(widgets.deletedAt));
@@ -104,7 +115,7 @@ export async function getEmbedPayload(
     filtered = filtered.slice(0, config.maxItems);
   }
 
-  return {
+  const payload: EmbedPayload = {
     widget: { name: widget.name, config },
     contributions: filtered.map((c) => ({
       id: c.id,
@@ -123,5 +134,10 @@ export async function getEmbedPayload(
     user: user
       ? { name: user.name, image: user.image, githubUsername: user.githubUsername }
       : null,
+  };
+
+  return {
+    payload,
+    allowedOrigins: (widget.allowedOrigins as string[] | null) ?? null,
   };
 }
