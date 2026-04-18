@@ -1,5 +1,10 @@
-export { db, getEmbedPayload } from '@github-embed-ui/db';
-export type { EmbedPayload, SerializedContribution } from '@github-embed-ui/db';
+export { db, getEmbedPayload, parseOrigin, matchesAllowlist } from '@github-embed-ui/db';
+export type {
+  EmbedPayload,
+  EmbedPayloadResult,
+  SerializedContribution,
+  ParsedOrigin,
+} from '@github-embed-ui/db';
 export {
   users,
   sessions,
