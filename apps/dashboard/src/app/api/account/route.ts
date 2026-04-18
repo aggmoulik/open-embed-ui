@@ -10,7 +10,6 @@ import {
 } from '@/lib/db';
 import { eq, inArray, count } from 'drizzle-orm';
 import { getSession, errorResponse } from '@/lib/auth-server';
-import { randomUUID } from 'crypto';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,7 +35,7 @@ export async function DELETE() {
 
   // Record the deletion audit trail
   await db.insert(accountDeletions).values({
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     userId,
     email: user.email,
     name: user.name,
@@ -58,7 +57,7 @@ export async function DELETE() {
 
   // Anonymize the user so the email/githubId are freed up for a fresh account.
   // better-auth looks up users by email — if we keep it, re-login reuses this row.
-  const tombstone = randomUUID();
+  const tombstone = crypto.randomUUID();
   await db
     .update(users)
     .set({

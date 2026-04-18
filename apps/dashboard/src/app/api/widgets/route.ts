@@ -2,7 +2,6 @@ import type { NextRequest } from 'next/server';
 import { db, widgets } from '@/lib/db';
 import { eq, and, desc, count, isNull } from 'drizzle-orm';
 import { getSession, errorResponse } from '@/lib/auth-server';
-import { randomUUID } from 'crypto';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,7 +44,7 @@ export async function POST(request: NextRequest) {
     return errorResponse('Name is required', 400);
   }
 
-  const id = randomUUID();
+  const id = crypto.randomUUID();
 
   await db.insert(widgets).values({
     id,

@@ -24,6 +24,9 @@
     "ui:add": "pnpm --filter @github-embed-ui/ui shadcn add",
     "export:widget": "tsx --env-file=packages/db/.env scripts/export-widget.ts"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "workerd"]
+  },
   "devDependencies": {
     "@github-embed-ui/db": "workspace:*",
     "tsx": "4.21.0",
