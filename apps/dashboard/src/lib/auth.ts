@@ -4,6 +4,8 @@ import { magicLink } from 'better-auth/plugins/magic-link';
 import { db, users, schema } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'sqlite',
@@ -14,19 +16,32 @@ export const auth = betterAuth({
       verification: schema.verifications,
     },
   }),
+  // Explicit trusted origins for CSRF / callback / redirect validation.
+  // Without this, better-auth derives only from BETTER_AUTH_URL — explicit
+  // is clearer and makes localhost dev work without surprises.
+  trustedOrigins: [
+    process.env.BETTER_AUTH_URL ?? 'http://localhost:3000',
+    ...(isDev ? ['http://localhost:3000'] : []),
+  ],
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     },
   },
-  plugins: [
-    magicLink({
-      sendMagicLink: async ({ email, url }) => {
-        console.log(`\n  🔗 Magic link for ${email}:\n  ${url}\n`);
-      },
-    }),
-  ],
+  // Magic link is DEV-ONLY. The sendMagicLink callback logs the URL to
+  // stdout, which would leak valid auth tokens through Cloudflare logs
+  // in production. Login UI is also dev-gated (apps/dashboard/src/app/
+  // login/page.tsx) but the API endpoint must also be removed in prod.
+  plugins: isDev
+    ? [
+        magicLink({
+          sendMagicLink: async ({ email, url }) => {
+            console.log(`\n  🔗 Magic link for ${email}:\n  ${url}\n`);
+          },
+        }),
+      ]
+    : [],
   account: {
     accountLinking: {
       enabled: true,
