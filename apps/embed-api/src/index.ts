@@ -36,6 +36,15 @@ app.use('*', async (c, next) => {
   await next();
 });
 
+// SECURITY: `origin: '*'` is intentional — embedded widgets are loaded
+// from arbitrary third-party origins. This worker exposes ONLY the
+// public read-only embed payload, so the wildcard is the correct
+// policy. If the worker grows to host any authenticated route in the
+// future, scope this CORS middleware to /api/embed/* (already done) and
+// leave the new route to default same-origin policy.
+//
+// Mirror of apps/dashboard/src/app/api/embed/[widgetId]/route.ts —
+// keep in lock-step with that file's CORS contract.
 app.use(
   '/api/embed/*',
   cors({

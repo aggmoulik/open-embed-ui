@@ -1,3 +1,17 @@
+/**
+ * Public embed payload endpoint — mirrors apps/embed-api/src/index.ts.
+ *
+ * SECURITY: This is the ONLY API route in the dashboard that returns
+ * `Access-Control-Allow-Origin: *`. The wildcard is intentional — the
+ * widget loads this from arbitrary third-party origins and needs to
+ * read the JSON. Do NOT copy `corsHeaders()` to any other route. All
+ * other API routes are authenticated and rely on Next.js' default
+ * same-origin behavior to prevent cross-origin reads.
+ *
+ * If this contract changes (e.g. per-widget origin allowlist), keep
+ * the worker (apps/embed-api) in lock-step.
+ */
+
 import { db, embeds, getEmbedPayload } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 
