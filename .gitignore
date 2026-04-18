@@ -56,3 +56,9 @@ next-env.d.ts
 
 # widget build output served by dashboard
 apps/dashboard/public/widget.js
+
+# cloudflare workers (apps/embed-api)
+.open-next/
+.wrangler/
+.dry-run/
+apps/embed-api/public/widget.js
