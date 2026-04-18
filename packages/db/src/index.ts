@@ -27,3 +27,7 @@ export const db = new Proxy({} as ReturnType<typeof createDb>, {
 // Shared queries (single source of truth for API + CLI exports)
 export { getEmbedPayload } from './queries/embed';
 export type { EmbedPayload, SerializedContribution, GetEmbedPayloadOptions } from './queries/embed';
+
+// Origin allowlist matcher — used by embed-api worker and dashboard /api/embed
+export { parseOrigin, matchesAllowlist } from './lib/origin-match';
+export type { ParsedOrigin } from './lib/origin-match';
