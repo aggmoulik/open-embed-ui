@@ -33,6 +33,31 @@ The widget fetches `https://your-dashboard-domain/api/embed/abc123` and renders.
 | `data-theme` | no | `light` \| `dark` \| `system` (default: `system`) |
 | `data-mount` | no | CSS selector of an existing element to mount into. If omitted, a `<div>` is inserted next to the script tag. |
 
+#### Origin allowlist (required)
+
+Every widget must declare which sites are allowed to embed it. Default-deny: a widget with no configured origins returns 403 from everywhere. Configure in the dashboard's widget editor under "Allowed Origins". Examples:
+
+```
+https://aggmoulik.github.io
+*.aggmoulik.com
+http://localhost:*
+```
+
+Behavior:
+
+| Allowlist | Result for browser embeds |
+|---|---|
+| (empty) | **Widget renders the placeholder *"This widget is not available on this site."* on every site (default deny).** The API returns 403 with no payload. |
+| Set + origin matches | Widget renders normally |
+| Set + origin mismatch | Widget renders the placeholder *"This widget is not available on this site."*; the API returns 403 with no payload |
+
+Match rules:
+- `https://exact.com` — exact origin (scheme + host + port)
+- `*.example.com` — any subdomain of `example.com` (apex `example.com` is NOT included; list it explicitly if you want both)
+- `http://localhost:*` — any port on localhost (dev convenience)
+
+The allowlist protects the **live API surface only** — the static-export flow (Mode B) is owner-controlled and does not enforce origins.
+
 ---
 
 ### Mode B — Static (no backend)

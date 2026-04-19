@@ -125,7 +125,13 @@ export function fetchWidget(id: string) {
   return apiFetch<DataResponse<Widget>>(`/api/widgets/${id}`);
 }
 
-export function createWidget(data: { name: string; description?: string; config: WidgetConfig }) {
+export function createWidget(data: {
+  name: string;
+  description?: string;
+  config: WidgetConfig;
+  /** Required by the API — at least one entry. See default-deny policy. */
+  allowedOrigins: string[];
+}) {
   return apiFetch<DataResponse<Widget>>('/api/widgets', {
     method: 'POST',
     body: JSON.stringify(data),

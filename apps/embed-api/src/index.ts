@@ -112,11 +112,11 @@ app.get('/api/embed/:widgetId', async (c) => {
     });
   }
 
-  // Compute the exact ACAO value:
-  //   - Unrestricted widget (null allowlist)   → `*`
-  //   - Restricted widget with matching origin → echo the origin
-  const acao =
-    allowedOrigins && allowedOrigins.length > 0 && originHeader ? originHeader : '*';
+  // Compute the exact ACAO value. Widgets default-deny — by the time
+  // we reach this point, allowedOrigins is non-empty AND the origin
+  // matched. Echo the request's Origin (or `*` only as a defensive
+  // fallback for non-browser callers without an Origin header).
+  const acao = originHeader ?? '*';
 
   // Fire-and-forget view count update (non-critical)
   c.executionCtx.waitUntil(incrementViewCount(widgetId));

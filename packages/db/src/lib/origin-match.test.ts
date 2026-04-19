@@ -51,13 +51,14 @@ test('parseOrigin', async (t) => {
   });
 });
 
-test('matchesAllowlist — back-compat (null/empty allowlist)', () => {
+test('matchesAllowlist — default deny (null/empty allowlist)', () => {
   const origin = parseOrigin('https://anywhere.com');
-  assert.equal(matchesAllowlist(origin, null), true);
-  assert.equal(matchesAllowlist(origin, undefined), true);
-  assert.equal(matchesAllowlist(origin, []), true);
-  // Even a missing Origin header is allowed when the widget is unrestricted
-  assert.equal(matchesAllowlist(null, null), true);
+  // Widget owner has not opted into any origin → block from everywhere.
+  assert.equal(matchesAllowlist(origin, null), false);
+  assert.equal(matchesAllowlist(origin, undefined), false);
+  assert.equal(matchesAllowlist(origin, []), false);
+  // Same when the request has no Origin header.
+  assert.equal(matchesAllowlist(null, null), false);
 });
 
 test('matchesAllowlist — restricted but no Origin header → block', () => {

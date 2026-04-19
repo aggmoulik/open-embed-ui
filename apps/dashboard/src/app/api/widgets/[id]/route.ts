@@ -43,26 +43,29 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if (body.isPublic !== undefined) updates.isPublic = body.isPublic;
 
   if ('allowedOrigins' in body) {
+    // Default-deny policy: every widget must have at least one
+    // allowed origin. PATCH cannot clear the allowlist (that would
+    // turn the widget into a public free-for-all). Owners must
+    // either replace the list or delete the widget entirely.
     const value = body.allowedOrigins;
-    if (value === null || value === undefined) {
-      updates.allowedOrigins = null;
-    } else if (!Array.isArray(value)) {
-      return errorResponse('allowedOrigins must be an array of strings or null', 400);
-    } else if (value.length > MAX_ALLOWED_ORIGINS) {
+    if (!Array.isArray(value)) {
+      return errorResponse('allowedOrigins must be an array of strings', 400);
+    }
+    if (value.length === 0) {
+      return errorResponse('allowedOrigins cannot be empty — at least one origin is required', 400);
+    }
+    if (value.length > MAX_ALLOWED_ORIGINS) {
       return errorResponse(
         `allowedOrigins cannot have more than ${MAX_ALLOWED_ORIGINS} entries`,
         400,
       );
-    } else {
-      const cleaned = value.map((v: unknown) => (typeof v === 'string' ? v.trim() : ''));
-      const invalid = cleaned.filter((v: string) => v.length > 0 && !isValidOriginEntry(v));
-      if (invalid.length > 0) {
-        return errorResponse(`Invalid origin entries: ${invalid.join(', ')}`, 400);
-      }
-      const nonEmpty = cleaned.filter((v: string) => v.length > 0);
-      // Empty array → null (unrestricted) for cleaner DB state
-      updates.allowedOrigins = nonEmpty.length > 0 ? nonEmpty : null;
     }
+    const cleaned = value.map((v: unknown) => (typeof v === 'string' ? v.trim() : ''));
+    const invalid = cleaned.filter((v: string) => v.length === 0 || !isValidOriginEntry(v));
+    if (invalid.length > 0) {
+      return errorResponse(`Invalid origin entries: ${invalid.join(', ')}`, 400);
+    }
+    updates.allowedOrigins = cleaned;
   }
 
   await db.update(widgets).set(updates).where(eq(widgets.id, id));

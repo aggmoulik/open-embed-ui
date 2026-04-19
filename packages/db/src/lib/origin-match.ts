@@ -122,8 +122,9 @@ export function isValidOriginEntry(entry: string): boolean {
 
 /**
  * Returns true iff the parsed origin satisfies at least one allowlist
- * entry. An empty or missing allowlist returns true (back-compat: a
- * widget with no allowlist is unrestricted).
+ * entry. **Default-deny semantics**: an empty or missing allowlist
+ * returns false (the widget cannot be embedded anywhere). Owners must
+ * explicitly opt the widget into specific origins via the dashboard.
  *
  * Pass the parsed origin (or null when the request had no Origin header).
  */
@@ -131,10 +132,10 @@ export function matchesAllowlist(
   origin: ParsedOrigin | null,
   allowlist: string[] | null | undefined,
 ): boolean {
-  // Unrestricted widget — always allowed
-  if (!allowlist || allowlist.length === 0) return true;
+  // Default deny — widget owner has not configured any allowed origins.
+  if (!allowlist || allowlist.length === 0) return false;
 
-  // Restricted widget but no Origin header on the request — block
+  // Restricted widget but no Origin header on the request — block.
   if (!origin) return false;
 
   for (const entry of allowlist) {

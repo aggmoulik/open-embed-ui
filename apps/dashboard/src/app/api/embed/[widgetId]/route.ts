@@ -17,10 +17,7 @@ import { eq } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ widgetId: string }> },
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ widgetId: string }> }) {
   const { widgetId } = await params;
   const originHeader = request.headers.get('origin');
   const parsedOrigin = parseOrigin(originHeader);
@@ -29,7 +26,7 @@ export async function GET(
   if (!result) {
     return Response.json(
       { error: 'Widget not found' },
-      { status: 404, headers: baseCorsHeaders(originHeader, null) },
+      { status: 404, headers: baseCorsHeaders(originHeader) },
     );
   }
 
@@ -53,7 +50,7 @@ export async function GET(
 
   return Response.json(payload, {
     headers: {
-      ...baseCorsHeaders(originHeader, allowedOrigins),
+      ...baseCorsHeaders(originHeader),
       'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
     },
   });
@@ -64,24 +61,19 @@ export async function OPTIONS(request: Request) {
   const originHeader = request.headers.get('origin');
   return new Response(null, {
     status: 204,
-    headers: baseCorsHeaders(originHeader, null, 'preflight'),
+    headers: baseCorsHeaders(originHeader, 'preflight'),
   });
 }
 
 function baseCorsHeaders(
   originHeader: string | null,
-  allowedOrigins: string[] | null,
   mode: 'response' | 'preflight' = 'response',
 ): Record<string, string> {
-  // Unrestricted widget (null allowlist) → `*`. Restricted widget with
-  // a matched Origin → echo it. Preflight always echoes (enforcement is
-  // on the GET response).
-  const acao =
-    mode === 'preflight'
-      ? (originHeader ?? '*')
-      : allowedOrigins && allowedOrigins.length > 0 && originHeader
-        ? originHeader
-        : '*';
+  // Widgets default-deny — by the time we set ACAO on a 200, the GET
+  // handler has already validated the origin against the allowlist.
+  // Echo the request's Origin (or `*` only as a defensive fallback for
+  // non-browser callers without an Origin header).
+  const acao = originHeader ?? '*';
 
   const h: Record<string, string> = {
     'Access-Control-Allow-Origin': acao,

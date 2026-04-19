@@ -119,6 +119,9 @@ async function seed() {
       maxItems: 10,
     },
     isPublic: true,
+    // Default-deny — seed includes localhost so the dev preview works
+    // out of the box. Production widgets must add real origins.
+    allowedOrigins: ['http://localhost:3000', 'http://localhost:4321', 'http://localhost:5173'],
   });
 
   await db.insert(schema.embeds).values({
