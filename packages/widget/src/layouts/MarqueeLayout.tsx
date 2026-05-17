@@ -20,12 +20,12 @@ export function MarqueeLayout({ contributions, titleOverrides }: Props) {
         <div class="geu-marquee-track">
           {topRow.map((c) => (
             <div class="geu-marquee-item">
-              <PRCard key={c.id} contribution={c} titleOverride={titleOverrides?.[c.id]} />
+              <PRCard key={c.id} contribution={c} titleOverride={titleOverrides?.[c.id]} uniform />
             </div>
           ))}
           {topRow.map((c) => (
             <div class="geu-marquee-item">
-              <PRCard key={`dup-${c.id}`} contribution={c} titleOverride={titleOverrides?.[c.id]} />
+              <PRCard key={`dup-${c.id}`} contribution={c} titleOverride={titleOverrides?.[c.id]} uniform />
             </div>
           ))}
         </div>
@@ -35,12 +35,12 @@ export function MarqueeLayout({ contributions, titleOverrides }: Props) {
           <div class="geu-marquee-track geu-marquee-track-reverse">
             {bottomRow.map((c) => (
               <div class="geu-marquee-item">
-                <PRCard key={c.id} contribution={c} titleOverride={titleOverrides?.[c.id]} />
+                <PRCard key={c.id} contribution={c} titleOverride={titleOverrides?.[c.id]} uniform />
               </div>
             ))}
             {bottomRow.map((c) => (
               <div class="geu-marquee-item">
-                <PRCard key={`dup-${c.id}`} contribution={c} titleOverride={titleOverrides?.[c.id]} />
+                <PRCard key={`dup-${c.id}`} contribution={c} titleOverride={titleOverrides?.[c.id]} uniform />
               </div>
             ))}
           </div>

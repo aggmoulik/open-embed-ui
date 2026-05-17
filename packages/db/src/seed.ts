@@ -14,7 +14,96 @@ async function seed() {
 
   const userId = 'dev-user-001';
   const widgetId = 'dev-widget-001';
+  const widgetDevlogId = 'dev-widget-002';
   const embedId = 'dev-embed-001';
+
+  // Optional user-authored enrichments per PR. Selective on purpose:
+  // enriched ~30% of the seed so layouts are visibly testing the new
+  // fields (labels, description, blogUrl, titleOverride) AND the
+  // auto-detect / no-blog code paths still get exercised.
+  interface Enrichment {
+    titleOverride?: string;
+    description?: string;
+    blogUrl?: string;
+    blogOpenInNewTab?: boolean;
+    labels?: string[];
+  }
+  const enrichments: Record<string, Enrichment> = {
+    'pr-1002': {
+      description: 'Server-actions UX: surfaces pending/method/data via a hook so forms can render local optimistic state without prop-drilling action results.',
+      blogUrl: 'https://react.dev/reference/react-dom/hooks/useFormStatus',
+      labels: ['FEATURE'],
+    },
+    'pr-1004': {
+      description: 'Reconciler microbench shows 18% wall-clock improvement on 10K-row lists. Hot path now skips equal-fiber sibling traversal.',
+      blogUrl: 'https://example.com/blog/fiber-perf-pass',
+      labels: ['PERFORMANCE'],
+    },
+    'pr-1006': {
+      titleOverride: 'Async RSC streaming — landing in 19.1',
+      description: 'New wire format streams component boundaries as they resolve. Backwards-compatible with the v18 RSC payload via a feature flag during rollout.',
+      blogUrl: 'https://example.com/blog/async-rsc-streaming',
+      labels: ['BREAKING CHANGE', 'FEATURE'],
+    },
+    'pr-1009': {
+      description: 'Snapshot the canonical v19 payload across 40 component variants. Catches regressions in the streaming chunker that unit tests missed twice last quarter.',
+      labels: ['TESTING'],
+    },
+    'pr-1010': {
+      description: 'Profiler was reading the memoized component\'s wrapper instead of the underlying type — crashed when wrapper was a forwardRef.',
+      labels: ['BUG FIX'],
+    },
+    'pr-2001': {
+      description: 'PPR for dynamic routes: render the shell at build time, stream the holes at request time. Cuts TTFB on /products/[id] by ~60% in our benchmarks.',
+      blogUrl: 'https://example.com/blog/ppr-dynamic',
+      labels: ['FEATURE'],
+    },
+    'pr-2003': {
+      description: 'Step-by-step App Router migration covering data fetching, layouts, and server actions. Replaces the v14 guide.',
+      blogUrl: 'https://example.com/blog/app-router-v15-guide',
+      blogOpenInNewTab: false,
+      labels: ['DOCUMENTATION'],
+    },
+    'pr-2006': {
+      description: 'New `after()` primitive lets you schedule work after the response has been sent to the client — analytics, log flushes, cache warm-ups.',
+      labels: ['FEATURE'],
+    },
+    'pr-2008': {
+      description: 'CSS module HMR finally works in Turbopack dev without a full reload. Closes a long-standing complaint from the Tailwind v4 early adopters.',
+      blogUrl: 'https://example.com/blog/turbopack-css-hmr',
+      labels: ['FEATURE'],
+    },
+    'pr-3005': {
+      titleOverride: 'Multi-region latency dashboard',
+      description: 'Aggregates probe RTTs across 14 regions into a single sparkline-per-region heatmap. Replaces the per-region tabs that nobody clicked.',
+      blogUrl: 'https://example.com/blog/multi-region-latency',
+      labels: ['FEATURE'],
+    },
+    'pr-4001': {
+      description: 'Container queries (@container) — query a parent\'s size, not the viewport\'s. The most requested Tailwind feature of the year.',
+      blogUrl: 'https://tailwindcss.com/docs/container-queries',
+      labels: ['FEATURE'],
+    },
+    'pr-4006': {
+      description: 'Native OKLCH color utilities. Wider gamut, perceptually uniform — better gradients without the muddy mid-points sRGB suffers from.',
+      labels: ['FEATURE'],
+    },
+    'pr-5003': {
+      description: 'Turso\'s libSQL HTTP batch API surfaced through Drizzle\'s transaction primitive. Cuts network round-trips on multi-statement workflows.',
+      blogUrl: 'https://example.com/blog/drizzle-turso-batch',
+      labels: ['FEATURE'],
+    },
+    'pr-6005': {
+      titleOverride: 'shadcn Sidebar — finally first-class',
+      description: 'Composable, collapsible, theme-aware sidebar with built-in keyboard navigation. Replaces the half-dozen ad-hoc implementations in the wild.',
+      blogUrl: 'https://ui.shadcn.com/docs/components/sidebar',
+      labels: ['FEATURE'],
+    },
+    'pr-6007': {
+      description: 'Toasts from multiple portals (e.g. nested dialogs) were racing on z-index. Now centrally ordered by a portal-root provider.',
+      labels: ['BUG FIX'],
+    },
+  };
 
   await db.insert(schema.users).values({
     id: userId,
@@ -91,6 +180,7 @@ async function seed() {
 
   for (const c of contributions) {
     const [repoOwner, repoName] = c.repo.split('/');
+    const enrich = enrichments[c.id] ?? {};
     await db.insert(schema.contributions).values({
       id: c.id,
       userId,
@@ -104,6 +194,12 @@ async function seed() {
       additions: c.additions,
       deletions: c.deletions,
       changedFiles: c.changedFiles,
+      titleOverride: enrich.titleOverride,
+      description: enrich.description,
+      blogUrl: enrich.blogUrl,
+      // schema default is true; only set when user wanted same-tab open
+      ...(enrich.blogOpenInNewTab === false ? { blogOpenInNewTab: false } : {}),
+      labels: enrich.labels,
     });
   }
 
@@ -124,6 +220,25 @@ async function seed() {
     allowedOrigins: ['http://localhost:3000', 'http://localhost:4321', 'http://localhost:5173'],
   });
 
+  // Second widget pre-configured to a receipt-family layout so the dev
+  // can flip between `dev-widget-001` (grid) and `dev-widget-002` (devlog)
+  // to visually compare the two visual treatments of blog icon + labels
+  // + description without re-editing widget config every time.
+  await db.insert(schema.widgets).values({
+    id: widgetDevlogId,
+    userId,
+    name: 'My OSS Contributions — devlog view',
+    description: 'Same data as widget 001, rendered with the devlog (vertical timeline + badges) layout.',
+    config: {
+      theme: 'system',
+      layout: 'devlog',
+      timeRange: 'all',
+      maxItems: 10,
+    },
+    isPublic: true,
+    allowedOrigins: ['http://localhost:3000', 'http://localhost:4321', 'http://localhost:5173'],
+  });
+
   await db.insert(schema.embeds).values({
     id: embedId,
     widgetId,
@@ -132,11 +247,112 @@ async function seed() {
     viewCount: 0,
   });
 
+  // ─── Regular (non-admin) user for testing the user-facing layout picker ──
+  // Both dev@localhost.dev and qwertymoulik@gmail.com are admins (per
+  // lib/admin.ts), so neither hits the regular-user code path. This second
+  // user lets you sign in via dev magic-link as `user@example.dev` and
+  // see the 5 featured layouts without the "dev" pills.
+  const regularUserId = 'regular-user-002';
+  const regularWidgetId = 'regular-widget-001';
+  await db.insert(schema.users).values({
+    id: regularUserId,
+    name: 'Regular User',
+    email: 'user@example.dev',
+    githubId: '1',
+    githubUsername: 'regular-user',
+    image: 'https://avatars.githubusercontent.com/u/1',
+  });
+
+  const regularContributions = [
+    {
+      id: 'reg-1',
+      title: 'feat: add keyboard shortcut for command palette',
+      repo: 'myorg/web-app',
+      mergedAt: '2026-03-12',
+      additions: 124,
+      deletions: 8,
+      changedFiles: 4,
+    },
+    {
+      id: 'reg-2',
+      title: 'fix: prevent double-submit on slow networks',
+      repo: 'myorg/web-app',
+      mergedAt: '2026-02-28',
+      additions: 22,
+      deletions: 6,
+      changedFiles: 2,
+    },
+    {
+      id: 'reg-3',
+      title: 'perf: memoize expensive table renders',
+      repo: 'myorg/web-app',
+      mergedAt: '2026-02-10',
+      additions: 47,
+      deletions: 31,
+      changedFiles: 3,
+    },
+    {
+      id: 'reg-4',
+      title: 'docs: rewrite getting-started for v3 API',
+      repo: 'myorg/docs',
+      mergedAt: '2026-01-22',
+      additions: 285,
+      deletions: 110,
+      changedFiles: 6,
+    },
+    {
+      id: 'reg-5',
+      title: 'chore: bump deps + drop Node 18 support',
+      repo: 'myorg/web-app',
+      mergedAt: '2026-01-05',
+      additions: 18,
+      deletions: 18,
+      changedFiles: 2,
+    },
+  ];
+
+  for (const c of regularContributions) {
+    const [repoOwner, repoName] = c.repo.split('/');
+    await db.insert(schema.contributions).values({
+      id: c.id,
+      userId: regularUserId,
+      title: c.title,
+      url: `https://github.com/${c.repo}/pull/${c.id.replace('reg-', '100')}`,
+      repo: c.repo,
+      repoOwner,
+      repoName,
+      githubId: c.id.replace('reg-', '100'),
+      mergedAt: new Date(c.mergedAt),
+      additions: c.additions,
+      deletions: c.deletions,
+      changedFiles: c.changedFiles,
+    });
+  }
+
+  await db.insert(schema.widgets).values({
+    id: regularWidgetId,
+    userId: regularUserId,
+    name: 'My contributions',
+    description: 'Default grid layout — open the builder to see only the 5 featured options.',
+    config: {
+      theme: 'system',
+      layout: 'grid',
+      timeRange: 'all',
+      maxItems: 10,
+    },
+    isPublic: true,
+    allowedOrigins: ['http://localhost:3000', 'http://localhost:4321', 'http://localhost:5173'],
+  });
+
+  const enrichedCount = Object.keys(enrichments).length;
   console.log('Seed complete!');
-  console.log(`  User: ${userId} (dev@localhost.dev)`);
-  console.log(`  Contributions: ${contributions.length}`);
-  console.log(`  Widget: ${widgetId}`);
-  console.log(`  Embed: ${embedId}`);
+  console.log(`  Admin user:   ${userId} (dev@localhost.dev)`);
+  console.log(`    ↳ Contributions: ${contributions.length} (${enrichedCount} with user-authored fields)`);
+  console.log(`    ↳ Widgets: ${widgetId} (grid), ${widgetDevlogId} (devlog)`);
+  console.log(`    ↳ Embed: ${embedId}`);
+  console.log(`  Regular user: ${regularUserId} (user@example.dev)`);
+  console.log(`    ↳ Contributions: ${regularContributions.length}`);
+  console.log(`    ↳ Widget: ${regularWidgetId} (grid) — for testing the featured-only picker view`);
 
   client.close();
 }

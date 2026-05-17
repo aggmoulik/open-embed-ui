@@ -1,4 +1,5 @@
 import { getDisplayLabels, getLabelColor, getCleanTitle } from '../labels';
+import { getBlogTarget } from '../blog';
 import type { Contribution } from '../types';
 import { safeHref } from '../lib/url-safe';
 
@@ -105,7 +106,27 @@ export function TerminalLayout({ contributions, titleOverrides }: Props) {
                   >
                     {cleanTitle}
                   </a>
+                  {(() => {
+                    const blog = getBlogTarget(c);
+                    if (!blog) return null;
+                    return (
+                      <a
+                        href={safeHref(blog.href)}
+                        target={blog.target}
+                        rel={blog.rel}
+                        style={{ marginLeft: '6px', color: 'currentColor', opacity: 0.55, fontSize: '10px', textDecoration: 'none', whiteSpace: 'nowrap' }}
+                        title="Read blog post"
+                      >
+                        [blog↗]
+                      </a>
+                    );
+                  })()}
                 </div>
+                {c.description && (
+                  <div style={{ margin: '4px 0 0', paddingLeft: '24px', fontSize: '10px', opacity: 0.65, lineHeight: 1.5, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                    {c.description}
+                  </div>
+                )}
                 <div class="geu-terminal-line-mid">
                   <span class="geu-terminal-hash">#{hash}</span>
                   <span class="geu-terminal-sep">·</span>

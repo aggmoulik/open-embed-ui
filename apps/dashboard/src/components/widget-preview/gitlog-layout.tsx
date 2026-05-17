@@ -1,4 +1,9 @@
-import { getDisplayLabels, getLabelColor, getCleanTitle } from '@open-embed-ui/types';
+import {
+  getBlogTarget,
+  getDisplayLabels,
+  getLabelColor,
+  getCleanTitle,
+} from '@open-embed-ui/types';
 import type { Contribution } from '@/types';
 import { safeHref } from '@/lib/validation/contribution';
 
@@ -24,15 +29,14 @@ export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutPr
     );
   }
 
+  // Real aggregate stats (merged from the old `log` layout when it was
+  // dropped in feature 17). The previous fluff stats — `rate` (just the
+  // count inflated by 6%) and `impact` (the +/- ratio) — were made-up
+  // derived numbers, not real data; replaced with actual count + repos +
+  // total additions/deletions.
   const totalAdd = contributions.reduce((n, c) => n + c.additions, 0);
   const totalDel = contributions.reduce((n, c) => n + c.deletions, 0);
-  const mergeRate = Math.round(
-    (contributions.length / (contributions.length + Math.round(contributions.length * 0.06))) * 100,
-  );
-  const impact = Math.min(
-    99,
-    Math.round(((totalAdd - totalDel) / Math.max(1, totalAdd + totalDel)) * 100),
-  );
+  const repoCount = new Set(contributions.map((c) => c.repo)).size;
 
   return (
     <div className="geu-gitlog">
@@ -46,12 +50,16 @@ export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutPr
           <span className="geu-gitlog-stats-val">{contributions.length}</span>
         </span>
         <span className="geu-gitlog-stats-item">
-          <span className="geu-gitlog-stats-label">rate:</span>{' '}
-          <span className="geu-gitlog-stats-val">{mergeRate}%</span>
+          <span className="geu-gitlog-stats-label">repos:</span>{' '}
+          <span className="geu-gitlog-stats-val">{repoCount}</span>
         </span>
         <span className="geu-gitlog-stats-item">
-          <span className="geu-gitlog-stats-label">impact:</span>{' '}
-          <span className="geu-gitlog-stats-val">{impact}/100</span>
+          <span className="geu-gitlog-stats-label">+</span>
+          <span className="geu-gitlog-stats-val">{totalAdd.toLocaleString('en-US')}</span>
+        </span>
+        <span className="geu-gitlog-stats-item">
+          <span className="geu-gitlog-stats-label">-</span>
+          <span className="geu-gitlog-stats-val">{totalDel.toLocaleString('en-US')}</span>
         </span>
       </div>
       <div className="geu-gitlog-entries">
@@ -81,6 +89,28 @@ export function GitlogLayout({ contributions, titleOverrides }: TerminalLayoutPr
                 >
                   {cleanTitle}
                 </a>
+                {(() => {
+                  const blog = getBlogTarget(c);
+                  if (!blog) return null;
+                  return (
+                    <a
+                      href={safeHref(blog.href)}
+                      target={blog.target}
+                      rel={blog.rel}
+                      style={{
+                        marginLeft: '6px',
+                        color: 'currentColor',
+                        opacity: 0.55,
+                        fontSize: '10px',
+                        textDecoration: 'none',
+                        whiteSpace: 'nowrap',
+                      }}
+                      title="Read blog post"
+                    >
+                      [blog↗]
+                    </a>
+                  );
+                })()}
               </div>
               {c.description && <div className="geu-gitlog-desc">{c.description}</div>}
             </div>

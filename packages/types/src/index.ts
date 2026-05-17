@@ -9,6 +9,8 @@ export {
   getCleanTitle,
 } from './labels';
 export type { LabelDef } from './labels';
+export { hasBlog, getBlogTarget } from './blog';
+export type { BlogTarget } from './blog';
 
 export type WidgetLayout =
   | 'grid'
@@ -16,11 +18,9 @@ export type WidgetLayout =
   | 'timeline'
   | 'single-card'
   | 'marquee'
-  | 'carousel'
   | 'masonry'
   | 'highlight'
   | 'terminal'
-  | 'log'
   | 'scorecard'
   | 'gitlog'
   | 'devlog'

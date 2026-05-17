@@ -19,12 +19,12 @@ export function MarqueeLayout({ contributions, titleOverrides }: MarqueeLayoutPr
         <div className="animate-marquee flex flex-nowrap gap-3" style={{ width: 'max-content' }}>
           {topRow.map((c) => (
             <div key={c.id} className="w-[280px] flex-[0_0_280px]">
-              <PRCard contribution={c} titleOverride={titleOverrides?.[c.id]} />
+              <PRCard contribution={c} titleOverride={titleOverrides?.[c.id]} uniform />
             </div>
           ))}
           {topRow.map((c) => (
             <div key={`dup-${c.id}`} className="w-[280px] flex-[0_0_280px]">
-              <PRCard contribution={c} titleOverride={titleOverrides?.[c.id]} />
+              <PRCard contribution={c} titleOverride={titleOverrides?.[c.id]} uniform />
             </div>
           ))}
         </div>
@@ -37,12 +37,12 @@ export function MarqueeLayout({ contributions, titleOverrides }: MarqueeLayoutPr
           >
             {bottomRow.map((c) => (
               <div key={c.id} className="w-[280px] flex-[0_0_280px]">
-                <PRCard contribution={c} titleOverride={titleOverrides?.[c.id]} />
+                <PRCard contribution={c} titleOverride={titleOverrides?.[c.id]} uniform />
               </div>
             ))}
             {bottomRow.map((c) => (
               <div key={`dup-${c.id}`} className="w-[280px] flex-[0_0_280px]">
-                <PRCard contribution={c} titleOverride={titleOverrides?.[c.id]} />
+                <PRCard contribution={c} titleOverride={titleOverrides?.[c.id]} uniform />
               </div>
             ))}
           </div>

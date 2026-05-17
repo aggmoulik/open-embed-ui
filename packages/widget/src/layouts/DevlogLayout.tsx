@@ -1,6 +1,8 @@
 import { getDisplayLabels, getLabelColor, getCleanTitle } from '../labels';
+import { getBlogTarget } from '../blog';
 import type { Contribution } from '../types';
 import { safeHref } from '../lib/url-safe';
+import { BLOG_ICON } from '../components/icons';
 
 interface Props {
   contributions: Contribution[];
@@ -60,15 +62,33 @@ export function DevlogLayout({ contributions, titleOverrides }: Props) {
                   );
                 })}
               </div>
-              <a
-                href={safeHref(c.url)}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="geu-devlog-title"
-                title={title}
-              >
-                {cleanTitle}
-              </a>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                <a
+                  href={safeHref(c.url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="geu-devlog-title"
+                  title={title}
+                >
+                  {cleanTitle}
+                </a>
+                {(() => {
+                  const blog = getBlogTarget(c);
+                  if (!blog) return null;
+                  return (
+                    <a
+                      href={safeHref(blog.href)}
+                      target={blog.target}
+                      rel={blog.rel}
+                      style={{ marginTop: '2px', flexShrink: 0, color: 'currentColor', opacity: 0.55, textDecoration: 'none' }}
+                      aria-label="Read blog post"
+                      title="Read blog post"
+                    >
+                      {BLOG_ICON}
+                    </a>
+                  );
+                })()}
+              </div>
               {c.description && (
                 <p class="geu-devlog-desc">{c.description}</p>
               )}

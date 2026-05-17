@@ -1,4 +1,9 @@
-import { getDisplayLabels, getLabelColor, getCleanTitle } from '@open-embed-ui/types';
+import {
+  getBlogTarget,
+  getDisplayLabels,
+  getLabelColor,
+  getCleanTitle,
+} from '@open-embed-ui/types';
 import type { Contribution } from '@/types';
 import { safeHref } from '@/lib/validation/contribution';
 
@@ -107,7 +112,46 @@ export function TerminalLayout({ contributions, titleOverrides }: TerminalLayout
                   >
                     {cleanTitle}
                   </a>
+                  {(() => {
+                    const blog = getBlogTarget(c);
+                    if (!blog) return null;
+                    return (
+                      <a
+                        href={safeHref(blog.href)}
+                        target={blog.target}
+                        rel={blog.rel}
+                        style={{
+                          marginLeft: '6px',
+                          color: 'currentColor',
+                          opacity: 0.55,
+                          fontSize: '10px',
+                          textDecoration: 'none',
+                          whiteSpace: 'nowrap',
+                        }}
+                        title="Read blog post"
+                      >
+                        [blog↗]
+                      </a>
+                    );
+                  })()}
                 </div>
+                {c.description && (
+                  <div
+                    style={{
+                      margin: '4px 0 0',
+                      paddingLeft: '24px',
+                      fontSize: '10px',
+                      opacity: 0.65,
+                      lineHeight: 1.5,
+                      overflow: 'hidden',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                    }}
+                  >
+                    {c.description}
+                  </div>
+                )}
                 <div className="geu-terminal-line-mid">
                   <span className="geu-terminal-hash">#{hash}</span>
                   <span className="geu-terminal-sep">·</span>

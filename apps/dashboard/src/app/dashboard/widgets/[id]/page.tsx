@@ -15,11 +15,9 @@ import {
   Clock,
   CreditCard,
   GalleryHorizontal,
-  Presentation,
   LayoutDashboard,
   Star,
   Receipt,
-  ScrollText,
   Trophy,
   TerminalSquare,
   GitBranch,
@@ -28,7 +26,7 @@ import {
   Code,
   Eye,
 } from 'lucide-react';
-import { useWidget, useContributions } from '@/hooks';
+import { useWidget, useContributions, useIsAdmin } from '@/hooks';
 import { createWidget } from '@/lib/api-client';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
 import { PreviewModal } from '@/components/preview-modal';
@@ -36,27 +34,33 @@ import { toast } from 'sonner';
 import { isValidOriginEntry } from '@/lib/db';
 import type { WidgetConfig, Contribution } from '@/types';
 
+// `featured: true` = visible to every user in the layout picker. The
+// 5 featured layouts cover the patterns real portfolios use most
+// (grid for browse, devlog for chronological story, highlight for
+// hero-plus-supporting, single-card for "latest", scorecard for
+// stats-forward brag walls). The other 7 stay available to admins
+// only — useful for testing and for power users; not surfaced to
+// regular users to keep the picker focused.
 const LAYOUTS = [
-  { value: 'grid' as const, label: 'Grid', icon: LayoutGrid },
-  { value: 'list' as const, label: 'List', icon: List },
-  { value: 'timeline' as const, label: 'Timeline', icon: Clock },
-  { value: 'single-card' as const, label: 'Single Card', icon: CreditCard },
-  { value: 'marquee' as const, label: 'Marquee', icon: GalleryHorizontal },
-  { value: 'carousel' as const, label: 'Carousel', icon: Presentation },
-  { value: 'masonry' as const, label: 'Masonry', icon: LayoutDashboard },
-  { value: 'highlight' as const, label: 'Highlight', icon: Star },
-  { value: 'terminal' as const, label: 'Receipt', icon: Receipt },
-  { value: 'log' as const, label: 'Log', icon: ScrollText },
-  { value: 'scorecard' as const, label: 'Scorecard', icon: Trophy },
-  { value: 'gitlog' as const, label: 'Git Log', icon: TerminalSquare },
-  { value: 'devlog' as const, label: 'Dev Log', icon: GitBranch },
-  { value: 'proof' as const, label: 'Proof of Work', icon: Award },
+  { value: 'grid' as const, label: 'Grid', icon: LayoutGrid, featured: true },
+  { value: 'list' as const, label: 'List', icon: List, featured: false },
+  { value: 'timeline' as const, label: 'Timeline', icon: Clock, featured: false },
+  { value: 'single-card' as const, label: 'Single Card', icon: CreditCard, featured: true },
+  { value: 'marquee' as const, label: 'Marquee', icon: GalleryHorizontal, featured: false },
+  { value: 'masonry' as const, label: 'Masonry', icon: LayoutDashboard, featured: false },
+  { value: 'highlight' as const, label: 'Highlight', icon: Star, featured: true },
+  { value: 'terminal' as const, label: 'Receipt', icon: Receipt, featured: false },
+  { value: 'scorecard' as const, label: 'Scorecard', icon: Trophy, featured: true },
+  { value: 'gitlog' as const, label: 'Git Log', icon: TerminalSquare, featured: false },
+  { value: 'devlog' as const, label: 'Dev Log', icon: GitBranch, featured: true },
+  { value: 'proof' as const, label: 'Proof of Work', icon: Award, featured: false },
 ];
 
 export default function WidgetBuilderPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const isNew = params.id === 'new';
+  const isAdmin = useIsAdmin();
 
   const { data: widget, loading: widgetLoading, update } = useWidget(isNew ? null : params.id);
   const { data: allContributions } = useContributions();
@@ -297,16 +301,32 @@ export default function WidgetBuilderPage() {
             </CardHeader>
             <CardContent className="px-3 pt-0 pb-3">
               <div className="flex flex-wrap gap-1.5">
-                {LAYOUTS.map((l) => (
+                {LAYOUTS.filter(
+                  // Show featured layouts to everyone; admins see all 12;
+                  // also keep the currently-selected layout visible so
+                  // existing widgets using a non-featured layout don't
+                  // appear broken in the picker.
+                  (l) => l.featured || isAdmin || l.value === config.layout,
+                ).map((l) => (
                   <Button
                     key={l.value}
                     variant={config.layout === l.value ? 'default' : 'outline'}
                     size="sm"
                     className="h-7 gap-1 px-2 text-xs"
                     onClick={() => setConfig((prev) => ({ ...prev, layout: l.value }))}
+                    title={
+                      !l.featured && isAdmin
+                        ? 'Admin-only layout (not shown to regular users)'
+                        : undefined
+                    }
                   >
                     <l.icon className="size-3" />
                     {l.label}
+                    {!l.featured && isAdmin && (
+                      <span className="ml-0.5 rounded bg-amber-500/15 px-1 text-[9px] font-semibold tracking-wide text-amber-700 uppercase dark:text-amber-400">
+                        dev
+                      </span>
+                    )}
                   </Button>
                 ))}
               </div>

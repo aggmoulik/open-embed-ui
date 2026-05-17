@@ -102,6 +102,53 @@
   @apply text-red-600;
 }
 
+/* Card-family: label badges, blog icon, description (feature 16) */
+.geu-card-badges {
+  @apply mb-1.5 flex flex-wrap gap-1;
+}
+.geu-card-badge {
+  @apply inline-block rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide;
+}
+.geu-card-title-row {
+  @apply flex items-start gap-1.5;
+}
+.geu-card-blog {
+  @apply mt-0.5 shrink-0 text-gray-500 no-underline transition-colors;
+}
+.geu-card-blog:hover {
+  @apply text-gray-900;
+}
+.dark .geu-card-blog {
+  @apply text-gray-400;
+}
+.dark .geu-card-blog:hover {
+  @apply text-gray-100;
+}
+.geu-card-desc {
+  @apply mt-2 text-xs leading-relaxed text-gray-500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dark .geu-card-desc {
+  @apply text-gray-400;
+}
+
+/* Uniform-height mode for marquee: card stretches to fill its flex
+   parent (h-full) AND reserves space for optional fields (badges,
+   description) so every card in a row has identical height and elements
+   align across cards. */
+.geu-card-uniform {
+  @apply h-full;
+}
+.geu-card-uniform .geu-card-badges {
+  min-height: 18px;
+}
+.geu-card-uniform .geu-card-desc {
+  min-height: 32px;
+}
+
 /* Timeline Layout */
 .geu-timeline {
   @apply relative pl-1;
@@ -180,56 +227,6 @@
 @keyframes geu-marquee-reverse {
   0% { transform: translateX(calc(-50% - 0.375rem)); }
   100% { transform: translateX(0); }
-}
-
-/* Carousel Layout */
-.geu-carousel {
-  @apply relative;
-}
-.geu-carousel-viewport {
-  @apply overflow-hidden rounded-lg;
-}
-.geu-carousel-track {
-  @apply flex transition-transform duration-300 ease-in-out;
-}
-.geu-carousel-slide {
-  @apply w-full shrink-0 px-1;
-}
-.geu-carousel-btn {
-  @apply absolute top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm transition-colors;
-}
-.geu-carousel-btn:hover {
-  @apply bg-gray-50 text-gray-900;
-}
-.dark .geu-carousel-btn {
-  @apply border-gray-700 bg-gray-800 text-gray-300;
-}
-.dark .geu-carousel-btn:hover {
-  @apply bg-gray-700 text-gray-100;
-}
-.geu-carousel-prev {
-  left: -12px;
-}
-.geu-carousel-next {
-  right: -12px;
-}
-.geu-carousel-dots {
-  @apply mt-3 flex justify-center gap-1.5;
-}
-.geu-carousel-dot {
-  @apply size-2 rounded-full bg-gray-300 transition-colors;
-}
-.geu-carousel-dot:hover {
-  @apply bg-gray-400;
-}
-.geu-carousel-dot.active {
-  @apply bg-purple-500;
-}
-.dark .geu-carousel-dot {
-  @apply bg-gray-600;
-}
-.dark .geu-carousel-dot.active {
-  @apply bg-purple-400;
 }
 
 /* Masonry Layout */
@@ -316,7 +313,7 @@
    Shared tokens, light default, `.dark` ancestor overrides.
    ========================================================================= */
 
-.geu-terminal, .geu-log, .geu-scorecard,
+.geu-terminal, .geu-scorecard,
 .geu-gitlog, .geu-devlog, .geu-proof {
   --rcpt-bg: #fafaf8;
   --rcpt-ink: #1a1a18;
@@ -335,7 +332,7 @@
   color: var(--rcpt-ink);
   letter-spacing: 0.01em;
 }
-.dark .geu-terminal, .dark .geu-log, .dark .geu-scorecard,
+.dark .geu-terminal, .dark .geu-scorecard,
 .dark .geu-gitlog, .dark .geu-devlog, .dark .geu-proof {
   --rcpt-bg: #090a0b;
   --rcpt-ink: #d4d4d2;
@@ -428,28 +425,6 @@
 .geu-terminal .geu-terminal-barcode { margin: 14px auto 6px; display: flex; align-items: stretch; justify-content: center; gap: 1px; height: 38px; padding: 0 8px; }
 .geu-terminal .geu-terminal-barcode-bar { display: inline-block; background: var(--rcpt-ink); height: 100%; }
 .geu-terminal .geu-terminal-barcode-label { font-size: 9px; letter-spacing: 0.35em; color: var(--rcpt-muted); margin-top: 2px; }
-
-/* =========================================================================
-   2. LOG — Receipt-family compact one-line-per-entry
-   ========================================================================= */
-
-.geu-log { background: var(--rcpt-bg); }
-.geu-log .geu-log-header { display: flex; gap: 16px; padding: 10px 12px; border-bottom: 1px solid var(--rcpt-rule); background: var(--rcpt-card-bg); }
-.geu-log .geu-log-stat { display: flex; align-items: baseline; gap: 5px; font-size: 14px; font-weight: 700; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
-.geu-log .geu-log-stat small { font-size: 9px; font-weight: 400; color: var(--rcpt-muted); letter-spacing: 0.08em; text-transform: uppercase; }
-.geu-log .geu-log-stat-add { color: var(--rcpt-add); }
-.geu-log .geu-log-stat-del { color: var(--rcpt-del); }
-.geu-log .geu-log-rows { list-style: none; padding: 0; margin: 0; }
-.geu-log .geu-log-row { display: flex; align-items: baseline; gap: 8px; padding: 5px 12px; border-bottom: 1px solid var(--rcpt-rule); font-size: 11px; white-space: nowrap; }
-.geu-log .geu-log-row:last-child { border-bottom: none; }
-.geu-log .geu-log-hash { flex-shrink: 0; width: 62px; color: var(--rcpt-amber); letter-spacing: 0.03em; }
-.geu-log .geu-log-kind { flex-shrink: 0; display: inline-block; width: 58px; padding: 0 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid currentColor; text-align: center; line-height: 1.5; }
-.geu-log .geu-log-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--rcpt-ink); text-decoration: none; }
-.geu-log .geu-log-title:hover { color: var(--rcpt-amber); text-decoration: underline; text-underline-offset: 2px; }
-.geu-log .geu-log-repo { flex-shrink: 0; max-width: 140px; overflow: hidden; text-overflow: ellipsis; color: var(--rcpt-muted); font-size: 10px; }
-.geu-log .geu-log-adds { flex-shrink: 0; width: 50px; text-align: right; color: var(--rcpt-add); font-size: 10px; font-variant-numeric: tabular-nums; }
-.geu-log .geu-log-dels { flex-shrink: 0; width: 50px; text-align: right; color: var(--rcpt-del); font-size: 10px; font-variant-numeric: tabular-nums; }
-.geu-log .geu-log-date { flex-shrink: 0; width: 50px; text-align: right; color: var(--rcpt-dim); font-size: 9.5px; letter-spacing: 0.06em; }
 
 /* =========================================================================
    3. SCORECARD — Receipt-family stats banner + card grid

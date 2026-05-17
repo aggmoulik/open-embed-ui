@@ -1,11 +1,8 @@
 import type { Contribution } from '../types';
 import { safeHref, safeImgSrc } from '../lib/url-safe';
-
-const PR_ICON_SM = (
-  <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12">
-    <path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354Z" />
-  </svg>
-);
+import { getDisplayLabels, getLabelColor } from '../labels';
+import { getBlogTarget } from '../blog';
+import { BLOG_ICON, PR_ICON_SM } from '../components/icons';
 
 interface Props {
   contributions: Contribution[];
@@ -21,13 +18,46 @@ export function TimelineLayout({ contributions, titleOverrides }: Props) {
       {contributions.map((c) => {
         const title = c.titleOverride || titleOverrides?.[c.id] || c.title;
         const avatarUrl = `https://github.com/${c.repoOwner}.png?size=32`;
+        const labels = c.labels && c.labels.length > 0 ? getDisplayLabels(title, c.labels) : [];
+        const blog = getBlogTarget(c);
         return (
           <div key={c.id} class="geu-timeline-item">
             <div class="geu-timeline-dot">{PR_ICON_SM}</div>
             <div class="geu-card-content">
-              <a href={safeHref(c.url)} target="_blank" rel="noopener noreferrer" class="geu-card-title">
-                {title}
-              </a>
+              {labels.length > 0 && (
+                <div class="geu-card-badges">
+                  {labels.map((label) => {
+                    const color = getLabelColor(label);
+                    return (
+                      <span
+                        key={label}
+                        class="geu-card-badge"
+                        data-lbl
+                        style={`--lbl-light:${color.light};--lbl-dark:${color.dark}`}
+                      >
+                        {label}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+              <div class="geu-card-title-row">
+                <a href={safeHref(c.url)} target="_blank" rel="noopener noreferrer" class="geu-card-title">
+                  {title}
+                </a>
+                {blog && (
+                  <a
+                    href={safeHref(blog.href)}
+                    target={blog.target}
+                    rel={blog.rel}
+                    class="geu-card-blog"
+                    aria-label="Read blog post"
+                    title="Read blog post"
+                  >
+                    {BLOG_ICON}
+                  </a>
+                )}
+              </div>
               <div class="geu-card-meta">
                 <a href={safeHref(`https://github.com/${c.repo}`)} target="_blank" rel="noopener noreferrer" class="geu-card-repo">
                   <img src={safeImgSrc(avatarUrl)} alt="" class="geu-card-avatar" loading="lazy" />
@@ -39,6 +69,7 @@ export function TimelineLayout({ contributions, titleOverrides }: Props) {
                   <time dateTime={c.mergedAt}>{new Date(c.mergedAt).toLocaleDateString()}</time>
                 )}
               </div>
+              {c.description && <p class="geu-card-desc">{c.description}</p>}
             </div>
           </div>
         );

@@ -1,6 +1,8 @@
 import { getDisplayLabels, getLabelColor, getCleanTitle } from '../labels';
+import { getBlogTarget } from '../blog';
 import type { Contribution } from '../types';
 import { safeHref } from '../lib/url-safe';
+import { BLOG_ICON } from '../components/icons';
 
 interface Props {
   contributions: Contribution[];
@@ -10,7 +12,7 @@ interface Props {
 /**
  * Scorecard layout — stats banner + compact 2-column card grid.
  *
- * Part of the "receipt family" alongside TerminalLayout and LogLayout.
+ * Part of the "receipt family" alongside TerminalLayout and GitlogLayout.
  * Large hero contribution count on the left, three secondary stats on the
  * right, followed by a responsive card grid showing each PR with kind pill,
  * date, title, repo, and a proportional diff bar.
@@ -83,15 +85,38 @@ export function ScorecardLayout({ contributions, titleOverrides }: Props) {
                   </time>
                 )}
               </div>
-              <a
-                href={safeHref(c.url)}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="geu-scorecard-title"
-                title={title}
-              >
-                {cleanTitle}
-              </a>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                <a
+                  href={safeHref(c.url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="geu-scorecard-title"
+                  title={title}
+                >
+                  {cleanTitle}
+                </a>
+                {(() => {
+                  const blog = getBlogTarget(c);
+                  if (!blog) return null;
+                  return (
+                    <a
+                      href={safeHref(blog.href)}
+                      target={blog.target}
+                      rel={blog.rel}
+                      style={{ marginTop: '2px', flexShrink: 0, color: 'currentColor', opacity: 0.55, textDecoration: 'none' }}
+                      aria-label="Read blog post"
+                      title="Read blog post"
+                    >
+                      {BLOG_ICON}
+                    </a>
+                  );
+                })()}
+              </div>
+              {c.description && (
+                <p style={{ margin: '4px 0 0', fontSize: '11px', opacity: 0.7, lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                  {c.description}
+                </p>
+              )}
               <a
                 href={safeHref(`https://github.com/${c.repo}`)}
                 target="_blank"

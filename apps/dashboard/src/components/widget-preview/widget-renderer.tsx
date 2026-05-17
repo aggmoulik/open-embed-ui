@@ -12,9 +12,6 @@ const SingleCardLayout = lazy(() =>
 const MarqueeLayout = lazy(() =>
   import('./marquee-layout').then((m) => ({ default: m.MarqueeLayout })),
 );
-const CarouselLayout = lazy(() =>
-  import('./carousel-layout').then((m) => ({ default: m.CarouselLayout })),
-);
 const MasonryLayout = lazy(() =>
   import('./masonry-layout').then((m) => ({ default: m.MasonryLayout })),
 );
@@ -24,7 +21,6 @@ const HighlightLayout = lazy(() =>
 const TerminalLayout = lazy(() =>
   import('./terminal-layout').then((m) => ({ default: m.TerminalLayout })),
 );
-const LogLayout = lazy(() => import('./log-layout').then((m) => ({ default: m.LogLayout })));
 const ScorecardLayout = lazy(() =>
   import('./scorecard-layout').then((m) => ({ default: m.ScorecardLayout })),
 );
@@ -42,15 +38,21 @@ const layouts: Record<WidgetLayout, React.LazyExoticComponent<React.ComponentTyp
   timeline: TimelineLayout,
   'single-card': SingleCardLayout,
   marquee: MarqueeLayout,
-  carousel: CarouselLayout,
   masonry: MasonryLayout,
   highlight: HighlightLayout,
   terminal: TerminalLayout,
-  log: LogLayout,
   scorecard: ScorecardLayout,
   gitlog: GitlogLayout,
   devlog: DevlogLayout,
   proof: ProofLayout,
+};
+
+// Layouts that have been dropped: explicit fallbacks keep stored widgets
+// rendering something sensible without a data migration.
+//   carousel (feature 17) → grid     (handled by the `?? layouts.grid` below)
+//   log      (feature 17) → gitlog   (gitlog now carries log's stats too)
+const LEGACY_LAYOUT_FALLBACK: Record<string, WidgetLayout> = {
+  log: 'gitlog',
 };
 
 interface LayoutProps {
@@ -64,9 +66,12 @@ interface WidgetRendererProps {
 }
 
 export function WidgetRenderer({ contributions, config }: WidgetRendererProps) {
-  const layout: WidgetLayout = config.layout ?? 'grid';
+  const requested = config.layout ?? 'grid';
+  const resolved: WidgetLayout = layouts[requested as WidgetLayout]
+    ? (requested as WidgetLayout)
+    : (LEGACY_LAYOUT_FALLBACK[requested as string] ?? 'grid');
   const titleOverrides = config.titleOverrides;
-  const Layout = layouts[layout] ?? layouts.grid;
+  const Layout = layouts[resolved] ?? layouts.grid;
 
   return (
     <Suspense

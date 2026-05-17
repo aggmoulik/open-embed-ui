@@ -93,7 +93,7 @@
    Shared tokens, light default, `.dark` ancestor overrides.
    ========================================================================= */
 
-.geu-terminal, .geu-log, .geu-scorecard,
+.geu-terminal, .geu-scorecard,
 .geu-gitlog, .geu-devlog, .geu-proof {
   --rcpt-bg: #fafaf8;
   --rcpt-ink: #1a1a18;
@@ -112,7 +112,7 @@
   color: var(--rcpt-ink);
   letter-spacing: 0.01em;
 }
-.dark .geu-terminal, .dark .geu-log, .dark .geu-scorecard,
+.dark .geu-terminal, .dark .geu-scorecard,
 .dark .geu-gitlog, .dark .geu-devlog, .dark .geu-proof {
   --rcpt-bg: #090a0b;
   --rcpt-ink: #d4d4d2;
@@ -205,28 +205,6 @@
 .geu-terminal .geu-terminal-barcode { margin: 14px auto 6px; display: flex; align-items: stretch; justify-content: center; gap: 1px; height: 38px; padding: 0 8px; }
 .geu-terminal .geu-terminal-barcode-bar { display: inline-block; background: var(--rcpt-ink); height: 100%; }
 .geu-terminal .geu-terminal-barcode-label { font-size: 9px; letter-spacing: 0.35em; color: var(--rcpt-muted); margin-top: 2px; }
-
-/* =========================================================================
-   2. LOG — Receipt-family compact one-line-per-entry
-   ========================================================================= */
-
-.geu-log { background: var(--rcpt-bg); }
-.geu-log .geu-log-header { display: flex; gap: 16px; padding: 10px 12px; border-bottom: 1px solid var(--rcpt-rule); background: var(--rcpt-card-bg); }
-.geu-log .geu-log-stat { display: flex; align-items: baseline; gap: 5px; font-size: 14px; font-weight: 700; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
-.geu-log .geu-log-stat small { font-size: 9px; font-weight: 400; color: var(--rcpt-muted); letter-spacing: 0.08em; text-transform: uppercase; }
-.geu-log .geu-log-stat-add { color: var(--rcpt-add); }
-.geu-log .geu-log-stat-del { color: var(--rcpt-del); }
-.geu-log .geu-log-rows { list-style: none; padding: 0; margin: 0; }
-.geu-log .geu-log-row { display: flex; align-items: baseline; gap: 8px; padding: 5px 12px; border-bottom: 1px solid var(--rcpt-rule); font-size: 11px; white-space: nowrap; }
-.geu-log .geu-log-row:last-child { border-bottom: none; }
-.geu-log .geu-log-hash { flex-shrink: 0; width: 62px; color: var(--rcpt-amber); letter-spacing: 0.03em; }
-.geu-log .geu-log-kind { flex-shrink: 0; display: inline-block; width: 58px; padding: 0 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid currentColor; text-align: center; line-height: 1.5; }
-.geu-log .geu-log-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--rcpt-ink); text-decoration: none; }
-.geu-log .geu-log-title:hover { color: var(--rcpt-amber); text-decoration: underline; text-underline-offset: 2px; }
-.geu-log .geu-log-repo { flex-shrink: 0; max-width: 140px; overflow: hidden; text-overflow: ellipsis; color: var(--rcpt-muted); font-size: 10px; }
-.geu-log .geu-log-adds { flex-shrink: 0; width: 50px; text-align: right; color: var(--rcpt-add); font-size: 10px; font-variant-numeric: tabular-nums; }
-.geu-log .geu-log-dels { flex-shrink: 0; width: 50px; text-align: right; color: var(--rcpt-del); font-size: 10px; font-variant-numeric: tabular-nums; }
-.geu-log .geu-log-date { flex-shrink: 0; width: 50px; text-align: right; color: var(--rcpt-dim); font-size: 9.5px; letter-spacing: 0.06em; }
 
 /* =========================================================================
    3. SCORECARD — Receipt-family stats banner + card grid

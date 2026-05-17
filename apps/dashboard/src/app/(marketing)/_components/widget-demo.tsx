@@ -14,6 +14,10 @@ const DEMO_CONTRIBUTIONS: Contribution[] = [
     additions: 287,
     deletions: 14,
     changedFiles: 6,
+    description:
+      'Pinterest-style staggered grid with full CSS isolation. Container queries handle responsive breakpoints without JS measurement.',
+    blogUrl: 'https://example.com/posts/masonry-layout',
+    labels: ['FEATURE'],
     createdAt: new Date('2026-05-10T09:00:00Z'),
     updatedAt: new Date('2026-05-12T14:32:00Z'),
   },
@@ -29,6 +33,9 @@ const DEMO_CONTRIBUTIONS: Contribution[] = [
     additions: 94,
     deletions: 23,
     changedFiles: 4,
+    description:
+      'Default-deny check moved before any DB work — closes the trivial enumeration vector.',
+    labels: ['SECURITY'],
     createdAt: new Date('2026-05-07T16:00:00Z'),
     updatedAt: new Date('2026-05-08T11:18:00Z'),
   },
@@ -44,6 +51,10 @@ const DEMO_CONTRIBUTIONS: Contribution[] = [
     additions: 31,
     deletions: 72,
     changedFiles: 3,
+    description:
+      'Replaced two unused tree-shake-defeating barrel exports. Widget.js drops to 15 KB gz.',
+    blogUrl: 'https://example.com/posts/bundle-budget',
+    labels: ['PERFORMANCE'],
     createdAt: new Date('2026-04-29T10:00:00Z'),
     updatedAt: new Date('2026-05-01T20:45:00Z'),
   },
@@ -51,7 +62,7 @@ const DEMO_CONTRIBUTIONS: Contribution[] = [
 
 export function WidgetDemo() {
   return (
-    <section id="demo" className="border-y bg-muted/30 py-16 sm:py-24">
+    <section id="demo" className="bg-muted/30 border-y py-16 sm:py-24">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">See it in action</h2>

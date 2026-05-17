@@ -1,4 +1,10 @@
-import { getDisplayLabels, getLabelColor, getCleanTitle } from '@open-embed-ui/types';
+import { BookOpen } from 'lucide-react';
+import {
+  getBlogTarget,
+  getDisplayLabels,
+  getLabelColor,
+  getCleanTitle,
+} from '@open-embed-ui/types';
 import type { Contribution } from '@/types';
 import { safeHref } from '@/lib/validation/contribution';
 
@@ -87,15 +93,39 @@ export function ProofLayout({ contributions, titleOverrides }: ScorecardLayoutPr
                   );
                 })}
               </div>
-              <a
-                href={safeHref(c.url)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="geu-proof-card-title"
-                title={title}
-              >
-                {cleanTitle}
-              </a>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                <a
+                  href={safeHref(c.url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="geu-proof-card-title"
+                  title={title}
+                >
+                  {cleanTitle}
+                </a>
+                {(() => {
+                  const blog = getBlogTarget(c);
+                  if (!blog) return null;
+                  return (
+                    <a
+                      href={safeHref(blog.href)}
+                      target={blog.target}
+                      rel={blog.rel}
+                      style={{
+                        marginTop: '2px',
+                        flexShrink: 0,
+                        color: 'currentColor',
+                        opacity: 0.55,
+                        textDecoration: 'none',
+                      }}
+                      aria-label="Read blog post"
+                      title="Read blog post"
+                    >
+                      <BookOpen size={13} />
+                    </a>
+                  );
+                })()}
+              </div>
               {c.description && <p className="geu-proof-card-desc">{c.description}</p>}
               <div className="geu-proof-card-meta">
                 <a

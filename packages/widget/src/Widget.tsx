@@ -18,11 +18,9 @@ const layoutImports: Record<WidgetLayout, () => Promise<{ [key: string]: Compone
   timeline: () => import('./layouts/TimelineLayout'),
   'single-card': () => import('./layouts/SingleCardLayout'),
   marquee: () => import('./layouts/MarqueeLayout'),
-  carousel: () => import('./layouts/CarouselLayout'),
   masonry: () => import('./layouts/MasonryLayout'),
   highlight: () => import('./layouts/HighlightLayout'),
   terminal: () => import('./layouts/TerminalLayout'),
-  log: () => import('./layouts/LogLayout'),
   scorecard: () => import('./layouts/ScorecardLayout'),
   gitlog: () => import('./layouts/GitlogLayout'),
   devlog: () => import('./layouts/DevlogLayout'),
@@ -35,15 +33,20 @@ const layoutExportNames: Record<WidgetLayout, string> = {
   timeline: 'TimelineLayout',
   'single-card': 'SingleCardLayout',
   marquee: 'MarqueeLayout',
-  carousel: 'CarouselLayout',
   masonry: 'MasonryLayout',
   highlight: 'HighlightLayout',
   terminal: 'TerminalLayout',
-  log: 'LogLayout',
   scorecard: 'ScorecardLayout',
   gitlog: 'GitlogLayout',
   devlog: 'DevlogLayout',
   proof: 'ProofLayout',
+};
+
+// Dropped layouts → closest surviving sibling (feature 17).
+// carousel → grid is the default unknown-layout path; log → gitlog
+// is special because gitlog now carries log's stats.
+const LEGACY_LAYOUT_FALLBACK: Record<string, WidgetLayout> = {
+  log: 'gitlog',
 };
 
 type ErrorKind = 'blocked' | 'not-found' | 'unavailable' | 'config';
@@ -102,7 +105,13 @@ export function Widget({ options }: WidgetProps) {
 
   useEffect(() => {
     if (!data) return;
-    const layout: WidgetLayout = data.widget.config.layout ?? 'grid';
+    // Tolerate legacy / unknown layout strings (e.g. widgets stored with
+    // `carousel` or `log` after those layouts were dropped) by mapping to
+    // the closest sibling, falling back to grid.
+    const requested = data.widget.config.layout ?? 'grid';
+    const layout: WidgetLayout = layoutImports[requested as WidgetLayout]
+      ? (requested as WidgetLayout)
+      : (LEGACY_LAYOUT_FALLBACK[requested as string] ?? 'grid');
     layoutImports[layout]().then((mod) => {
       const name = layoutExportNames[layout];
       setLayoutComponent(() => mod[name] as ComponentType<LayoutProps>);

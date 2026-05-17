@@ -1,4 +1,10 @@
-import { getDisplayLabels, getLabelColor, getCleanTitle } from '@open-embed-ui/types';
+import { BookOpen } from 'lucide-react';
+import {
+  getBlogTarget,
+  getDisplayLabels,
+  getLabelColor,
+  getCleanTitle,
+} from '@open-embed-ui/types';
 import type { Contribution } from '@/types';
 import { safeHref } from '@/lib/validation/contribution';
 
@@ -11,7 +17,7 @@ interface ScorecardLayoutProps {
  * Dashboard preview mirror of `packages/widget/src/layouts/ScorecardLayout.tsx`.
  *
  * Stats banner + compact 2-column card grid. Part of the "receipt family"
- * alongside TerminalLayout and LogLayout. Uses the same `geu-scorecard-*`
+ * alongside TerminalLayout and GitlogLayout. Uses the same `geu-scorecard-*`
  * class names so the CSS from widget.css can be reused.
  */
 export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayoutProps) {
@@ -93,15 +99,55 @@ export function ScorecardLayout({ contributions, titleOverrides }: ScorecardLayo
                   </time>
                 )}
               </div>
-              <a
-                href={safeHref(c.url)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="geu-scorecard-title"
-                title={title}
-              >
-                {cleanTitle}
-              </a>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                <a
+                  href={safeHref(c.url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="geu-scorecard-title"
+                  title={title}
+                >
+                  {cleanTitle}
+                </a>
+                {(() => {
+                  const blog = getBlogTarget(c);
+                  if (!blog) return null;
+                  return (
+                    <a
+                      href={safeHref(blog.href)}
+                      target={blog.target}
+                      rel={blog.rel}
+                      style={{
+                        marginTop: '2px',
+                        flexShrink: 0,
+                        color: 'currentColor',
+                        opacity: 0.55,
+                        textDecoration: 'none',
+                      }}
+                      aria-label="Read blog post"
+                      title="Read blog post"
+                    >
+                      <BookOpen size={13} />
+                    </a>
+                  );
+                })()}
+              </div>
+              {c.description && (
+                <p
+                  style={{
+                    margin: '4px 0 0',
+                    fontSize: '11px',
+                    opacity: 0.7,
+                    lineHeight: 1.4,
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                  }}
+                >
+                  {c.description}
+                </p>
+              )}
               <a
                 href={safeHref(`https://github.com/${c.repo}`)}
                 target="_blank"

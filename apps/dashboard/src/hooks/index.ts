@@ -5,3 +5,4 @@ export { useUpdateContribution } from './use-update-contribution';
 export { useProfile } from './use-profile';
 export { useWidgets } from './use-widgets';
 export { useWidget } from './use-widget';
+export { useIsAdmin } from './use-is-admin';
