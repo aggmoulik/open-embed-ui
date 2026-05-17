@@ -99,7 +99,7 @@
 
 <div class="code-section">
   <h2>npm Package Usage</h2>
-  <div class="code-block" id="npm-code">import { mount } from '@github-embed-ui/widget';
+  <div class="code-block" id="npm-code">import { mount } from '@open-embed-ui/widget';
 mount('#my-widget', { widgetId: 'YOUR_WIDGET_ID', baseUrl: 'http://localhost:3000' });</div>
 </div>
 
@@ -159,7 +159,7 @@ function loadWidget() {
   document.getElementById('script-code').textContent =
     '<script async src="' + baseUrl + '/widget.js" data-widget-id="' + widgetId + '"><\/script>';
   document.getElementById('npm-code').textContent =
-    "import { mount } from '@github-embed-ui/widget';\nmount('#my-widget', { widgetId: '" + widgetId + "', baseUrl: '" + baseUrl + "' });";
+    "import { mount } from '@open-embed-ui/widget';\nmount('#my-widget', { widgetId: '" + widgetId + "', baseUrl: '" + baseUrl + "' });";
 }
 
 function clearWidget() {

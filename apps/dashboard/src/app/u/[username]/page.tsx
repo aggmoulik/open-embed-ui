@@ -118,7 +118,7 @@ export default async function PublicProfilePage({ params }: Props) {
             }
             className="text-muted-foreground text-xs hover:underline"
           >
-            Powered by GitHub Embed UI
+            Powered by Open Embed UI
           </a>
         </div>
       </div>

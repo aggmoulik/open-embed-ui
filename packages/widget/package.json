@@ -1,5 +1,5 @@
 {
-  "name": "@github-embed-ui/widget",
+  "name": "@open-embed-ui/widget",
   "version": "0.1.0",
   "private": false,
   "main": "dist/index.mjs",
@@ -14,7 +14,7 @@
     "preact": "10.29.0"
   },
   "dependencies": {
-    "@github-embed-ui/types": "workspace:*",
+    "@open-embed-ui/types": "workspace:*",
     "preact": "10.29.0"
   },
   "devDependencies": {

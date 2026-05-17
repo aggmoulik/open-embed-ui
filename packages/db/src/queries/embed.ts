@@ -10,7 +10,7 @@
  */
 
 import { and, desc, eq, isNull } from 'drizzle-orm';
-import type { WidgetConfig } from '@github-embed-ui/types';
+import type { WidgetConfig } from '@open-embed-ui/types';
 import { db } from '../index';
 import { contributions, users, widgets } from '../schema';
 

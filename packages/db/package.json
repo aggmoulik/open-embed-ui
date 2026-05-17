@@ -1,5 +1,5 @@
 {
-  "name": "@github-embed-ui/db",
+  "name": "@open-embed-ui/db",
   "version": "0.1.0",
   "private": true,
   "main": "./src/index.ts",
@@ -17,7 +17,7 @@
     "test": "node --test --import tsx src/lib/*.test.ts"
   },
   "dependencies": {
-    "@github-embed-ui/types": "workspace:*",
+    "@open-embed-ui/types": "workspace:*",
     "@libsql/client": "0.17.2",
     "drizzle-orm": "0.45.2"
   },

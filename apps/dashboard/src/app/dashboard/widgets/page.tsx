@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Button } from '@github-embed-ui/ui/components/button';
-import { Card, CardContent } from '@github-embed-ui/ui/components/card';
-import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
-import { Badge } from '@github-embed-ui/ui/components/badge';
+import { Button } from '@open-embed-ui/ui/components/button';
+import { Card, CardContent } from '@open-embed-ui/ui/components/card';
+import { Skeleton } from '@open-embed-ui/ui/components/skeleton';
+import { Badge } from '@open-embed-ui/ui/components/badge';
 import {
   Box,
   Plus,
@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 import { useWidgets } from '@/hooks';
 import { deleteWidget } from '@/lib/api-client';
-import { ConfirmDialog } from '@github-embed-ui/ui/components/confirm-dialog';
+import { ConfirmDialog } from '@open-embed-ui/ui/components/confirm-dialog';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
 import { PreviewModal } from '@/components/preview-modal';
 import { useState } from 'react';

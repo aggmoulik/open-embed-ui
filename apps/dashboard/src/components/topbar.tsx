@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { authClient } from '@/lib/auth-client';
-import { Avatar, AvatarFallback, AvatarImage } from '@github-embed-ui/ui/components/avatar';
-import { Button } from '@github-embed-ui/ui/components/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@open-embed-ui/ui/components/avatar';
+import { Button } from '@open-embed-ui/ui/components/button';
 import { LogOut, Sun, Moon, Monitor } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';

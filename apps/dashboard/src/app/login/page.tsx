@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 import { authClient } from '@/lib/auth-client';
-import { Button } from '@github-embed-ui/ui/components/button';
-import { Input } from '@github-embed-ui/ui/components/input';
+import { Button } from '@open-embed-ui/ui/components/button';
+import { Input } from '@open-embed-ui/ui/components/input';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@github-embed-ui/ui/components/card';
+} from '@open-embed-ui/ui/components/card';
 import { toast } from 'sonner';
 
 export default function LoginPage() {
@@ -46,7 +46,7 @@ export default function LoginPage() {
     <div className="bg-background flex min-h-screen items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">GitHub Embed UI</CardTitle>
+          <CardTitle className="text-2xl font-bold">Open Embed UI</CardTitle>
           <CardDescription>Sign in to showcase your open-source contributions</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

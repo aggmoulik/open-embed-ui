@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@github-embed-ui/ui/lib/utils';
+import { cn } from '@open-embed-ui/ui/lib/utils';
 import {
   LayoutDashboard,
   GitPullRequest,
@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@github-embed-ui/ui/components/button';
+import { Button } from '@open-embed-ui/ui/components/button';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -62,7 +62,7 @@ export function Sidebar() {
             href="/dashboard"
             className="text-lg font-semibold text-sidebar-foreground"
           >
-            GitHub Embed UI
+            Open Embed UI
           </Link>
         </div>
 

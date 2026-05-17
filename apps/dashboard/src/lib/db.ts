@@ -4,13 +4,13 @@ export {
   parseOrigin,
   matchesAllowlist,
   isValidOriginEntry,
-} from '@github-embed-ui/db';
+} from '@open-embed-ui/db';
 export type {
   EmbedPayload,
   EmbedPayloadResult,
   SerializedContribution,
   ParsedOrigin,
-} from '@github-embed-ui/db';
+} from '@open-embed-ui/db';
 export {
   users,
   sessions,
@@ -20,5 +20,5 @@ export {
   contributions,
   embeds,
   accountDeletions,
-} from '@github-embed-ui/db/schema';
-export * as schema from '@github-embed-ui/db/schema';
+} from '@open-embed-ui/db/schema';
+export * as schema from '@open-embed-ui/db/schema';

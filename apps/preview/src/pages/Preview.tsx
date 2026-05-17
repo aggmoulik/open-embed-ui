@@ -62,7 +62,7 @@ export function Preview() {
       <ViewportFrame viewport={viewport}>
         <WidgetHost widgetId={widgetId} theme={theme} baseUrl={baseUrl} />
       </ViewportFrame>
-      <div class="preview-footer">Powered by GitHub Embed UI</div>
+      <div class="preview-footer">Powered by Open Embed UI</div>
     </div>
   );
 }

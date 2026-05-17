@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Button } from '@github-embed-ui/ui/components/button';
-import { Badge } from '@github-embed-ui/ui/components/badge';
-import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
+import { Button } from '@open-embed-ui/ui/components/button';
+import { Badge } from '@open-embed-ui/ui/components/badge';
+import { Skeleton } from '@open-embed-ui/ui/components/skeleton';
 import { X } from 'lucide-react';
 import { useWidget, useContributions } from '@/hooks';
 import { WidgetRenderer } from '@/components/widget-preview/widget-renderer';

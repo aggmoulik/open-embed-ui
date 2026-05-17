@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@github-embed-ui/ui/components/button';
+import { Button } from '@open-embed-ui/ui/components/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ContributionsPaginationProps {

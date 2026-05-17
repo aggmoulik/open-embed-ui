@@ -1,7 +1,7 @@
 /**
  * Label utilities for widget badge rendering.
  *
- * Mirrors the label functions from @github-embed-ui/types/labels.
+ * Mirrors the label functions from @open-embed-ui/types/labels.
  * Duplicated here because the widget's rollup build cannot transpile
  * raw .ts files from the types package (which has no build step).
  *

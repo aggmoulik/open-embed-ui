@@ -1,7 +1,7 @@
 'use client';
 
 import { GitPullRequest } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@github-embed-ui/ui/components/tabs';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@open-embed-ui/ui/components/tabs';
 import { PRCard } from './pr-card';
 import type { Contribution } from '@/types';
 import { safeHref, safeImgSrc } from '@/lib/validation/contribution';

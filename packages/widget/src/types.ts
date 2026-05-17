@@ -1,8 +1,8 @@
-export type { WidgetLayout, WidgetConfig } from '@github-embed-ui/types';
-export type { BaseContribution } from '@github-embed-ui/types';
+export type { WidgetLayout, WidgetConfig } from '@open-embed-ui/types';
+export type { BaseContribution } from '@open-embed-ui/types';
 
-import type { WidgetConfig } from '@github-embed-ui/types';
-import type { BaseContribution } from '@github-embed-ui/types';
+import type { WidgetConfig } from '@open-embed-ui/types';
+import type { BaseContribution } from '@open-embed-ui/types';
 
 export interface WidgetOptions {
   /**

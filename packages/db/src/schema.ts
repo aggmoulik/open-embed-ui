@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
-import type { WidgetConfig } from '@github-embed-ui/types';
+import type { WidgetConfig } from '@open-embed-ui/types';
 
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(),

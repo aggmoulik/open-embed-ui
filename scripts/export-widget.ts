@@ -26,7 +26,7 @@ const WIDGET_PKG_JSON = join(REPO_ROOT, 'packages', 'widget', 'package.json');
 const WIDGET_SRC_DIR = join(REPO_ROOT, 'packages', 'widget', 'src');
 const DB_PACKAGE_DIR = join(REPO_ROOT, 'packages', 'db');
 
-import { getEmbedPayload } from '@github-embed-ui/db';
+import { getEmbedPayload } from '@open-embed-ui/db';
 
 /**
  * Normalize file:./… URLs from packages/db/.env so they resolve relative to the

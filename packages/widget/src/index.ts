@@ -10,7 +10,7 @@ import cssText from './styles/widget.css';
 export function mount(selector: string | HTMLElement, options: WidgetOptions): void {
   const target = typeof selector === 'string' ? document.querySelector(selector) : selector;
   if (!target) {
-    console.error(`[GitHub Embed UI] Target element not found: ${selector}`);
+    console.error(`[Open Embed UI] Target element not found: ${selector}`);
     return;
   }
 
@@ -149,7 +149,7 @@ function autoInit() {
   const mountSelector = candidate.getAttribute('data-mount');
 
   if (!widgetId && !dataSrc) {
-    console.error('[GitHub Embed UI] <script> tag must have either data-widget-id or data-src.');
+    console.error('[Open Embed UI] <script> tag must have either data-widget-id or data-src.');
     return;
   }
 
@@ -164,7 +164,7 @@ function autoInit() {
   if (mountSelector) {
     host = document.querySelector(mountSelector);
     if (!host) {
-      console.error(`[GitHub Embed UI] data-mount target not found: ${mountSelector}`);
+      console.error(`[Open Embed UI] data-mount target not found: ${mountSelector}`);
       return;
     }
     // Don't double-mount into the same target

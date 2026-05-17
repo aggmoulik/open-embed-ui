@@ -51,7 +51,7 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Theme variables imported from @github-embed-ui/ui/styles/globals.css */
+/* Theme variables imported from @open-embed-ui/ui/styles/globals.css */
 
 @layer base {
   * {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Button } from '@github-embed-ui/ui/components/button';
+import { Button } from '@open-embed-ui/ui/components/button';
 import { Code, Copy, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -21,7 +21,7 @@ export function EmbedCodeModal({ widgetId, open, onClose }: EmbedCodeModalProps)
 
   const codes = {
     script: `<script async src="${baseUrl}/widget.js" data-widget-id="${widgetId}"></script>`,
-    npm: `import { mount } from '@github-embed-ui/widget';\nmount('#my-widget', { widgetId: '${widgetId}', baseUrl: '${baseUrl}' });`,
+    npm: `import { mount } from '@open-embed-ui/widget';\nmount('#my-widget', { widgetId: '${widgetId}', baseUrl: '${baseUrl}' });`,
   };
 
   const copyCode = useCallback(() => {
@@ -44,7 +44,7 @@ export function EmbedCodeModal({ widgetId, open, onClose }: EmbedCodeModalProps)
       key: 'npm',
       label: 'npm Package',
       description:
-        'Install @github-embed-ui/widget and mount programmatically. Preact as peer dependency.',
+        'Install @open-embed-ui/widget and mount programmatically. Preact as peer dependency.',
     },
   ];
 

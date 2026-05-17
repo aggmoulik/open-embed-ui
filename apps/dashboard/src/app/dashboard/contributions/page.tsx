@@ -4,15 +4,15 @@ import { useMemo, useState } from 'react';
 import { ContributionRow } from '@/components/contribution-row';
 import { ContributionEditDialog } from '@/components/contribution-edit-dialog';
 import { ContributionsPagination } from '@/components/contributions-pagination';
-import { Button } from '@github-embed-ui/ui/components/button';
-import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
+import { Button } from '@open-embed-ui/ui/components/button';
+import { Skeleton } from '@open-embed-ui/ui/components/skeleton';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@github-embed-ui/ui/components/select';
+} from '@open-embed-ui/ui/components/select';
 import { GitPullRequest, RefreshCw, Loader2 } from 'lucide-react';
 import { useContributions, useSyncContributions } from '@/hooks';
 import { toast } from 'sonner';

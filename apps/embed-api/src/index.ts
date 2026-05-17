@@ -11,7 +11,7 @@
  */
 
 import { Hono } from 'hono';
-import { parseOrigin, matchesAllowlist } from '@github-embed-ui/db';
+import { parseOrigin, matchesAllowlist } from '@open-embed-ui/db';
 
 interface RateLimit {
   limit(opts: { key: string }): Promise<{ success: boolean }>;
@@ -88,7 +88,7 @@ app.get('/api/embed/:widgetId', async (c) => {
   }
 
   // Lazy-load to avoid initializing drizzle/libsql at module top-level
-  const { getEmbedPayload } = await import('@github-embed-ui/db');
+  const { getEmbedPayload } = await import('@open-embed-ui/db');
   const result = await getEmbedPayload(widgetId);
 
   if (!result) {
@@ -143,7 +143,7 @@ app.notFound((c) => c.text('Not found', 404));
 
 async function incrementViewCount(widgetId: string) {
   try {
-    const { db, embeds } = await import('@github-embed-ui/db');
+    const { db, embeds } = await import('@open-embed-ui/db');
     const { eq } = await import('drizzle-orm');
     const embed = await db.query.embeds.findFirst({ where: eq(embeds.widgetId, widgetId) });
     if (embed) {

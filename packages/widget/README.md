@@ -1,4 +1,4 @@
-# @github-embed-ui/widget
+# @open-embed-ui/widget
 
 Embeddable widget that renders GitHub PR contributions inside a Shadow DOM. Drop a `<script>` tag on any page and a card/grid/timeline/etc. of your merged PRs renders inline.
 
@@ -91,7 +91,7 @@ When `data-src` is present, `data-widget-id` and `baseUrl` are ignored.
 For frameworks where you'd rather not use a script tag, import directly:
 
 ```ts
-import { mount, unmount } from '@github-embed-ui/widget';
+import { mount, unmount } from '@open-embed-ui/widget';
 
 // Static mode
 mount('#my-contributions', {

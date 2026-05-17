@@ -1,7 +1,7 @@
 'use client';
 
-import { Card, CardContent } from '@github-embed-ui/ui/components/card';
-import { Badge } from '@github-embed-ui/ui/components/badge';
+import { Card, CardContent } from '@open-embed-ui/ui/components/card';
+import { Badge } from '@open-embed-ui/ui/components/badge';
 import { GitPullRequest } from 'lucide-react';
 import type { Contribution } from '@/types';
 

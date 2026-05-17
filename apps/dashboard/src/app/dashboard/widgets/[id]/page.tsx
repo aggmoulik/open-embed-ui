@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Button } from '@github-embed-ui/ui/components/button';
-import { Input } from '@github-embed-ui/ui/components/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@github-embed-ui/ui/components/card';
-import { Skeleton } from '@github-embed-ui/ui/components/skeleton';
+import { Button } from '@open-embed-ui/ui/components/button';
+import { Input } from '@open-embed-ui/ui/components/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@open-embed-ui/ui/components/card';
+import { Skeleton } from '@open-embed-ui/ui/components/skeleton';
 import {
   ArrowLeft,
   Save,

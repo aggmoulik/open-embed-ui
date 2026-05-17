@@ -1,4 +1,4 @@
-import { getDisplayLabels, getLabelColor, getCleanTitle } from '@github-embed-ui/types';
+import { getDisplayLabels, getLabelColor, getCleanTitle } from '@open-embed-ui/types';
 import type { Contribution } from '@/types';
 import { safeHref } from '@/lib/validation/contribution';
 

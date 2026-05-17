@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'GitHub Embed UI',
+  title: 'Open Embed UI',
   description: 'Showcase your open-source contributions with embeddable widgets',
 };
 

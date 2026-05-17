@@ -1,5 +1,5 @@
 {
-  "name": "@github-embed-ui/embed-api",
+  "name": "@open-embed-ui/embed-api",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "tail": "wrangler tail"
   },
   "dependencies": {
-    "@github-embed-ui/db": "workspace:*",
+    "@open-embed-ui/db": "workspace:*",
     "hono": "^4.10.4"
   },
   "devDependencies": {

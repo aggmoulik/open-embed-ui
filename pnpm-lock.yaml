@@ -8,7 +8,7 @@ importers:
 
   .:
     devDependencies:
-      '@github-embed-ui/db':
+      '@open-embed-ui/db':
         specifier: workspace:*
         version: link:packages/db
       tsx:
@@ -20,13 +20,13 @@ importers:
 
   apps/dashboard:
     dependencies:
-      '@github-embed-ui/db':
+      '@open-embed-ui/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@github-embed-ui/types':
+      '@open-embed-ui/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@github-embed-ui/ui':
+      '@open-embed-ui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       better-auth:
@@ -108,7 +108,7 @@ importers:
 
   apps/embed-api:
     dependencies:
-      '@github-embed-ui/db':
+      '@open-embed-ui/db':
         specifier: workspace:*
         version: link:../../packages/db
       hono:
@@ -152,12 +152,12 @@ importers:
 
   packages/db:
     dependencies:
-      '@github-embed-ui/types':
-        specifier: workspace:*
-        version: link:../types
       '@libsql/client':
         specifier: 0.17.2
         version: 0.17.2
+      '@open-embed-ui/types':
+        specifier: workspace:*
+        version: link:../types
       drizzle-orm:
         specifier: 0.45.2
         version: 0.45.2(@cloudflare/workers-types@4.20260417.1)(@libsql/client@0.17.2)(@opentelemetry/api@1.9.1)(kysely@0.28.15)
@@ -221,7 +221,7 @@ importers:
 
   packages/widget:
     dependencies:
-      '@github-embed-ui/types':
+      '@open-embed-ui/types':
         specifier: workspace:*
         version: link:../types
       preact:

@@ -6,7 +6,7 @@
  * for a single endpoint. Edge-runtime safe.
  */
 
-import { VALID_LABELS } from '@github-embed-ui/types';
+import { VALID_LABELS } from '@open-embed-ui/types';
 
 export const TITLE_OVERRIDE_MAX = 200;
 export const DESCRIPTION_MAX = 500;

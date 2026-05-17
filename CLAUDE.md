@@ -86,4 +86,4 @@ Target platform is Cloudflare Workers + Pages. Every new feature MUST be compati
 - After running `pnpm ui:add`, fix imports: replace `@/lib/utils` → `../lib/utils` in generated files
 - Components use `radix-ui` (unified package), NOT `@base-ui/react`
 - Export new components from `packages/ui/src/index.ts` if they need barrel export
-- Dashboard imports: `import { X } from '@github-embed-ui/ui/components/x'`
+- Dashboard imports: `import { X } from '@open-embed-ui/ui/components/x'`

@@ -1,13 +1,13 @@
 'use client';
 
-import { Button } from '@github-embed-ui/ui/components/button';
-import { Badge } from '@github-embed-ui/ui/components/badge';
+import { Button } from '@open-embed-ui/ui/components/button';
+import { Badge } from '@open-embed-ui/ui/components/badge';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@github-embed-ui/ui/components/tooltip';
+} from '@open-embed-ui/ui/components/tooltip';
 import { GitPullRequest, Pencil, ExternalLink, Link as LinkIcon } from 'lucide-react';
 import type { Contribution } from '@/types';
 

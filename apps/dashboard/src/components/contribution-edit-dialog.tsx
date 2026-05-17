@@ -8,16 +8,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@github-embed-ui/ui/components/dialog';
-import { Button } from '@github-embed-ui/ui/components/button';
-import { Checkbox } from '@github-embed-ui/ui/components/checkbox';
-import { Input } from '@github-embed-ui/ui/components/input';
-import { Label } from '@github-embed-ui/ui/components/label';
-import { Textarea } from '@github-embed-ui/ui/components/textarea';
+} from '@open-embed-ui/ui/components/dialog';
+import { Button } from '@open-embed-ui/ui/components/button';
+import { Checkbox } from '@open-embed-ui/ui/components/checkbox';
+import { Input } from '@open-embed-ui/ui/components/input';
+import { Label } from '@open-embed-ui/ui/components/label';
+import { Textarea } from '@open-embed-ui/ui/components/textarea';
 import { ExternalLink, Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Contribution } from '@/types';
-import { PREDEFINED_LABELS, LABELS_MAX_COUNT, getDisplayLabels } from '@github-embed-ui/types';
+import { PREDEFINED_LABELS, LABELS_MAX_COUNT, getDisplayLabels } from '@open-embed-ui/types';
 import { useUpdateContribution } from '@/hooks';
 import {
   BLOG_URL_MAX,

@@ -77,7 +77,7 @@ export function Widget({ options }: WidgetProps) {
           // Origin not on the widget's allowlist. Log once for the dev;
           // user-facing text is deliberately neutral (no data leak).
           console.warn(
-            '[GitHub Embed UI] This domain is not on the widget\'s allowlist. ' +
+            '[Open Embed UI] This domain is not on the widget\'s allowlist. ' +
               'Ask the widget owner to add your domain in the dashboard.',
           );
           throw new WidgetError('blocked');
@@ -93,7 +93,7 @@ export function Widget({ options }: WidgetProps) {
         if (err instanceof WidgetError) {
           setErrorKind(err.kind);
         } else {
-          console.warn('[GitHub Embed UI] Fetch failed — likely a CORS or network error.', err);
+          console.warn('[Open Embed UI] Fetch failed — likely a CORS or network error.', err);
           setErrorKind('unavailable');
         }
       })
@@ -125,7 +125,7 @@ export function Widget({ options }: WidgetProps) {
         rel="noopener noreferrer"
         class="geu-footer"
       >
-        Powered by GitHub Embed UI
+        Powered by Open Embed UI
       </a>
     </div>
   );

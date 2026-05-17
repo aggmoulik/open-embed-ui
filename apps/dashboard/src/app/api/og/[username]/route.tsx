@@ -110,7 +110,7 @@ export async function GET(
       </div>
 
       {/* Branding */}
-      <span style={{ marginTop: '32px', fontSize: '14px', color: '#475569' }}>GitHub Embed UI</span>
+      <span style={{ marginTop: '32px', fontSize: '14px', color: '#475569' }}>Open Embed UI</span>
     </div>,
     {
       width: 1200,
