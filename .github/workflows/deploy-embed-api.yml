@@ -1,0 +1,67 @@
+name: Deploy embed-api (Cloudflare Worker)
+
+# Push-to-main only, path-filtered. The worker depends on the widget
+# bundle (which it serves from public/widget.js) and shared packages
+# (db queries, types, origin matcher), so changes in those paths
+# warrant a redeploy too.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/embed-api/**'
+      - 'packages/widget/**'
+      - 'packages/db/**'
+      - 'packages/types/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/deploy-embed-api.yml'
+  workflow_dispatch:
+
+# Cancel in-flight runs when a newer commit lands — prevents two
+# concurrent wrangler deploys from racing on the same worker.
+concurrency:
+  group: deploy-embed-api
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: build · widget · wrangler deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.29.3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Build the widget bundle so the worker's `copy:widget` step picks
+      # up the latest dist/widget.js. The embed-api's `deploy` script
+      # also runs `copy:widget` but it's harmless to do here as well
+      # (rebuild is cheap, and this matches the local dev flow).
+      - name: Build widget
+        run: pnpm build:widget
+
+      - name: Deploy with Wrangler
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/embed-api
+          # The package's `deploy` script runs `copy:widget && wrangler deploy`
+          # so we let it drive (consistent with local `pnpm --filter
+          # @open-embed-ui/embed-api deploy`).
+          command: deploy
+          packageManager: pnpm

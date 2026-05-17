@@ -1,0 +1,61 @@
+name: CI
+
+# Push-to-main only. No PR-triggered runs per user preference — Vercel
+# preview deploys + PR-time lint gating are explicitly out of scope.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: lint · typecheck · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          # Pinned to match `packageManager` in root package.json.
+          version: 10.29.3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Lint runs but doesn't fail CI yet — 5 pre-existing
+      # `react-hooks/set-state-in-effect` errors in apps/dashboard/src/hooks/*
+      # need a structural refactor (move to SWR/TanStack Query or restructure
+      # useEffect calls). Tracked as follow-up; lint failures are visible in
+      # the run output for visibility without blocking deploys.
+      - name: Lint (warn-only)
+        run: pnpm lint
+        continue-on-error: true
+
+      # Hard gate: any tsc error fails the build.
+      - name: Type-check (dashboard)
+        run: pnpm --filter @open-embed-ui/dashboard exec tsc --noEmit
+
+      # Build the widget bundle first (the dashboard build copies widget.js
+      # into apps/dashboard/public/), then the full turbo build. CI guard
+      # script (scripts/check-bundle-size.mjs) enforces the 19 KB gz budget
+      # as part of build:widget.
+      - name: Build widget
+        run: pnpm build:widget
+
+      - name: Build all (turbo)
+        run: pnpm build
