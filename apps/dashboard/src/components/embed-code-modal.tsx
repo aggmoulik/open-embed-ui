@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Button } from '@open-embed-ui/ui/components/button';
 import { Code, Copy, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -19,10 +19,16 @@ export function EmbedCodeModal({ widgetId, open, onClose }: EmbedCodeModalProps)
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
-  const codes = {
-    script: `<script async src="${baseUrl}/widget.js" data-widget-id="${widgetId}"></script>`,
-    npm: `import { mount } from '@open-embed-ui/widget';\nmount('#my-widget', { widgetId: '${widgetId}', baseUrl: '${baseUrl}' });`,
-  };
+  // Memoize so `copyCode`'s deps are stable across renders — otherwise the
+  // object literal would be a fresh reference each render and break the
+  // useCallback memoization (react-hooks/exhaustive-deps warning).
+  const codes = useMemo(
+    () => ({
+      script: `<script async src="${baseUrl}/widget.js" data-widget-id="${widgetId}"></script>`,
+      npm: `import { mount } from '@open-embed-ui/widget';\nmount('#my-widget', { widgetId: '${widgetId}', baseUrl: '${baseUrl}' });`,
+    }),
+    [baseUrl, widgetId],
+  );
 
   const copyCode = useCallback(() => {
     navigator.clipboard.writeText(codes[tab]);

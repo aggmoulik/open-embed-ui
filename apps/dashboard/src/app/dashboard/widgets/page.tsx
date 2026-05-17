@@ -7,48 +7,15 @@ import { Button } from '@open-embed-ui/ui/components/button';
 import { Card, CardContent } from '@open-embed-ui/ui/components/card';
 import { Skeleton } from '@open-embed-ui/ui/components/skeleton';
 import { Badge } from '@open-embed-ui/ui/components/badge';
-import {
-  Box,
-  Plus,
-  Pencil,
-  Trash2,
-  Code,
-  Eye,
-  LayoutGrid,
-  List,
-  Clock,
-  CreditCard,
-  GalleryHorizontal,
-  LayoutDashboard,
-  Star,
-  Receipt,
-  Trophy,
-  TerminalSquare,
-  GitBranch,
-  Award,
-} from 'lucide-react';
+import { Box, Plus, Pencil, Trash2, Code, Eye, LayoutGrid } from 'lucide-react';
 import { useWidgets } from '@/hooks';
 import { deleteWidget } from '@/lib/api-client';
 import { ConfirmDialog } from '@open-embed-ui/ui/components/confirm-dialog';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
 import { PreviewModal } from '@/components/preview-modal';
 import { useState } from 'react';
+import { layoutIcons } from '@/lib/layouts';
 import type { Widget } from '@/types';
-
-const layoutIcons = {
-  grid: LayoutGrid,
-  list: List,
-  timeline: Clock,
-  'single-card': CreditCard,
-  marquee: GalleryHorizontal,
-  masonry: LayoutDashboard,
-  highlight: Star,
-  terminal: Receipt,
-  scorecard: Trophy,
-  gitlog: TerminalSquare,
-  devlog: GitBranch,
-  proof: Award,
-};
 
 export default function WidgetsPage() {
   const { data: widgets, loading, error, refetch } = useWidgets();

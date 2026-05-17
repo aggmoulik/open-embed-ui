@@ -6,55 +6,15 @@ import { Button } from '@open-embed-ui/ui/components/button';
 import { Input } from '@open-embed-ui/ui/components/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@open-embed-ui/ui/components/card';
 import { Skeleton } from '@open-embed-ui/ui/components/skeleton';
-import {
-  ArrowLeft,
-  Save,
-  Loader2,
-  LayoutGrid,
-  List,
-  Clock,
-  CreditCard,
-  GalleryHorizontal,
-  LayoutDashboard,
-  Star,
-  Receipt,
-  Trophy,
-  TerminalSquare,
-  GitBranch,
-  Award,
-  Check,
-  Code,
-  Eye,
-} from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Check, Code, Eye } from 'lucide-react';
 import { useWidget, useContributions, useIsAdmin } from '@/hooks';
 import { createWidget } from '@/lib/api-client';
 import { EmbedCodeModal } from '@/components/embed-code-modal';
 import { PreviewModal } from '@/components/preview-modal';
 import { toast } from 'sonner';
 import { isValidOriginEntry } from '@/lib/db';
-import type { WidgetConfig, Contribution } from '@/types';
-
-// `featured: true` = visible to every user in the layout picker. The
-// 5 featured layouts cover the patterns real portfolios use most
-// (grid for browse, devlog for chronological story, highlight for
-// hero-plus-supporting, single-card for "latest", scorecard for
-// stats-forward brag walls). The other 7 stay available to admins
-// only — useful for testing and for power users; not surfaced to
-// regular users to keep the picker focused.
-const LAYOUTS = [
-  { value: 'grid' as const, label: 'Grid', icon: LayoutGrid, featured: true },
-  { value: 'list' as const, label: 'List', icon: List, featured: false },
-  { value: 'timeline' as const, label: 'Timeline', icon: Clock, featured: false },
-  { value: 'single-card' as const, label: 'Single Card', icon: CreditCard, featured: true },
-  { value: 'marquee' as const, label: 'Marquee', icon: GalleryHorizontal, featured: false },
-  { value: 'masonry' as const, label: 'Masonry', icon: LayoutDashboard, featured: false },
-  { value: 'highlight' as const, label: 'Highlight', icon: Star, featured: true },
-  { value: 'terminal' as const, label: 'Receipt', icon: Receipt, featured: false },
-  { value: 'scorecard' as const, label: 'Scorecard', icon: Trophy, featured: true },
-  { value: 'gitlog' as const, label: 'Git Log', icon: TerminalSquare, featured: false },
-  { value: 'devlog' as const, label: 'Dev Log', icon: GitBranch, featured: true },
-  { value: 'proof' as const, label: 'Proof of Work', icon: Award, featured: false },
-];
+import { LAYOUTS } from '@/lib/layouts';
+import type { WidgetConfig } from '@/types';
 
 export default function WidgetBuilderPage() {
   const params = useParams<{ id: string }>();
