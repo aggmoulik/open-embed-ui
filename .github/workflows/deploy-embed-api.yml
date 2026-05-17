@@ -47,12 +47,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Build the widget bundle so the worker's `copy:widget` step picks
-      # up the latest dist/widget.js. The embed-api's `deploy` script
-      # also runs `copy:widget` but it's harmless to do here as well
-      # (rebuild is cheap, and this matches the local dev flow).
+      # Build the widget bundle (produces packages/widget/dist/widget.js).
       - name: Build widget
         run: pnpm build:widget
+
+      # Copy the freshly built widget.js into apps/embed-api/public/ so
+      # wrangler's assets.directory binding finds it. The embed-api's own
+      # `deploy` script normally chains `copy:widget && wrangler deploy`,
+      # but the wrangler-action below invokes `wrangler deploy` directly
+      # (skipping the npm-script wrapper), so we run the copy step here
+      # explicitly. `apps/embed-api/public/` isn't committed — it's a
+      # build artifact recreated on every CI run.
+      - name: Copy widget into embed-api public/
+        run: pnpm --filter @open-embed-ui/embed-api copy:widget
 
       - name: Deploy with Wrangler
         uses: cloudflare/wrangler-action@v3
@@ -60,8 +67,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: apps/embed-api
-          # The package's `deploy` script runs `copy:widget && wrangler deploy`
-          # so we let it drive (consistent with local `pnpm --filter
-          # @open-embed-ui/embed-api deploy`).
           command: deploy
           packageManager: pnpm
