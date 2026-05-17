@@ -50,12 +50,15 @@ jobs:
       - name: Type-check (dashboard)
         run: pnpm --filter @open-embed-ui/dashboard exec tsc --noEmit
 
-      # Build the widget bundle first (the dashboard build copies widget.js
-      # into apps/dashboard/public/), then the full turbo build. CI guard
-      # script (scripts/check-bundle-size.mjs) enforces the 19 KB gz budget
-      # as part of build:widget.
+      # Mirror exactly what Vercel runs for the dashboard deploy (see
+      # `vercel.json` buildCommand). The widget bundle goes into
+      # apps/dashboard/public/widget.js as part of `build:widget`, and the
+      # 19 KB gz budget is enforced by scripts/check-bundle-size.mjs.
+      # Skip the other workspace packages — preview ships separately and
+      # embed-api is verified by its own deploy workflow (wrangler bundles
+      # the worker, so a plain build step adds nothing).
       - name: Build widget
         run: pnpm build:widget
 
-      - name: Build all (turbo)
-        run: pnpm build
+      - name: Build dashboard (mirror Vercel buildCommand)
+        run: pnpm --filter @open-embed-ui/dashboard build
