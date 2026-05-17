@@ -3,18 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@open-embed-ui/ui/lib/utils';
-import {
-  LayoutDashboard,
-  GitPullRequest,
-  Box,
-  Settings,
-  Menu,
-  X,
-} from 'lucide-react';
+import { LayoutDashboard, GitPullRequest, Box, Settings, Mail, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@open-embed-ui/ui/components/button';
 
-const navItems = [
+const baseNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   {
     href: '/dashboard/contributions',
@@ -25,9 +18,16 @@ const navItems = [
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
 
-export function Sidebar() {
+const adminNavItems = [{ href: '/dashboard/waitlist', label: 'Waitlist', icon: Mail }];
+
+interface SidebarProps {
+  isAdmin?: boolean;
+}
+
+export function Sidebar({ isAdmin = false }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navItems = isAdmin ? [...baseNavItems, ...adminNavItems] : baseNavItems;
 
   return (
     <>
@@ -53,15 +53,12 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-sidebar-border bg-sidebar transition-transform md:static md:translate-x-0',
+          'border-sidebar-border bg-sidebar fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r transition-transform md:static md:translate-x-0',
           mobileOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        <div className="flex h-14 items-center border-b border-sidebar-border px-4">
-          <Link
-            href="/dashboard"
-            className="text-lg font-semibold text-sidebar-foreground"
-          >
+        <div className="border-sidebar-border flex h-14 items-center border-b px-4">
+          <Link href="/dashboard" className="text-sidebar-foreground text-lg font-semibold">
             Open Embed UI
           </Link>
         </div>

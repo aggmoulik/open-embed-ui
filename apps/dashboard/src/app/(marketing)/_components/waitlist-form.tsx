@@ -1,15 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@open-embed-ui/ui/components/button';
 import { Input } from '@open-embed-ui/ui/components/input';
 import { isValidEmail } from '@/lib/validation/email';
 
+function readUtm(): { utm_source?: string; utm_medium?: string; utm_campaign?: string } {
+  if (typeof window === 'undefined') return {};
+  const params = new URLSearchParams(window.location.search);
+  const out: { utm_source?: string; utm_medium?: string; utm_campaign?: string } = {};
+  const s = params.get('utm_source');
+  const m = params.get('utm_medium');
+  const c = params.get('utm_campaign');
+  if (s) out.utm_source = s;
+  if (m) out.utm_medium = m;
+  if (c) out.utm_campaign = c;
+  return out;
+}
+
 export function WaitlistForm() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState<string | null>(null);
+  // Capture the external referrer at mount, before any in-app navigation can
+  // overwrite document.referrer. Same-origin referrers are dropped — a visitor
+  // bouncing between /login and / shouldn't count as a "source".
+  const referrerRef = useRef<string | null>(null);
+  useEffect(() => {
+    const ref = document.referrer;
+    if (ref && !ref.startsWith(window.location.origin)) {
+      referrerRef.current = ref;
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -19,10 +42,12 @@ export function WaitlistForm() {
     }
     setLoading(true);
     try {
+      const utm = readUtm();
+      const referrer = referrerRef.current;
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, ...utm, ...(referrer ? { referrer } : {}) }),
       });
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
@@ -49,7 +74,9 @@ export function WaitlistForm() {
         <div className="bg-muted/40 mt-5 rounded-lg border p-4 text-sm">
           <p className="font-medium">You&apos;re on the list.</p>
           <p className="text-muted-foreground mt-1">
-            We&apos;ll email <span className="text-foreground font-mono break-all">{submitted}</span> when invites open.
+            We&apos;ll email{' '}
+            <span className="text-foreground font-mono break-all">{submitted}</span> when invites
+            open.
           </p>
         </div>
       ) : (
