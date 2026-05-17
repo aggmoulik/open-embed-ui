@@ -4,7 +4,7 @@
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm build:widget && pnpm --filter @open-embed-ui/dashboard build",
   "outputDirectory": "apps/dashboard/.next",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- apps/dashboard packages/db packages/types packages/ui packages/widget",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- apps/dashboard packages/db packages/types packages/ui packages/widget vercel.json pnpm-lock.yaml package.json turbo.json",
   "git": {
     "deploymentEnabled": {
       "main": true
