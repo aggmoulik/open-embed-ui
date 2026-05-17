@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "copy:widget": "cp ../../packages/widget/dist/widget.js public/widget.js",
+    "copy:widget": "mkdir -p public && cp ../../packages/widget/dist/widget.js public/widget.js",
     "build": "pnpm copy:widget",
     "dev": "pnpm copy:widget && wrangler dev",
     "deploy": "pnpm copy:widget && wrangler deploy",
