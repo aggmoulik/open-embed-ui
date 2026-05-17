@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "cd ../.. && pnpm build:widget && cd apps/dashboard && pnpm build",
+  "outputDirectory": ".next",
+  "ignoreCommand": "cd ../.. && git diff --quiet HEAD^ HEAD -- apps/dashboard packages/db packages/types packages/ui packages/widget vercel.json apps/dashboard/vercel.json pnpm-lock.yaml package.json turbo.json",
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  }
+}
