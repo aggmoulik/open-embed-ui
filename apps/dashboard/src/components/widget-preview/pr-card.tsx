@@ -78,7 +78,6 @@ export function PRCard({
                 href={safeHref(blog.href)}
                 target={blog.target}
                 rel={blog.rel}
-                onClick={(e) => e.stopPropagation()}
                 className="text-muted-foreground hover:text-foreground mt-0.5 shrink-0 transition-colors"
                 aria-label="Read blog post"
                 title="Read blog post"
