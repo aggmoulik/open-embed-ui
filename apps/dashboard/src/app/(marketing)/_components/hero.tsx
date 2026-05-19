@@ -1,42 +1,127 @@
 import Link from 'next/link';
-import { Badge } from '@open-embed-ui/ui/components/badge';
-import { Button } from '@open-embed-ui/ui/components/button';
-import { WaitlistForm } from './waitlist-form';
+import { CodeCard } from './code-card';
+import { InlineWaitlist } from './inline-waitlist';
+import { WaitlistTrigger } from './waitlist-trigger';
 
-export function Hero() {
+interface HeroProps {
+  isAuthenticated?: boolean;
+}
+
+export function Hero({ isAuthenticated = false }: HeroProps) {
   return (
-    <section className="relative overflow-hidden">
-      <div className="from-background to-muted/30 absolute inset-0 -z-10 bg-gradient-to-b" />
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 pt-16 pb-20 sm:px-6 sm:pt-20 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:pt-28 lg:pb-28">
-        {/* Left: copy + CTAs */}
-        <div className="text-center lg:text-left">
-          <Badge variant="outline" className="rounded-full">
-            Now in private beta
-          </Badge>
-          <h1 className="text-foreground mt-6 text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-            Show off your open-source PRs{' '}
-            <span className="text-muted-foreground">anywhere</span>
-          </h1>
-          <p className="text-muted-foreground mt-5 max-w-xl text-base text-pretty sm:text-lg lg:mx-0 mx-auto">
-            Drop a single React component — or one <code className="bg-muted rounded px-1.5 py-0.5 text-sm">&lt;script&gt;</code> tag —
-            on your blog, portfolio, or README. Get a live, themed widget of your merged contributions. No iframes, no API keys, no maintenance.
-          </p>
-          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
-            <Button asChild size="lg" variant="outline">
-              <a href="#demo">See it live ↓</a>
-            </Button>
-            <Link
-              href="/login"
-              className="text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline"
-            >
-              Already have an account? Sign in
-            </Link>
-          </div>
-        </div>
+    <section className="relative overflow-hidden pt-22 pb-16 lg:pt-24 lg:pb-20" id="top">
+      <div className="marketing-grid-bg" aria-hidden="true" />
+      <div className="relative mx-auto max-w-[1240px] px-7">
+        <div className="grid items-start gap-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center">
+          <div>
+            <span className="border-border bg-background text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-[11px] tracking-wide">
+              <span
+                className="bg-brand size-1.5 rounded-full"
+                style={{
+                  boxShadow: '0 0 0 3px color-mix(in oklab, var(--brand) 18%, transparent)',
+                }}
+              />
+              <span>private beta</span>
+              <span className="text-muted-foreground/60">·</span>
+              <span>invite-only</span>
+            </span>
 
-        {/* Right: waitlist form */}
-        <div className="lg:justify-self-end lg:max-w-md w-full">
-          <WaitlistForm />
+            <h1 className="mt-4 text-[44px] leading-[1.02] font-semibold tracking-[-0.035em] text-balance sm:text-[56px] lg:text-[64px]">
+              Show off your
+              <br />
+              open-source PRs{' '}
+              <span className="text-foreground/90 font-serif text-[1.04em] font-normal italic">
+                anywhere
+              </span>
+            </h1>
+
+            <p className="text-muted-foreground mt-5 max-w-[540px] text-[17px] leading-[1.55]">
+              One{' '}
+              <code className="border-border bg-muted text-foreground rounded border px-1.5 py-0.5 font-mono text-[13px]">
+                &lt;script&gt;
+              </code>{' '}
+              tag. Fourteen layouts. Zero iframes, zero API keys, zero maintenance. Drop it on your
+              blog, portfolio, or README and get a live, themed widget of your merged contributions.
+            </p>
+
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              {isAuthenticated ? (
+                <Link
+                  href="/dashboard"
+                  className="border-foreground bg-foreground text-background hover:bg-foreground/90 inline-flex h-[38px] items-center justify-center gap-2 rounded-md border px-4 font-mono text-[13px] font-medium whitespace-nowrap transition-colors"
+                >
+                  Open dashboard →
+                </Link>
+              ) : (
+                <WaitlistTrigger className="border-foreground bg-foreground text-background hover:bg-foreground/90 inline-flex h-[38px] items-center justify-center gap-2 rounded-md border px-4 font-mono text-[13px] font-medium whitespace-nowrap transition-colors">
+                  Join the waitlist →
+                </WaitlistTrigger>
+              )}
+              <a
+                href="#demo"
+                className="border-border bg-background text-foreground hover:border-foreground/40 hover:bg-muted/40 inline-flex h-[38px] items-center justify-center gap-2 rounded-md border px-4 font-mono text-[13px] font-medium whitespace-nowrap transition-colors"
+              >
+                See it live ↓
+              </a>
+              {!isAuthenticated && (
+                <Link
+                  href="/login"
+                  className="text-muted-foreground hover:text-foreground font-mono text-[12px] underline-offset-4 transition-colors hover:underline"
+                >
+                  or sign in
+                </Link>
+              )}
+            </div>
+
+            <div className="border-border text-muted-foreground mt-9 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-dashed pt-5 font-mono text-[11px]">
+              <span>
+                <span className="text-foreground font-semibold">19 KB</span> gzipped
+              </span>
+              <span>·</span>
+              <span>Shadow-DOM isolated</span>
+              <span>·</span>
+              <span>
+                built by{' '}
+                <a
+                  href="https://github.com/aggmoulik"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground underline underline-offset-2"
+                >
+                  @aggmoulik
+                </a>
+              </span>
+            </div>
+          </div>
+
+          <div className="mx-auto w-full max-w-[520px] lg:mx-0 lg:w-full lg:max-w-none lg:justify-self-end">
+            <CodeCard />
+            {isAuthenticated ? (
+              <div className="border-border bg-background mt-4 flex items-center justify-between gap-4 rounded-md border p-4">
+                <div>
+                  <p className="text-muted-foreground font-mono text-[12px]">
+                    <span className="text-brand">●</span> Signed in
+                  </p>
+                  <p className="text-foreground mt-0.5 text-[14px] font-medium">
+                    Pick up where you left off.
+                  </p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="bg-foreground text-background inline-flex h-10 shrink-0 items-center justify-center rounded-md px-4 font-mono text-[13px] font-medium transition-opacity hover:opacity-90"
+                >
+                  Open dashboard →
+                </Link>
+              </div>
+            ) : (
+              <>
+                <InlineWaitlist className="mt-4" inputId="waitlist-email" />
+                <p className="text-muted-foreground/70 mt-2.5 font-mono text-[11px]">
+                  No spam. One email when invites open. Unsubscribe anytime.
+                </p>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </section>

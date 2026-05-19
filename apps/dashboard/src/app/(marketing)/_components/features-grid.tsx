@@ -1,121 +1,71 @@
-interface Feature {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}
-
-const FEATURES: Feature[] = [
+const FEATURES = [
   {
-    title: '14 polished layouts',
-    description:
-      'Grid, list, timeline, terminal, gitlog, devlog, scorecard, proof — pick the one that matches your site.',
-    icon: <IconLayout />,
-  },
-  {
+    num: '01',
     title: 'Shadow DOM isolation',
-    description:
-      'The widget ships its own styles inside a Shadow DOM. No CSS leaks in, no CSS leaks out.',
-    icon: <IconShield />,
+    body: "Widget ships its own styles inside a Shadow DOM. No CSS leaks in, no CSS leaks out — drop it into a Tailwind site, a Hugo blog, or a hand-written README without surprises.",
   },
   {
+    num: '02',
     title: 'Light, dark, or system',
-    description:
-      'Theme follows your visitor’s OS preference automatically — or pin it light or dark per embed.',
-    icon: <IconMoon />,
+    body: "Theme follows your visitor's OS preference automatically. Or pin it light / dark / per-embed. All 14 layouts ship both modes.",
   },
   {
+    num: '03',
     title: 'Per-widget origin allowlist',
-    description:
-      'Default-deny security. Declare exactly which domains can embed each widget — wildcards supported.',
-    icon: <IconLock />,
+    body: 'Default-deny security. Declare exactly which domains can embed each widget — wildcards supported, leak alerts in your dashboard.',
   },
   {
+    num: '04',
     title: 'Live API or static export',
-    description:
-      'Mode A: dynamic via our edge worker. Mode B: bake a static JSON into your CI for zero-runtime embeds.',
-    icon: <IconBolt />,
+    body: 'Mode A: dynamic via the edge worker. Mode B: bake a JSON snapshot into your CI for zero-runtime, fully cacheable embeds.',
   },
   {
+    num: '05',
     title: 'Edge-deployed, <100 KB',
-    description:
-      'Slim Cloudflare Worker (~96 KB gzipped) serves the live API. Widget itself stays under 19 KB gzipped.',
-    icon: <IconCloud />,
+    body: 'Slim Cloudflare Worker (~96 KB gzipped) serves the live API. Widget itself stays under 19 KB gzipped on the wire.',
+  },
+  {
+    num: '06',
+    title: 'No iframes, no tracking',
+    body: "Real DOM nodes you can style around. No third-party cookies, no analytics pings, no maintenance — and never any of your visitors' data.",
   },
 ];
 
 export function FeaturesGrid() {
   return (
-    <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-      <div className="mb-12 text-center">
-        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Built for serious portfolios</h2>
-        <p className="text-muted-foreground mx-auto mt-3 max-w-2xl text-base">
-          A widget that respects your site, your visitors, and your bundle size.
-        </p>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {FEATURES.map((feature) => (
-          <div
-            key={feature.title}
-            className="bg-card rounded-lg border p-6 transition-shadow hover:shadow-sm"
-          >
-            <div className="text-foreground mb-3">{feature.icon}</div>
-            <h3 className="text-base font-semibold">{feature.title}</h3>
-            <p className="text-muted-foreground mt-2 text-sm">{feature.description}</p>
+    <section className="border-t border-border py-24" id="features">
+      <div className="mx-auto max-w-[1240px] px-7">
+        <div className="mb-11 max-w-[720px]">
+          <div className="marketing-section-eyebrow mb-3 inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
+            04 · built for serious portfolios
           </div>
-        ))}
+          <h2 className="font-sans text-[32px] font-semibold leading-[1.1] tracking-[-0.025em] sm:text-[38px]">
+            A widget that respects your site, your visitors, and your bundle size.
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 overflow-hidden rounded-xl border border-border bg-background sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map((f, i) => {
+            const cols = 3;
+            const onRight = (i + 1) % cols === 0;
+            const inLastRow = i >= FEATURES.length - cols;
+            return (
+              <div
+                key={f.num}
+                className={`p-7 ${onRight ? '' : 'lg:border-r'} ${inLastRow ? '' : 'lg:border-b'} ${i % 2 === 1 ? 'sm:border-r-0 lg:border-r' : 'sm:border-r'} ${i >= FEATURES.length - 2 ? 'sm:border-b-0' : 'sm:border-b'} border-border`}
+              >
+                <div className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground/70">
+                  {f.num} —
+                </div>
+                <h3 className="mb-2 mt-3.5 text-[16px] font-semibold tracking-[-0.01em]">
+                  {f.title}
+                </h3>
+                <p className="m-0 text-[14px] leading-[1.55] text-muted-foreground">{f.body}</p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
-  );
-}
-
-function IconLayout() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-      <rect x="3" y="3" width="7" height="7" rx="1.5" />
-      <rect x="14" y="3" width="7" height="7" rx="1.5" />
-      <rect x="3" y="14" width="7" height="7" rx="1.5" />
-      <rect x="14" y="14" width="7" height="7" rx="1.5" />
-    </svg>
-  );
-}
-
-function IconShield() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-      <path d="M12 2.5 4 5.5v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10v-6L12 2.5Z" />
-    </svg>
-  );
-}
-
-function IconMoon() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-      <path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11Z" />
-    </svg>
-  );
-}
-
-function IconLock() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-      <rect x="4" y="11" width="16" height="10" rx="2" />
-      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-    </svg>
-  );
-}
-
-function IconBolt() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" strokeLinejoin="round">
-      <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />
-    </svg>
-  );
-}
-
-function IconCloud() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-      <path d="M7 18h10a4 4 0 0 0 .5-7.97 6 6 0 0 0-11.66 1.3A4 4 0 0 0 7 18Z" />
-    </svg>
   );
 }

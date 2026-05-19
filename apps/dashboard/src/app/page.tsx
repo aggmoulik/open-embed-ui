@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth-server';
 import { LandingNav } from './(marketing)/_components/landing-nav';
 import { Hero } from './(marketing)/_components/hero';
+import { InstallBand } from './(marketing)/_components/install-band';
 import { WidgetDemo } from './(marketing)/_components/widget-demo';
+import { LayoutGallery } from './(marketing)/_components/layout-gallery';
 import { FeaturesGrid } from './(marketing)/_components/features-grid';
+import { FinalCta } from './(marketing)/_components/final-cta';
 import { LandingFooter } from './(marketing)/_components/landing-footer';
 
 export const dynamic = 'force-dynamic';
@@ -37,15 +39,18 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const session = await getSession();
-  if (session) redirect('/dashboard');
+  const isAuthenticated = Boolean(session?.user);
 
   return (
     <div className="bg-background flex min-h-screen flex-col">
-      <LandingNav />
+      <LandingNav isAuthenticated={isAuthenticated} />
       <main className="flex-1">
-        <Hero />
+        <Hero isAuthenticated={isAuthenticated} />
+        <InstallBand />
         <WidgetDemo />
+        <LayoutGallery />
         <FeaturesGrid />
+        <FinalCta isAuthenticated={isAuthenticated} />
       </main>
       <LandingFooter />
     </div>
