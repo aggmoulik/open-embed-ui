@@ -1,13 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
 
+// Classify the raw error query-param into one of our known buckets.
+// better-auth's onAPIError.errorURL redirect can either:
+//   (a) pass our APIError `code` (e.g. "WAITLIST_REQUIRED") in `?error=` — short, snake-case
+//   (b) pass the full APIError `message` in `?error=` — long, sentence-cased
+// We detect (a) by exact match against known codes, and fall back to keyword
+// sniffing on the message for (b) so we don't display raw URL-encoded text.
+type ErrorKind = 'waitlist' | 'cancelled' | 'generic';
+
+function classifyError(raw: string | null | undefined): ErrorKind | null {
+  if (!raw) return null;
+  const upper = raw.toUpperCase();
+  if (upper === 'WAITLIST_REQUIRED' || upper === 'FORBIDDEN') return 'waitlist';
+  if (raw === 'access_denied' || /cancel/i.test(raw)) return 'cancelled';
+  if (/waitlist/i.test(raw)) return 'waitlist';
+  return 'generic';
+}
+
+const ERROR_MESSAGES: Record<ErrorKind, string> = {
+  waitlist:
+    "You're not on the waitlist yet, or your account hasn't been approved. Join the waitlist from the home page — we'll send an invite when capacity opens.",
+  cancelled: 'GitHub sign-in was cancelled. No account was created.',
+  generic: "Sign-in didn't go through. Please try again.",
+};
+
 export default function LoginPage() {
+  const search = useSearchParams();
+  const rawError = search?.get('error') ?? search?.get('error_description') ?? null;
+  const kind = classifyError(rawError);
+  const errorMessage = kind ? ERROR_MESSAGES[kind] : null;
+
   const [email, setEmail] = useState('');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Surface the error as a toast on first paint so it's noticed even if the
+  // user scrolls past the inline banner.
+  useEffect(() => {
+    if (errorMessage) toast.error(errorMessage);
+  }, [errorMessage]);
 
   function handleGitHubLogin() {
     authClient.signIn.social({
@@ -58,6 +94,26 @@ export default function LoginPage() {
               Showcase your open-source contributions.
             </h1>
           </div>
+
+          {errorMessage && (
+            <div
+              role="alert"
+              className="border-destructive/40 bg-destructive/5 text-destructive mb-4 rounded-md border p-3 font-mono text-[12px] leading-[1.55]"
+            >
+              <span className="font-semibold">
+                // {kind === 'waitlist' ? 'waitlist required' : 'sign-in failed'}
+              </span>
+              <div className="text-foreground/90 mt-1.5 font-sans text-[13px]">{errorMessage}</div>
+              {kind === 'waitlist' && (
+                <a
+                  href="/#waitlist-email"
+                  className="text-foreground mt-2 inline-block font-mono text-[12px] underline underline-offset-2 hover:opacity-80"
+                >
+                  Join the waitlist →
+                </a>
+              )}
+            </div>
+          )}
 
           <button
             type="button"

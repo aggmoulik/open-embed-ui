@@ -148,6 +148,11 @@ export const embeds = sqliteTable('embeds', {
 // Feature 15: pre-launch waitlist.
 // Idempotent on email (unique). Source = HTTP Referer; UTM fields are
 // passed by the client from window.location.search on submit.
+//
+// `approvedAt` is the gate for the closed-beta sign-in flow:
+//   NULL  → on the waitlist, not yet allowed to sign in
+//   timestamp → admin approved this signup, sign-in passes the gate
+// Set/cleared by admins from /dashboard/waitlist. See `lib/invites.ts`.
 export const waitlist = sqliteTable('waitlist', {
   id: text('id').primaryKey(),
   email: text('email').notNull().unique(),
@@ -155,6 +160,7 @@ export const waitlist = sqliteTable('waitlist', {
   utmSource: text('utm_source'),
   utmMedium: text('utm_medium'),
   utmCampaign: text('utm_campaign'),
+  approvedAt: integer('approved_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .$defaultFn(() => new Date()),

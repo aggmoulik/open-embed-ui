@@ -1,8 +1,10 @@
 import { betterAuth } from 'better-auth';
+import { APIError } from 'better-auth/api';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { magicLink } from 'better-auth/plugins/magic-link';
 import { db, users, schema } from '@/lib/db';
 import { eq } from 'drizzle-orm';
+import { isInvited } from './invites';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -47,7 +49,31 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
+  // Where the OAuth callback should send the user after an APIError thrown
+  // from a database hook (e.g. our waitlist gate below). The login page
+  // reads `?error=…` from the URL and renders a banner.
+  onAPIError: {
+    errorURL: '/login',
+    throw: false,
+  },
   databaseHooks: {
+    user: {
+      create: {
+        // Closed-beta gate: a user must be on the admin allowlist or in the
+        // waitlist table before a `users` row is created. Throwing here
+        // aborts the sign-in flow before any orphaned records are written.
+        before: async (user) => {
+          const allowed = await isInvited(user.email);
+          if (!allowed) {
+            throw new APIError('FORBIDDEN', {
+              message:
+                "You're not on the waitlist yet. Join the waitlist on the home page and we'll send an invite when capacity opens.",
+              code: 'WAITLIST_REQUIRED',
+            });
+          }
+        },
+      },
+    },
     account: {
       create: {
         after: async (account) => {
