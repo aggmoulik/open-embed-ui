@@ -9,11 +9,14 @@ interface HeroProps {
 
 export function Hero({ isAuthenticated = false }: HeroProps) {
   return (
-    <section className="relative overflow-hidden pt-22 pb-16 lg:pt-24 lg:pb-20" id="top">
+    <section
+      className="relative overflow-hidden pt-14 pb-12 sm:pt-22 sm:pb-16 lg:pt-24 lg:pb-20"
+      id="top"
+    >
       <div className="marketing-grid-bg" aria-hidden="true" />
-      <div className="relative mx-auto max-w-[1240px] px-7">
-        <div className="grid items-start gap-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center">
-          <div>
+      <div className="relative mx-auto max-w-[1240px] px-5 sm:px-7">
+        <div className="grid items-start gap-10 sm:gap-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center">
+          <div className="min-w-0">
             <span className="border-border bg-background text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-[11px] tracking-wide">
               <span
                 className="bg-brand size-1.5 rounded-full"
@@ -26,10 +29,12 @@ export function Hero({ isAuthenticated = false }: HeroProps) {
               <span>invite-only</span>
             </span>
 
-            <h1 className="mt-4 text-[44px] leading-[1.02] font-semibold tracking-[-0.035em] text-balance sm:text-[56px] lg:text-[64px]">
-              Show off your
-              <br />
-              open-source PRs{' '}
+            <h1 className="mt-4 text-[36px] leading-[1.05] font-semibold tracking-[-0.035em] text-balance sm:text-[56px] sm:leading-[1.02] lg:text-[64px]">
+              Show off your <span className="sm:hidden">open-source PRs </span>
+              <span className="hidden sm:inline">
+                <br />
+                open-source PRs{' '}
+              </span>
               <span className="text-foreground/90 font-serif text-[1.04em] font-normal italic">
                 anywhere
               </span>
@@ -40,7 +45,7 @@ export function Hero({ isAuthenticated = false }: HeroProps) {
               <code className="border-border bg-muted text-foreground rounded border px-1.5 py-0.5 font-mono text-[13px]">
                 &lt;script&gt;
               </code>{' '}
-              tag. Fourteen layouts. Zero iframes, zero API keys, zero maintenance. Drop it on your
+              tag. Seven layouts. Zero iframes, zero API keys, zero maintenance. Drop it on your
               blog, portfolio, or README and get a live, themed widget of your merged contributions.
             </p>
 
@@ -94,11 +99,11 @@ export function Hero({ isAuthenticated = false }: HeroProps) {
             </div>
           </div>
 
-          <div className="mx-auto w-full max-w-[520px] lg:mx-0 lg:w-full lg:max-w-none lg:justify-self-end">
+          <div className="mx-auto w-full max-w-[520px] min-w-0 lg:mx-0 lg:w-full lg:max-w-none lg:justify-self-end">
             <CodeCard />
             {isAuthenticated ? (
-              <div className="border-border bg-background mt-4 flex items-center justify-between gap-4 rounded-md border p-4">
-                <div>
+              <div className="border-border bg-background mt-4 flex flex-wrap items-center justify-between gap-3 rounded-md border p-4 sm:flex-nowrap sm:gap-4">
+                <div className="min-w-0">
                   <p className="text-muted-foreground font-mono text-[12px]">
                     <span className="text-brand">●</span> Signed in
                   </p>

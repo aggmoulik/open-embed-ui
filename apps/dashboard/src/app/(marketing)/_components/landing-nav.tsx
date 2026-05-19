@@ -11,7 +11,7 @@ interface LandingNavProps {
 export function LandingNav({ isAuthenticated = false }: LandingNavProps) {
   return (
     <header className="border-border bg-background/75 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur-md backdrop-saturate-150">
-      <div className="mx-auto flex h-14 max-w-[1240px] items-center justify-between px-7">
+      <div className="mx-auto flex h-14 max-w-[1240px] items-center justify-between px-4 sm:px-7">
         <Link
           href="/"
           className="flex items-center gap-2.5 font-mono text-[13px] font-semibold tracking-[-0.01em]"
@@ -23,10 +23,12 @@ export function LandingNav({ isAuthenticated = false }: LandingNavProps) {
             ⌥
           </span>
           <span>openembed/ui</span>
-          <span className="text-muted-foreground/80 font-normal">{VERSION_LABEL}</span>
+          <span className="text-muted-foreground/80 hidden font-normal sm:inline">
+            {VERSION_LABEL}
+          </span>
         </Link>
 
-        <nav className="text-muted-foreground flex items-center gap-5 font-mono text-[13px]">
+        <nav className="text-muted-foreground flex items-center gap-3 font-mono text-[13px] sm:gap-5">
           <a href="#demo" className="hover:text-foreground hidden transition-colors sm:inline">
             demo
           </a>

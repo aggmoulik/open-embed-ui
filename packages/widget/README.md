@@ -3,7 +3,7 @@
 Embeddable widget that renders GitHub PR contributions inside a Shadow DOM. Drop a `<script>` tag on any page and a card/grid/timeline/etc. of your merged PRs renders inline.
 
 - 📦 **Preact + Shadow DOM** — full style isolation from host page
-- 🎨 **14 layouts**, lazy-loaded as needed
+- 🎨 **7 layouts**, lazy-loaded as needed
 - 🌗 **Light / dark / system** theme
 - 🛜 **Two data modes**: API-driven (live) or static JSON (zero backend)
 

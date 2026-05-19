@@ -60,46 +60,46 @@ const TAG_STYLES: Record<PrTag, string> = {
 
 export function WidgetDemo() {
   return (
-    <section className="border-t border-border py-24" id="demo">
-      <div className="mx-auto max-w-[1240px] px-7">
+    <section className="border-border border-t py-16 sm:py-24" id="demo">
+      <div className="mx-auto max-w-[1240px] px-5 sm:px-7">
         <div className="mb-11 max-w-[720px]">
-          <div className="marketing-section-eyebrow mb-3 inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
+          <div className="marketing-section-eyebrow text-muted-foreground mb-3 inline-block font-mono text-[11px] tracking-[0.08em] uppercase">
             02 · live demo
           </div>
-          <h2 className="mb-3 font-sans text-[32px] font-semibold leading-[1.1] tracking-[-0.025em] sm:text-[38px]">
+          <h2 className="mb-3 font-sans text-[32px] leading-[1.1] font-semibold tracking-[-0.025em] sm:text-[38px]">
             This is the widget. Rendering right now.
           </h2>
-          <p className="max-w-[620px] text-[16px] text-muted-foreground">
+          <p className="text-muted-foreground max-w-[620px] text-[16px]">
             Same React component, same data shape, same Shadow DOM as what you&apos;d embed. Real
             DOM nodes, real CSS isolation, real &lt;300ms first paint.
           </p>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-border bg-background shadow-[0_1px_0_rgba(0,0,0,.02),0_4px_16px_rgba(0,0,0,.05)]">
-          <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-3.5 py-2.5">
-            <div className="flex gap-1.5">
-              <span className="size-2.5 rounded-full bg-border" />
-              <span className="size-2.5 rounded-full bg-border" />
-              <span className="size-2.5 rounded-full bg-border" />
+        <div className="border-border bg-background overflow-hidden rounded-2xl border shadow-[0_1px_0_rgba(0,0,0,.02),0_4px_16px_rgba(0,0,0,.05)]">
+          <div className="border-border bg-muted/40 flex items-center gap-2 border-b px-3 py-2.5 sm:gap-3 sm:px-3.5">
+            <div className="flex shrink-0 gap-1.5">
+              <span className="bg-border size-2.5 rounded-full" />
+              <span className="bg-border size-2.5 rounded-full" />
+              <span className="bg-border size-2.5 rounded-full" />
             </div>
-            <div className="flex h-[26px] flex-1 items-center gap-0.5 rounded-md border border-border bg-background px-2.5 font-mono text-[12px] text-muted-foreground">
+            <div className="border-border bg-background text-muted-foreground flex h-[26px] min-w-0 flex-1 items-center gap-0.5 overflow-hidden rounded-md border px-2.5 font-mono text-[11px] sm:text-[12px]">
               <span>https://</span>
-              <b className="font-semibold text-foreground">your-portfolio.dev</b>
+              <b className="text-foreground truncate font-semibold">your-portfolio.dev</b>
               <span>/now</span>
             </div>
-            <span className="rounded-[5px] border border-b-2 border-border bg-background px-1.5 py-0.5 font-mono text-[11px] text-foreground/80">
+            <span className="border-border bg-background text-foreground/80 hidden shrink-0 rounded-[5px] border border-b-2 px-1.5 py-0.5 font-mono text-[11px] sm:inline">
               ⌘K
             </span>
           </div>
 
-          <div className="marketing-dot-bg min-h-[360px] bg-background p-7">
-            <div className="mx-auto max-w-[720px] rounded-[10px] border border-border bg-background p-4 shadow-[0_1px_0_rgba(0,0,0,.02),0_1px_2px_rgba(0,0,0,.04)]">
-              <div className="mb-3 flex items-center justify-between border-b border-dashed border-border pb-3.5">
-                <h4 className="m-0 font-mono text-[13px] font-medium text-muted-foreground">
-                  <span className="font-semibold text-foreground">aggmoulik</span>
+          <div className="marketing-dot-bg bg-background min-h-[320px] p-4 sm:min-h-[360px] sm:p-7">
+            <div className="border-border bg-background mx-auto max-w-[720px] rounded-[10px] border p-3 shadow-[0_1px_0_rgba(0,0,0,.02),0_1px_2px_rgba(0,0,0,.04)] sm:p-4">
+              <div className="border-border mb-3 flex items-center justify-between border-b border-dashed pb-3.5">
+                <h4 className="text-muted-foreground m-0 font-mono text-[13px] font-medium">
+                  <span className="text-foreground font-semibold">aggmoulik</span>
                   &nbsp;/&nbsp;recent merged PRs
                 </h4>
-                <span className="rounded-full border border-border px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
+                <span className="border-border text-muted-foreground rounded-full border px-2 py-0.5 font-mono text-[11px]">
                   ▲ list · light
                 </span>
               </div>
@@ -107,29 +107,29 @@ export function WidgetDemo() {
               {PRS.map((pr, i) => (
                 <div
                   key={pr.title}
-                  className={`grid grid-cols-[auto_1fr_auto_auto] items-center gap-3.5 px-1 py-3 ${
-                    i < PRS.length - 1 ? 'border-b border-dashed border-border' : ''
+                  className={`grid grid-cols-[auto_1fr_auto] items-center gap-2.5 px-1 py-3 sm:grid-cols-[auto_1fr_auto_auto] sm:gap-3.5 ${
+                    i < PRS.length - 1 ? 'border-border border-b border-dashed' : ''
                   }`}
                 >
-                  <GitBranch className="size-[18px] shrink-0 text-violet" strokeWidth={2} />
+                  <GitBranch className="text-violet size-[18px] shrink-0" strokeWidth={2} />
                   <div className="min-w-0">
-                    <div className="truncate text-[14px] font-medium text-foreground">
-                      <span className="font-mono text-violet">
+                    <div className="text-foreground truncate text-[14px] font-medium">
+                      <span className="text-violet font-mono">
                         {pr.tag}({pr.scope}):
                       </span>{' '}
                       {pr.title}
                     </div>
-                    <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">
+                    <div className="text-muted-foreground mt-0.5 font-mono text-[11px]">
                       {pr.repo} · <span className="text-brand">+{pr.add}</span>{' '}
                       <span className="text-danger">−{pr.del}</span> · merged {pr.date}
                     </div>
                   </div>
                   <span
-                    className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.06em] ${TAG_STYLES[pr.tag]}`}
+                    className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold tracking-[0.06em] uppercase ${TAG_STYLES[pr.tag]}`}
                   >
                     {pr.tag}
                   </span>
-                  <span className="hidden whitespace-nowrap font-mono text-[11px] text-muted-foreground/70 sm:inline">
+                  <span className="text-muted-foreground/70 hidden font-mono text-[11px] whitespace-nowrap sm:inline">
                     {pr.date}
                   </span>
                 </div>

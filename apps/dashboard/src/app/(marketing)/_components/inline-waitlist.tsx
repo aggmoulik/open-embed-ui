@@ -117,7 +117,7 @@ export function InlineWaitlist({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`border-border bg-background focus-within:border-foreground focus-within:ring-brand/30 flex max-w-[480px] overflow-hidden rounded-md border transition-shadow focus-within:ring-2 ${className}`}
+      className={`border-border bg-background focus-within:border-foreground focus-within:ring-brand/30 flex w-full max-w-[480px] min-w-0 overflow-hidden rounded-md border transition-shadow focus-within:ring-2 ${className}`}
     >
       <input
         id={inputId}
@@ -129,7 +129,7 @@ export function InlineWaitlist({
         onChange={(e) => setEmail(e.target.value)}
         disabled={loading}
         aria-label="GitHub email address"
-        className="text-foreground placeholder:text-muted-foreground/70 h-10 flex-1 border-0 bg-transparent px-3.5 font-mono text-[13px] focus:outline-none disabled:opacity-60"
+        className="text-foreground placeholder:text-muted-foreground/70 h-10 w-full min-w-0 flex-1 border-0 bg-transparent px-3.5 font-mono text-[13px] focus:outline-none disabled:opacity-60"
       />
       <button
         type="submit"

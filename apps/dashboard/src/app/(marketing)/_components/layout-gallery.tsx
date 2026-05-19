@@ -268,69 +268,52 @@ interface LayoutEntry {
 // Order + featured flag mirror apps/dashboard/src/lib/layouts.ts exactly.
 const LAYOUTS: LayoutEntry[] = [
   { name: 'Grid', slug: 'layouts/grid', Preview: PGrid, featured: true },
+  { name: 'List', slug: 'layouts/list', Preview: PList, featured: true },
+  { name: 'Timeline', slug: 'layouts/timeline', Preview: PTimeline, featured: true },
   { name: 'Single Card', slug: 'layouts/single-card', Preview: PSingleCard, featured: true },
+  { name: 'Marquee', slug: 'layouts/marquee', Preview: PMarquee, featured: true },
+  { name: 'Masonry', slug: 'layouts/masonry', Preview: PMasonry, featured: true },
   { name: 'Highlight', slug: 'layouts/highlight', Preview: PHighlight, featured: true },
-  { name: 'Scorecard', slug: 'layouts/scorecard', Preview: PScorecard, featured: true },
-  { name: 'Dev Log', slug: 'layouts/devlog', Preview: PDevlog, featured: true },
-  { name: 'List', slug: 'layouts/list', Preview: PList, featured: false },
-  { name: 'Timeline', slug: 'layouts/timeline', Preview: PTimeline, featured: false },
-  { name: 'Marquee', slug: 'layouts/marquee', Preview: PMarquee, featured: false },
-  { name: 'Masonry', slug: 'layouts/masonry', Preview: PMasonry, featured: false },
   { name: 'Receipt', slug: 'layouts/terminal', Preview: PReceipt, featured: false },
+  { name: 'Scorecard', slug: 'layouts/scorecard', Preview: PScorecard, featured: false },
   { name: 'Git Log', slug: 'layouts/gitlog', Preview: PGitlog, featured: false },
+  { name: 'Dev Log', slug: 'layouts/devlog', Preview: PDevlog, featured: false },
   { name: 'Proof of Work', slug: 'layouts/proof', Preview: PProof, featured: false },
 ];
 
-const FEATURED_COUNT = LAYOUTS.filter((l) => l.featured).length;
-const SOON_COUNT = LAYOUTS.length - FEATURED_COUNT;
+const FEATURED_LAYOUTS = LAYOUTS.filter((l) => l.featured);
 
 export function LayoutGallery() {
   return (
-    <section className="border-border bg-muted/30 border-t py-24" id="layouts">
-      <div className="mx-auto max-w-[1240px] px-7">
-        <div className="mb-11 max-w-[720px]">
+    <section className="border-border bg-muted/30 border-t py-16 sm:py-24" id="layouts">
+      <div className="mx-auto max-w-[1240px] px-5 sm:px-7">
+        <div className="mb-9 max-w-[720px] sm:mb-11">
           <div className="marketing-section-eyebrow text-muted-foreground mb-3 inline-block font-mono text-[11px] tracking-[0.08em] uppercase">
-            03 · {FEATURED_COUNT} layouts in production
+            03 · {FEATURED_LAYOUTS.length} layouts in production
           </div>
           <h2 className="mb-3 font-sans text-[32px] leading-[1.1] font-semibold tracking-[-0.025em] sm:text-[38px]">
             Pick the one that matches your site.
           </h2>
           <p className="text-muted-foreground max-w-[620px] text-[16px]">
-            <span className="text-foreground">{FEATURED_COUNT} featured layouts</span> ship today —
-            content-first, screen-reader-friendly, light/dark out of the box. {SOON_COUNT} more
-            patterns land during private beta.
+            Content-first, screen-reader-friendly, and shipping in both light and dark out of the
+            box. Switch with a single attribute change — no rebuild required.
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-4">
-          {LAYOUTS.map((L, i) => {
+          {FEATURED_LAYOUTS.map((L, i) => {
             const num = String(i + 1).padStart(2, '0');
             const Preview = L.Preview;
             return (
               <div
                 key={L.name}
-                className={
-                  L.featured
-                    ? 'group border-border bg-background hover:border-foreground/30 flex cursor-pointer flex-col overflow-hidden rounded-[10px] border transition-all hover:-translate-y-px hover:shadow-[0_1px_0_rgba(0,0,0,.02),0_4px_16px_rgba(0,0,0,.05)]'
-                    : 'group border-border bg-muted/30 flex flex-col overflow-hidden rounded-[10px] border border-dashed opacity-70'
-                }
+                className="group border-border bg-background hover:border-foreground/30 flex cursor-pointer flex-col overflow-hidden rounded-[10px] border transition-all hover:-translate-y-px hover:shadow-[0_1px_0_rgba(0,0,0,.02),0_4px_16px_rgba(0,0,0,.05)]"
               >
                 <div className="border-border bg-muted/40 relative flex aspect-[4/3] flex-col gap-2 overflow-hidden border-b p-3.5">
                   <Preview />
-                  {!L.featured && (
-                    <span className="bg-muted text-muted-foreground/80 absolute top-2.5 right-2.5 inline-flex h-4 items-center rounded-sm px-1.5 font-mono text-[10px] leading-none font-medium tracking-[0.06em] uppercase">
-                      soon
-                    </span>
-                  )}
                 </div>
-                <div className="flex items-center justify-between gap-2.5 px-3 py-2.5">
-                  <div
-                    className={
-                      L.featured
-                        ? 'text-foreground font-mono text-[12px] font-semibold'
-                        : 'text-muted-foreground/80 font-mono text-[12px] font-semibold'
-                    }
-                  >
+                <div className="flex flex-col items-start gap-0.5 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2.5">
+                  <div className="text-foreground font-mono text-[12px] font-semibold">
                     {L.name}
                   </div>
                   <div className="text-muted-foreground/70 font-mono text-[10px]">

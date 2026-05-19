@@ -21,11 +21,11 @@ export interface LayoutMeta {
   icon: LucideIcon;
   /**
    * `featured: true` → visible to every user in the widget builder picker.
-   * The 5 featured layouts cover the patterns real portfolios use most
-   * (grid for browse, single-card for "latest", highlight for hero +
-   * supporting, scorecard for stats-forward, devlog for chronological).
-   * The other 7 stay available to admins only — useful for testing and
-   * power users without bloating the default picker for new users.
+   * The 7 featured layouts are the production-ready set: grid/list for
+   * browse, single-card for "latest", highlight for hero+supporting,
+   * timeline for chronological, marquee for ticker rows, and masonry
+   * for staggered pinboard. The other 5 stay admin-only — useful for
+   * testing and power users without bloating the default picker.
    */
   featured: boolean;
 }
@@ -39,16 +39,16 @@ export interface LayoutMeta {
  */
 export const LAYOUTS: readonly LayoutMeta[] = [
   { value: 'grid', label: 'Grid', icon: LayoutGrid, featured: true },
-  { value: 'list', label: 'List', icon: List, featured: false },
-  { value: 'timeline', label: 'Timeline', icon: Clock, featured: false },
+  { value: 'list', label: 'List', icon: List, featured: true },
+  { value: 'timeline', label: 'Timeline', icon: Clock, featured: true },
   { value: 'single-card', label: 'Single Card', icon: CreditCard, featured: true },
-  { value: 'marquee', label: 'Marquee', icon: GalleryHorizontal, featured: false },
-  { value: 'masonry', label: 'Masonry', icon: LayoutDashboard, featured: false },
+  { value: 'marquee', label: 'Marquee', icon: GalleryHorizontal, featured: true },
+  { value: 'masonry', label: 'Masonry', icon: LayoutDashboard, featured: true },
   { value: 'highlight', label: 'Highlight', icon: Star, featured: true },
   { value: 'terminal', label: 'Receipt', icon: Receipt, featured: false },
-  { value: 'scorecard', label: 'Scorecard', icon: Trophy, featured: true },
+  { value: 'scorecard', label: 'Scorecard', icon: Trophy, featured: false },
   { value: 'gitlog', label: 'Git Log', icon: TerminalSquare, featured: false },
-  { value: 'devlog', label: 'Dev Log', icon: GitBranch, featured: true },
+  { value: 'devlog', label: 'Dev Log', icon: GitBranch, featured: false },
   { value: 'proof', label: 'Proof of Work', icon: Award, featured: false },
 ];
 

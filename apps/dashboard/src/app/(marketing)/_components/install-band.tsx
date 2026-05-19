@@ -19,8 +19,8 @@ const TARGETS: Target[] = [
 
 export function InstallBand() {
   return (
-    <div className="border-border bg-muted/30 border-y py-9">
-      <div className="mx-auto flex max-w-[1240px] flex-wrap items-center gap-x-7 gap-y-3 px-7">
+    <div className="border-border bg-muted/30 border-y py-7 sm:py-9">
+      <div className="mx-auto flex max-w-[1240px] flex-wrap items-center gap-x-5 gap-y-3 px-5 sm:gap-x-7 sm:px-7">
         <span className="text-muted-foreground font-mono text-[11px] tracking-[0.08em] uppercase">
           Drops cleanly into →
         </span>

@@ -250,8 +250,8 @@ export function CodeCard() {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-background shadow-[0_1px_0_rgba(0,0,0,.02),0_4px_16px_rgba(0,0,0,.05)]">
-      <div className="flex items-end gap-0.5 border-b border-border bg-muted/40 px-2 pt-1.5">
+    <div className="border-border bg-background overflow-hidden rounded-xl border shadow-[0_1px_0_rgba(0,0,0,.02),0_4px_16px_rgba(0,0,0,.05)]">
+      <div className="border-border bg-muted/40 flex items-end gap-0.5 border-b px-2 pt-1.5">
         {SNIPPETS.map((s) => {
           const isActive = s.id === tab;
           return (
@@ -262,7 +262,7 @@ export function CodeCard() {
               className={`relative top-px cursor-pointer rounded-t-md border border-b-0 px-3 py-2 font-mono text-[12px] transition-colors ${
                 isActive
                   ? 'border-border bg-background text-foreground'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground hover:text-foreground border-transparent'
               }`}
             >
               {s.label}
@@ -273,15 +273,15 @@ export function CodeCard() {
         <button
           type="button"
           onClick={copy}
-          className="mb-1 self-center rounded px-2 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="text-muted-foreground hover:bg-muted hover:text-foreground mb-1 self-center rounded px-2 py-1 font-mono text-[11px] transition-colors"
         >
           {copied ? 'copied ✓' : 'copy'}
         </button>
       </div>
-      <pre className="m-0 overflow-x-auto px-5 py-4 font-mono text-[13px] leading-[1.7]">
+      <pre className="m-0 overflow-x-auto px-3 py-3.5 font-mono text-[12px] leading-[1.65] sm:px-5 sm:py-4 sm:text-[13px]">
         {active.lines.map((line, i) => (
           <div key={i}>
-            <span className="inline-block w-7 select-none pr-3.5 text-right text-muted-foreground/60">
+            <span className="text-muted-foreground/60 inline-block w-7 pr-3.5 text-right select-none">
               {i + 1}
             </span>
             {line.tokens.length === 0 ? (

@@ -13,27 +13,27 @@ interface FinalCtaProps {
  */
 export function FinalCta({ isAuthenticated = false }: FinalCtaProps) {
   return (
-    <section className="border-t border-foreground bg-foreground py-24 text-background">
-      <div className="mx-auto max-w-[720px] px-7 text-center">
-        <div className="marketing-section-eyebrow mb-3 inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-background/60">
+    <section className="border-foreground bg-foreground text-background border-t py-16 sm:py-24">
+      <div className="mx-auto max-w-[720px] px-5 text-center sm:px-7">
+        <div className="marketing-section-eyebrow text-background/60 mb-3 inline-block font-mono text-[11px] tracking-[0.08em] uppercase">
           05 · ship it
         </div>
-        <h2 className="font-sans text-[32px] font-semibold leading-[1.1] tracking-[-0.025em] text-background sm:text-[38px]">
+        <h2 className="text-background font-sans text-[32px] leading-[1.1] font-semibold tracking-[-0.025em] sm:text-[38px]">
           Stop screenshotting{' '}
-          <span className="line-through decoration-background/40">your PRs</span>.
+          <span className="decoration-background/40 line-through">your PRs</span>.
           <br />
           Embed them.
         </h2>
 
         {isAuthenticated ? (
           <>
-            <p className="mx-auto mb-7 mt-3.5 max-w-[620px] text-[16px] text-background/70">
+            <p className="text-background/70 mx-auto mt-3.5 mb-7 max-w-[620px] text-[16px]">
               You&apos;re signed in. Build a widget, copy the snippet, paste it anywhere.
             </p>
             <div className="flex justify-center">
               <Link
                 href="/dashboard"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-brand px-5 font-mono text-[13px] font-medium text-white transition-opacity hover:opacity-90"
+                className="bg-brand inline-flex h-11 items-center justify-center gap-2 rounded-md px-5 font-mono text-[13px] font-medium text-white transition-opacity hover:opacity-90"
               >
                 Open dashboard →
               </Link>
@@ -41,9 +41,8 @@ export function FinalCta({ isAuthenticated = false }: FinalCtaProps) {
           </>
         ) : (
           <>
-            <p className="mx-auto mb-7 mt-3.5 max-w-[620px] text-[16px] text-background/70">
-              Private beta is open. We&apos;re sending 200 invites a week to people on the
-              waitlist.
+            <p className="text-background/70 mx-auto mt-3.5 mb-7 max-w-[620px] text-[16px]">
+              Private beta is open. We&apos;re sending 200 invites a week to people on the waitlist.
             </p>
             <div className="flex justify-center">
               <InlineWaitlist variant="dark" buttonLabel="Get my invite" />
@@ -51,7 +50,7 @@ export function FinalCta({ isAuthenticated = false }: FinalCtaProps) {
           </>
         )}
 
-        <p className="mt-4.5 font-mono text-[12px] text-background/60">
+        <p className="text-background/60 mt-4.5 font-mono text-[12px]">
           A solo project by{' '}
           <a
             href="https://github.com/aggmoulik"

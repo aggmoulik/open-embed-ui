@@ -14,7 +14,7 @@ const QUICK_LINKS = [
     href: '/dashboard/widgets',
     icon: Box,
     title: 'Widgets',
-    body: 'Create, configure, and grab the embed code for any of the 14 layouts.',
+    body: 'Create, configure, and grab the embed code for any of the 7 layouts.',
     cta: 'Manage widgets →',
   },
   {

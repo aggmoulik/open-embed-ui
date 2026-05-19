@@ -204,7 +204,7 @@
   flex-wrap: nowrap;
   gap: 0.75rem;
   width: max-content;
-  animation: geu-marquee 60s linear infinite;
+  animation: geu-marquee 100s linear infinite;
 }
 .geu-marquee-track-reverse {
   animation-name: geu-marquee-reverse;

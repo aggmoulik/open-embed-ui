@@ -24,8 +24,8 @@ const BUILT_BY = [
 
 export function LandingFooter() {
   return (
-    <footer className="border-border bg-muted/40 border-t pt-14 pb-9">
-      <div className="mx-auto max-w-[1240px] px-7">
+    <footer className="border-border bg-muted/40 border-t pt-10 pb-8 sm:pt-14 sm:pb-9">
+      <div className="mx-auto max-w-[1240px] px-5 sm:px-7">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr]">
           <div>
             <div className="mb-3.5 flex items-center gap-2.5 font-mono text-[13px] font-semibold tracking-[-0.01em]">
