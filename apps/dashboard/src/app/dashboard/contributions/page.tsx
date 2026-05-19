@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { ContributionRow } from '@/components/contribution-row';
 import { ContributionEditDialog } from '@/components/contribution-edit-dialog';
 import { ContributionsPagination } from '@/components/contributions-pagination';
-import { Button } from '@open-embed-ui/ui/components/button';
+import { PageHeader } from '@/components/page-header';
 import { Skeleton } from '@open-embed-ui/ui/components/skeleton';
 import {
   Select,
@@ -73,50 +73,48 @@ export default function ContributionsPage() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Merged Pull Requests</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Your merged PRs from public repositories. Add a description and blog link to each
-            contribution.
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-1.5"
-          onClick={handleSync}
-          disabled={syncing}
-        >
-          {syncing ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : (
-            <RefreshCw className="size-3.5" />
-          )}
-          {syncing ? 'Syncing...' : 'Sync'}
-        </Button>
-      </div>
-
-      <div className="mt-4 flex items-center justify-end gap-2">
-        <Select value={sort} onValueChange={handleSortChange}>
-          <SelectTrigger className="h-8 w-36 text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="newest">Newest first</SelectItem>
-            <SelectItem value="oldest">Oldest first</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <div className="mx-auto max-w-[1100px]">
+      <PageHeader
+        num="02"
+        eyebrow="contributions"
+        title="Merged pull requests"
+        lead="Your merged PRs from public repositories. Add a description and blog link to each contribution."
+        actions={
+          <>
+            <Select value={sort} onValueChange={handleSortChange}>
+              <SelectTrigger className="border-border bg-background h-[30px] w-36 rounded-md border font-mono text-[12px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest first</SelectItem>
+                <SelectItem value="oldest">Oldest first</SelectItem>
+              </SelectContent>
+            </Select>
+            <button
+              type="button"
+              onClick={handleSync}
+              disabled={syncing}
+              className="border-border bg-background text-foreground hover:border-foreground/40 hover:bg-muted/40 inline-flex h-[30px] items-center gap-2 rounded-md border px-3 font-mono text-[12px] transition-colors disabled:opacity-60"
+            >
+              {syncing ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <RefreshCw className="size-3.5" strokeWidth={1.75} />
+              )}
+              {syncing ? 'Syncing…' : 'Sync'}
+            </button>
+          </>
+        }
+      />
 
       {error && (
-        <div className="border-destructive/50 bg-destructive/10 text-destructive mt-4 rounded-lg border p-3 text-sm">
+        <div className="border-destructive/50 bg-destructive/10 text-destructive mb-4 rounded-md border p-3 font-mono text-[12px]">
+          <span className="font-semibold">// error: </span>
           {error}
         </div>
       )}
 
-      <div className="mt-4 space-y-2">
+      <div className="space-y-2">
         {loading ? (
           <LoadingSkeleton />
         ) : contributions.length > 0 ? (
@@ -167,21 +165,31 @@ function LoadingSkeleton() {
 
 function EmptyState({ onSync, syncing }: { onSync: () => void; syncing: boolean }) {
   return (
-    <div className="border-border flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
-      <GitPullRequest className="text-muted-foreground/50 size-10" />
-      <h3 className="mt-4 text-lg font-medium">No merged PRs yet</h3>
-      <p className="text-muted-foreground mt-1 max-w-xs text-sm">
-        Import your GitHub contributions to get started. Merged PRs from public repos will appear
+    <div className="border-border bg-muted/20 flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
+      <GitPullRequest className="text-muted-foreground/50 size-10" strokeWidth={1.5} />
+      <div className="marketing-section-eyebrow text-muted-foreground mt-5 inline-block font-mono text-[11px] tracking-[0.08em] uppercase">
+        empty state
+      </div>
+      <h3 className="mt-1 font-sans text-[18px] font-semibold tracking-[-0.01em]">
+        No merged PRs yet
+      </h3>
+      <p className="text-muted-foreground mt-1.5 max-w-[360px] text-[14px]">
+        Sync your GitHub contributions to get started. Merged PRs from public repos will appear
         here.
       </p>
-      <Button className="mt-4 gap-1.5" onClick={onSync} disabled={syncing}>
+      <button
+        type="button"
+        onClick={onSync}
+        disabled={syncing}
+        className="border-foreground bg-foreground text-background hover:bg-foreground/90 mt-5 inline-flex h-[34px] items-center gap-2 rounded-md border px-4 font-mono text-[12px] font-medium transition-colors disabled:opacity-60"
+      >
         {syncing ? (
           <Loader2 className="size-3.5 animate-spin" />
         ) : (
-          <RefreshCw className="size-3.5" />
+          <RefreshCw className="size-3.5" strokeWidth={1.75} />
         )}
-        {syncing ? 'Syncing...' : 'Sync Now'}
-      </Button>
+        {syncing ? 'Syncing…' : 'Sync now'}
+      </button>
     </div>
   );
 }
