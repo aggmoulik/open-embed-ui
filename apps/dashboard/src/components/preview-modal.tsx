@@ -1,8 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Button } from '@open-embed-ui/ui/components/button';
-import { Badge } from '@open-embed-ui/ui/components/badge';
 import { Skeleton } from '@open-embed-ui/ui/components/skeleton';
 import { X } from 'lucide-react';
 import { useWidget, useContributions } from '@/hooks';
@@ -67,42 +65,62 @@ export function PreviewModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="bg-background flex w-full max-w-5xl flex-col overflow-hidden rounded-xl border shadow-2xl"
+        className="border-border bg-background flex w-full max-w-5xl flex-col overflow-hidden rounded-xl border shadow-2xl"
         style={{ height: 'min(85vh, 750px)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-sm font-medium">Widget Preview</span>
-            <Badge variant="outline" className="text-[10px]">
-              {filteredContributions.length} PRs shown
-            </Badge>
+        <div className="border-border bg-muted/30 flex shrink-0 items-center justify-between border-b border-dashed px-4 py-2.5">
+          <div className="flex items-center gap-3">
+            <span className="text-muted-foreground font-mono text-[10px] tracking-[0.08em] uppercase">
+              // live preview
+            </span>
+            <span className="text-muted-foreground/70 font-mono text-[10px] tracking-[0.08em] uppercase">
+              {filteredContributions.length} prs · {config.layout ?? 'grid'} ·{' '}
+              {config.theme ?? 'system'}
+            </span>
           </div>
-          <Button variant="ghost" size="icon-xs" onClick={onClose}>
-            <X className="size-3.5" />
-          </Button>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close preview"
+            className="border-border bg-background text-muted-foreground hover:border-foreground/40 hover:text-foreground inline-flex size-7 items-center justify-center rounded-md border transition-colors"
+          >
+            <X className="size-3.5" strokeWidth={1.75} />
+          </button>
         </div>
 
-        <div className="flex-1 overflow-auto p-4">
-          <div className="bg-background rounded-lg border p-4">
-            {loading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} className="h-16 rounded-lg" />
-                ))}
-              </div>
-            ) : hasData ? (
-              <WidgetRenderer contributions={filteredContributions} config={config} />
-            ) : (
-              <div className="text-muted-foreground flex items-center justify-center py-20 text-sm">
-                Widget not found.
-              </div>
-            )}
+        {/* Browser chrome — same as the landing WidgetDemo */}
+        <div className="border-border bg-muted/40 flex shrink-0 items-center gap-3 border-b px-3.5 py-2.5">
+          <div className="flex gap-1.5">
+            <span className="bg-border size-2.5 rounded-full" />
+            <span className="bg-border size-2.5 rounded-full" />
+            <span className="bg-border size-2.5 rounded-full" />
           </div>
+          <div className="border-border bg-background text-muted-foreground flex h-[26px] flex-1 items-center gap-0.5 rounded-md border px-2.5 font-mono text-[12px]">
+            <span>https://</span>
+            <b className="text-foreground font-semibold">your-portfolio.dev</b>
+            <span>/now</span>
+          </div>
+        </div>
+
+        <div className="marketing-dot-bg bg-background flex-1 overflow-auto p-6">
+          {loading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-20 rounded-xl" />
+              ))}
+            </div>
+          ) : hasData ? (
+            <WidgetRenderer contributions={filteredContributions} config={config} />
+          ) : (
+            <div className="text-muted-foreground flex items-center justify-center py-20 font-mono text-[13px]">
+              <span className="text-brand mr-2">●</span> Widget not found.
+            </div>
+          )}
         </div>
       </div>
     </div>

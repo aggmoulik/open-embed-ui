@@ -31,19 +31,20 @@ export function PRCard({
   const c = contribution;
   const displayTitle = c.titleOverride || titleOverride || c.title;
   const avatarUrl = `https://github.com/${c.repoOwner}.png?size=32`;
-  // Only render labels in card layouts when the user has explicitly set them.
-  // Receipt-family layouts (terminal/log/etc.) use the auto-detect fallback as
-  // part of their CLI aesthetic; card-family stays cleaner unless opted in.
+  // Card-family layouts only show user-set labels. Receipt/CLI families lean on
+  // auto-detection as part of their aesthetic; cards stay cleaner.
   const labels =
     showLabels && c.labels && c.labels.length > 0 ? getDisplayLabels(displayTitle, c.labels) : [];
   const blog = getBlogTarget(c);
 
   return (
     <div
-      className={`border-border bg-card hover:bg-muted/50 rounded-lg border p-3 transition-colors ${uniform ? 'flex h-full flex-col' : ''}`}
+      className={`border-border bg-background hover:border-foreground/30 group rounded-xl border p-3.5 transition-all hover:-translate-y-px hover:shadow-[0_1px_0_rgba(0,0,0,.02),0_4px_16px_rgba(0,0,0,.05)] ${
+        uniform ? 'flex h-full flex-col' : ''
+      }`}
     >
-      <div className={`flex gap-2.5 ${uniform ? 'flex-1' : ''}`}>
-        <GitPullRequest className="mt-0.5 size-4 shrink-0 text-purple-500" />
+      <div className={`flex gap-3 ${uniform ? 'flex-1' : ''}`}>
+        <GitPullRequest className="text-violet mt-0.5 size-4 shrink-0" strokeWidth={1.75} />
         <div className="min-w-0 flex-1">
           {(labels.length > 0 || uniform) && (
             <div
@@ -55,7 +56,7 @@ export function PRCard({
                 return (
                   <span
                     key={label}
-                    className="rounded px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-white uppercase"
+                    className="rounded-sm px-1.5 py-px font-mono text-[10px] font-semibold tracking-[0.06em] text-white uppercase"
                     style={{ backgroundColor: color.light }}
                   >
                     {label}
@@ -64,12 +65,15 @@ export function PRCard({
               })}
             </div>
           )}
+
           <div className="flex items-start gap-1.5">
             <a
               href={safeHref(c.url)}
               target="_blank"
               rel="noopener noreferrer"
-              className={`font-medium hover:underline ${compact ? 'text-xs' : 'text-sm'} line-clamp-1`}
+              className={`text-foreground line-clamp-1 font-medium tracking-[-0.005em] underline-offset-2 group-hover:underline ${
+                compact ? 'text-[12px]' : 'text-[14px]'
+              }`}
             >
               {displayTitle}
             </a>
@@ -78,43 +82,56 @@ export function PRCard({
                 href={safeHref(blog.href)}
                 target={blog.target}
                 rel={blog.rel}
-                className="text-muted-foreground hover:text-foreground mt-0.5 shrink-0 transition-colors"
+                className="text-muted-foreground/70 hover:text-foreground mt-0.5 shrink-0 transition-colors"
                 aria-label="Read blog post"
                 title="Read blog post"
               >
-                <BookOpen className="size-3.5" />
+                <BookOpen className="size-3.5" strokeWidth={1.75} />
               </a>
             )}
           </div>
-          <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
+
+          <div className="text-muted-foreground mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px]">
             <a
               href={safeHref(`https://github.com/${c.repo}`)}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 hover:underline"
+              className="hover:text-foreground flex items-center gap-1.5 transition-colors"
             >
               <img
                 src={safeImgSrc(avatarUrl)}
                 alt={c.repoOwner}
-                className="size-4 rounded-full"
+                className="size-3.5 rounded-full"
                 loading="lazy"
               />
               {c.repo}
             </a>
-            <span className="text-green-600">+{c.additions}</span>
-            <span className="text-red-600">-{c.deletions}</span>
+            <span className="text-muted-foreground/40">·</span>
+            <span className="text-brand">+{c.additions}</span>
+            <span className="text-danger">−{c.deletions}</span>
             {c.mergedAt && (
-              <time dateTime={new Date(c.mergedAt).toISOString()}>
-                {new Date(c.mergedAt).toLocaleDateString()}
-              </time>
+              <>
+                <span className="text-muted-foreground/40">·</span>
+                <time
+                  dateTime={new Date(c.mergedAt).toISOString()}
+                  className="text-muted-foreground/80"
+                >
+                  {new Date(c.mergedAt).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </time>
+              </>
             )}
           </div>
+
           {showDescription && (c.description || uniform) && (
             <p
-              className="text-muted-foreground mt-2 line-clamp-2 text-xs leading-relaxed"
+              className="text-muted-foreground mt-2.5 line-clamp-2 text-[12px] leading-[1.55]"
               style={uniform ? { minHeight: '32px' } : undefined}
             >
-              {c.description ?? ' '}
+              {c.description ?? ' '}
             </p>
           )}
         </div>
