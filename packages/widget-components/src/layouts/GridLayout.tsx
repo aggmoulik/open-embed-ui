@@ -1,5 +1,5 @@
-import { PRCard } from './pr-card';
-import type { Contribution } from '@/types';
+import { PRCard } from '../PRCard';
+import type { BaseContribution as Contribution } from '@open-embed-ui/types';
 
 interface GridLayoutProps {
   contributions: Contribution[];

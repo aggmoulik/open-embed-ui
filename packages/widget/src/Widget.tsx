@@ -2,60 +2,36 @@ import { useState, useEffect } from 'preact/hooks';
 import type { ComponentType } from 'preact';
 import type { WidgetData, WidgetOptions, WidgetLayout, Contribution } from './types';
 import { safeHref } from './lib/url-safe';
+import type { LayoutResolver, LayoutProps } from './layout-map';
 
 interface WidgetProps {
   options: WidgetOptions;
+  /**
+   * Pre-loaded layout component for per-layout IIFE bundles. When present,
+   * `layoutResolver` is ignored and the component is used directly.
+   */
+  LayoutComponent?: ComponentType<LayoutProps>;
+  /**
+   * Dynamic-import resolver for the all-layouts bundle. Only provided by
+   * the all-layouts entry (src/index.ts); per-layout entries omit it.
+   */
+  layoutResolver?: LayoutResolver;
+  /**
+   * Legacy layout string fallback map (carousel → grid, log → gitlog, etc.).
+   * Provided by the all-layouts entry alongside layoutResolver.
+   */
+  legacyFallback?: Record<string, WidgetLayout>;
 }
-
-interface LayoutProps {
-  contributions: Contribution[];
-  titleOverrides?: Record<string, string>;
-}
-
-const layoutImports: Record<WidgetLayout, () => Promise<{ [key: string]: ComponentType<LayoutProps> }>> = {
-  grid: () => import('./layouts/GridLayout'),
-  list: () => import('./layouts/ListLayout'),
-  timeline: () => import('./layouts/TimelineLayout'),
-  'single-card': () => import('./layouts/SingleCardLayout'),
-  marquee: () => import('./layouts/MarqueeLayout'),
-  masonry: () => import('./layouts/MasonryLayout'),
-  highlight: () => import('./layouts/HighlightLayout'),
-  terminal: () => import('./layouts/TerminalLayout'),
-  scorecard: () => import('./layouts/ScorecardLayout'),
-  gitlog: () => import('./layouts/GitlogLayout'),
-  devlog: () => import('./layouts/DevlogLayout'),
-  proof: () => import('./layouts/ProofLayout'),
-};
-
-const layoutExportNames: Record<WidgetLayout, string> = {
-  grid: 'GridLayout',
-  list: 'ListLayout',
-  timeline: 'TimelineLayout',
-  'single-card': 'SingleCardLayout',
-  marquee: 'MarqueeLayout',
-  masonry: 'MasonryLayout',
-  highlight: 'HighlightLayout',
-  terminal: 'TerminalLayout',
-  scorecard: 'ScorecardLayout',
-  gitlog: 'GitlogLayout',
-  devlog: 'DevlogLayout',
-  proof: 'ProofLayout',
-};
-
-// Dropped layouts → closest surviving sibling (feature 17).
-// carousel → grid is the default unknown-layout path; log → gitlog
-// is special because gitlog now carries log's stats.
-const LEGACY_LAYOUT_FALLBACK: Record<string, WidgetLayout> = {
-  log: 'gitlog',
-};
 
 type ErrorKind = 'blocked' | 'not-found' | 'unavailable' | 'config';
 
-export function Widget({ options }: WidgetProps) {
+export function Widget({ options, LayoutComponent: injectedLayout, layoutResolver, legacyFallback }: WidgetProps) {
   const [data, setData] = useState<WidgetData | null>(null);
   const [errorKind, setErrorKind] = useState<ErrorKind | null>(null);
   const [loading, setLoading] = useState(true);
-  const [LayoutComponent, setLayoutComponent] = useState<ComponentType<LayoutProps> | null>(null);
+  const [resolvedLayout, setResolvedLayout] = useState<ComponentType<LayoutProps> | null>(
+    injectedLayout ?? null,
+  );
 
   const baseUrl = options.baseUrl || '';
 
@@ -105,23 +81,30 @@ export function Widget({ options }: WidgetProps) {
 
   useEffect(() => {
     if (!data) return;
+    // When a per-layout bundle injects the component directly, skip the
+    // dynamic-import resolver entirely — the layout is already bundled.
+    if (injectedLayout) {
+      setResolvedLayout(() => injectedLayout);
+      return;
+    }
+    if (!layoutResolver) return;
     // Tolerate legacy / unknown layout strings (e.g. widgets stored with
     // `carousel` or `log` after those layouts were dropped) by mapping to
     // the closest sibling, falling back to grid.
-    const requested = data.widget.config.layout ?? 'grid';
-    const layout: WidgetLayout = layoutImports[requested as WidgetLayout]
-      ? (requested as WidgetLayout)
-      : (LEGACY_LAYOUT_FALLBACK[requested as string] ?? 'grid');
-    layoutImports[layout]().then((mod) => {
-      const name = layoutExportNames[layout];
-      setLayoutComponent(() => mod[name] as ComponentType<LayoutProps>);
+    const requested = (data.widget.config.layout ?? 'grid') as string;
+    // If it's in the legacy map, remap; otherwise pass through as-is (the
+    // resolver will handle unknown strings by falling back to grid).
+    const layout = ((legacyFallback ?? {})[requested] ?? requested) as WidgetLayout;
+    layoutResolver(layout).then((Component) => {
+      setResolvedLayout(() => Component);
     });
-  }, [data]);
+  }, [data, injectedLayout, layoutResolver, legacyFallback]);
 
   if (loading) return <div class="geu-loading">Loading...</div>;
   if (errorKind) return <ErrorPlaceholder kind={errorKind} />;
-  if (!data || !LayoutComponent) return null;
+  if (!data || !resolvedLayout) return null;
 
+  const LayoutComponent = resolvedLayout;
   const titleOverrides = data.widget.config.titleOverrides;
   const contributions = data.contributions;
 

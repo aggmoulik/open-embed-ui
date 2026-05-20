@@ -1,3 +1,5 @@
+export { isSafeHttpUrl, safeHref, safeImgSrc } from './url-safe';
+
 export {
   PREDEFINED_LABELS,
   VALID_LABELS,
@@ -19,12 +21,7 @@ export type WidgetLayout =
   | 'single-card'
   | 'marquee'
   | 'masonry'
-  | 'highlight'
-  | 'terminal'
-  | 'scorecard'
-  | 'gitlog'
-  | 'devlog'
-  | 'proof';
+  | 'highlight';
 
 export interface WidgetConfig {
   theme?: 'light' | 'dark' | 'system';

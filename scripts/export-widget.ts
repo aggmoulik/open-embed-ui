@@ -193,16 +193,36 @@ async function main() {
   writeFileSync(dataPath, JSON.stringify(payload, null, 2) + '\n', 'utf-8');
   console.log(`  ✓ Wrote ${relativeTo(outDir, dataPath)}`);
 
-  // 5. Copy widget.js (and source map if present)
-  const widgetJsSrc = join(WIDGET_DIST, 'widget.js');
+  // 5. Copy widget.js (and source map if present) — picks the slim per-layout
+  // bundle when the widget's layout has one, falls back to the all-layouts
+  // bundle for admin-only receipt-family layouts (terminal/scorecard/etc.).
+  const PER_LAYOUT = new Set([
+    'grid',
+    'list',
+    'timeline',
+    'single-card',
+    'marquee',
+    'masonry',
+    'highlight',
+  ]);
+  const widgetLayout = payload.widget.config?.layout ?? 'grid';
+  const slimName = PER_LAYOUT.has(widgetLayout) ? `widget-${widgetLayout}.js` : 'widget.js';
+  const widgetJsSrc = join(WIDGET_DIST, slimName);
+  if (!existsSync(widgetJsSrc)) {
+    console.error(
+      `✗ Expected ${slimName} not found in dist. Run \`pnpm build:widget\` first.`,
+    );
+    process.exit(1);
+  }
+  // Destination always named widget.js so consumer HTML doesn't change.
   const widgetJsDest = join(outDir, 'widget.js');
   copyFileSync(widgetJsSrc, widgetJsDest);
-  console.log(`  ✓ Copied widget.js`);
+  console.log(`  ✓ Copied ${slimName} → widget.js (layout: ${widgetLayout})`);
 
-  const widgetMapSrc = join(WIDGET_DIST, 'widget.js.map');
+  const widgetMapSrc = join(WIDGET_DIST, `${slimName}.map`);
   if (existsSync(widgetMapSrc)) {
     copyFileSync(widgetMapSrc, join(outDir, 'widget.js.map'));
-    console.log(`  ✓ Copied widget.js.map`);
+    console.log(`  ✓ Copied ${slimName}.map → widget.js.map`);
   }
 
   // 6. Write manifest

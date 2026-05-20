@@ -1,0 +1,23 @@
+{
+  "name": "@open-embed-ui/widget-components",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "dependencies": {
+    "@open-embed-ui/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "preact": "10.29.0",
+    "typescript": "5.9.3"
+  }
+}

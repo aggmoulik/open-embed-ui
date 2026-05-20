@@ -1,10 +1,4 @@
 {
   "extends": "../tsconfig/preact.json",
-  "compilerOptions": {
-    "noEmit": false,
-    "outDir": "dist",
-    "rootDir": "src",
-    "declarationDir": "dist"
-  },
   "include": ["src/**/*"]
 }

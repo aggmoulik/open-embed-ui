@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hostile host — aggressive CSS reset</title>
+    <style>
+      /* Aggressive host CSS — should NOT bleed into Shadow DOM. */
+      *, *::before, *::after {
+        all: initial;
+        box-sizing: border-box !important;
+        color: red !important;
+        font-family: 'Comic Sans MS', cursive !important;
+      }
+      body { display: block; padding: 20px; }
+      h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+      p { margin: 0.25rem 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Hostile host — widget should be isolated</h1>
+    <p>
+      If you see the widget rendered correctly below (NOT red, NOT Comic Sans),
+      Shadow DOM isolation is working.
+    </p>
+
+    <script
+      async
+      src="http://localhost:3000/widget.js"
+      data-widget-id="dev-widget-001"
+    ></script>
+  </body>
+</html>

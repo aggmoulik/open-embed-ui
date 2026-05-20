@@ -3,7 +3,8 @@
 @import "shadcn/tailwind.css";
 @import "../../../../packages/ui/src/styles/globals.css";
 
-@source "../../../../packages/ui/src";
+@source "../../../../packages/ui/src/**/*.{ts,tsx}";
+@source "../../../../packages/widget-components/src/**/*.{ts,tsx}";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -110,6 +111,36 @@
 .animate-marquee:hover,
 .animate-marquee-reverse:hover {
   animation-play-state: paused;
+}
+/* Shared MarqueeLayout class names (packages/widget-components).
+   Reuse the existing @keyframes marquee / marquee-reverse above — no new
+   keyframes. Mirrors packages/widget/src/styles/widget.css. */
+.geu-marquee {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.geu-marquee-row {
+  overflow: hidden;
+}
+.geu-marquee-track {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.75rem;
+  width: max-content;
+  animation: marquee 100s linear infinite;
+}
+.geu-marquee-track-reverse {
+  animation-name: marquee-reverse;
+}
+.geu-marquee:hover .geu-marquee-track {
+  animation-play-state: paused;
+}
+.geu-marquee-item {
+  flex: 0 0 280px;
+  width: 280px;
+  min-width: 0;
 }
 /* Receipt-family + screenshot-family layout preview styles — mirrors widget.css */
 

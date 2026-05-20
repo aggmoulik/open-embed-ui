@@ -130,6 +130,12 @@ export async function getEmbedPayload(
       deletions: c.deletions,
       changedFiles: c.changedFiles,
       labels: (c.labels as string[] | null) ?? null,
+      // User-authored metadata (feature 11). The shared widget components
+      // consume these — PRCard renders the description below the meta row
+      // and the blog-link affordance uses blogUrl/blogOpenInNewTab.
+      description: c.description ?? null,
+      blogUrl: c.blogUrl ?? null,
+      blogOpenInNewTab: c.blogOpenInNewTab,
     })),
     user: user
       ? { name: user.name, image: user.image, githubUsername: user.githubUsername }

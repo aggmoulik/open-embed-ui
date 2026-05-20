@@ -1,11 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { BookOpen, GitPullRequest } from 'lucide-react';
-import { getBlogTarget, getDisplayLabels, getLabelColor } from '@open-embed-ui/types';
-import { PRCard } from './pr-card';
-import type { Contribution } from '@/types';
-import { safeHref, safeImgSrc } from '@/lib/validation/contribution';
+import { BookOpen, GitPullRequest } from '../icons';
+import {
+  getBlogTarget,
+  getDisplayLabels,
+  getLabelColor,
+  safeHref,
+  safeImgSrc,
+} from '@open-embed-ui/types';
+import { PRCard } from '../PRCard';
+import type { BaseContribution as Contribution } from '@open-embed-ui/types';
 
 interface HighlightLayoutProps {
   contributions: Contribution[];

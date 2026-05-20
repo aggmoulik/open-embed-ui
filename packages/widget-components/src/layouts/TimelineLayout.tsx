@@ -1,7 +1,12 @@
-import { BookOpen, GitPullRequest } from 'lucide-react';
-import { getBlogTarget, getDisplayLabels, getLabelColor } from '@open-embed-ui/types';
-import type { Contribution } from '@/types';
-import { safeHref, safeImgSrc } from '@/lib/validation/contribution';
+import {
+  type BaseContribution as Contribution,
+  getBlogTarget,
+  getDisplayLabels,
+  getLabelColor,
+  safeHref,
+  safeImgSrc,
+} from '@open-embed-ui/types';
+import { BookOpen, GitPullRequest } from '../icons';
 
 interface TimelineLayoutProps {
   contributions: Contribution[];

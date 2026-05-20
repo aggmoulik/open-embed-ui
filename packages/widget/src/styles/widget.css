@@ -1,192 +1,186 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* v4 per-layer imports — skip `tailwindcss/preflight` to save ~300 B gz on
+   Shadow-DOM-isolated widget. Host page styles don't reach inside the shadow,
+   so most Preflight resets are unused. Manual reset below covers only what
+   widget.css rules actually depend on. */
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
 
-/* Container */
+/* Manual reset — replaces Preflight inside Shadow DOM */
+.geu-widget,
+.geu-widget *,
+.geu-widget *::before,
+.geu-widget *::after {
+  box-sizing: border-box;
+}
+
+/* Tailwind v4 @property initial-value fallback.
+   --------------------------------------------
+   Tailwind v4 registers ~35 internal --tw-* variables via `@property` rules
+   with `initial-value` defaults (border-style: solid, shadow: 0 0 #0000,
+   translate: 0, etc.). Utility classes consume these via var(), e.g.
+   `.border { border-style: var(--tw-border-style) }`. When @property isn't
+   honored, the variable resolves to nothing and the property falls back to
+   its CSS initial — for border-style that means "none", so borders disappear.
+
+   Tailwind ships an @supports-gated fallback block for older browsers, but
+   that block is skipped in modern engines (which DO support @property). And
+   @property declarations inside Shadow DOM are unreliable across browsers —
+   we've observed Chromium silently dropping the initial-values, manifesting
+   as invisible borders, missing shadows, and broken transform composition.
+
+   Solution: replicate Tailwind's full fallback declaration list here,
+   ungated, scoped to .geu-widget descendants. Values mirror the @supports
+   block emitted by tailwindcss@4.2.2 — re-extract on Tailwind upgrades. */
+.geu-widget,
+.geu-widget *,
+.geu-widget *::before,
+.geu-widget *::after,
+.geu-widget ::backdrop {
+  --tw-space-y-reverse: 0;
+  --tw-border-style: solid;
+  --tw-leading: initial;
+  --tw-font-weight: initial;
+  --tw-tracking: initial;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-color: initial;
+  --tw-shadow-alpha: 100%;
+  --tw-inset-shadow: 0 0 #0000;
+  --tw-inset-shadow-color: initial;
+  --tw-inset-shadow-alpha: 100%;
+  --tw-ring-color: initial;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-inset-ring-color: initial;
+  --tw-inset-ring-shadow: 0 0 #0000;
+  --tw-ring-inset: initial;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-blur: initial;
+  --tw-brightness: initial;
+  --tw-contrast: initial;
+  --tw-grayscale: initial;
+  --tw-hue-rotate: initial;
+  --tw-invert: initial;
+  --tw-opacity: initial;
+  --tw-saturate: initial;
+  --tw-sepia: initial;
+  --tw-drop-shadow: initial;
+  --tw-drop-shadow-color: initial;
+  --tw-drop-shadow-alpha: 100%;
+  --tw-drop-shadow-size: initial;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-translate-z: 0;
+}
+.geu-widget a {
+  color: inherit;
+  text-decoration: none;
+}
+.geu-widget img,
+.geu-widget svg {
+  display: block;
+  max-width: 100%;
+}
+.geu-widget button {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* =========================================================================
+   CSS-first Tailwind v4 config — replaces the deleted tailwind.config.mjs.
+   ========================================================================= */
+
+/* Content sources to scan for utility class names (replaces the v3
+   `content` array). Path is relative to this CSS file. */
+@source "../**/*.{ts,tsx}";
+@source "../../../widget-components/src/**/*.{ts,tsx}";
+
+/* Class-based dark mode. The widget root element receives a `.dark` class.
+   Variant matches both the .dark element itself AND its descendants, so
+   utilities like `dark:bg-foreground` on the widget root activate. */
+@custom-variant dark (&:is(.geu-widget.dark, .geu-widget.dark *));
+
+/* Design tokens. Two things going on here:
+
+   1. `@theme` block registers tokens so Tailwind v4 generates utility
+      classes (bg-muted, text-foreground, border-border, text-violet, etc).
+      Tailwind emits these at `:root` by default — fine for normal pages.
+
+   2. `.geu-widget` block REDEFINES the same --color-* tokens directly.
+      Why: the widget runs inside a Shadow DOM, and `:root` does NOT match
+      anything inside a shadow tree. Tailwind's :root vars are invisible
+      inside the widget. We re-emit them on .geu-widget (which IS a real
+      ancestor of every rendered element) so the utilities actually resolve.
+
+   Values mirror packages/ui/src/styles/globals.css so the widget renders
+   visually identical to the dashboard preview. */
+@theme {
+  /* Fonts. Host pages that load Geist via next/font make these visible
+     inside the Shadow DOM per the CSS Fonts spec; otherwise falls through
+     to system defaults. */
+  --font-sans: Geist, "Geist Sans", Inter, ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono", GeistMono, "JetBrains Mono", ui-monospace,
+    SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+
+  /* Color tokens — register so Tailwind generates the utility classes.
+     Light-mode values; .geu-widget.dark overrides below. */
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.145 0 0);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.145 0 0);
+  --color-muted: oklch(0.97 0 0);
+  --color-muted-foreground: oklch(0.556 0 0);
+  --color-border: oklch(0.922 0 0);
+  --color-brand: oklch(0.629 0.149 159.6);
+  --color-brand-foreground: oklch(0.985 0 0);
+  --color-brand-soft: oklch(0.965 0.057 159.6);
+  --color-violet: oklch(0.481 0.226 285);
+  --color-warn: oklch(0.609 0.165 56);
+  --color-danger: oklch(0.567 0.218 27);
+}
+
+/* Re-emit the same tokens directly on .geu-widget so they resolve inside
+   the Shadow DOM (where :root does not match). Identical values to @theme. */
 .geu-widget {
-  @apply font-sans text-sm leading-relaxed text-gray-900;
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.145 0 0);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.145 0 0);
+  --color-muted: oklch(0.97 0 0);
+  --color-muted-foreground: oklch(0.556 0 0);
+  --color-border: oklch(0.922 0 0);
+  --color-brand: oklch(0.629 0.149 159.6);
+  --color-brand-foreground: oklch(0.985 0 0);
+  --color-brand-soft: oklch(0.965 0.057 159.6);
+  --color-violet: oklch(0.481 0.226 285);
+  --color-warn: oklch(0.609 0.165 56);
+  --color-danger: oklch(0.567 0.218 27);
+
+  @apply font-sans text-sm leading-relaxed;
+  color: var(--color-foreground);
 }
+
+/* Dark-mode overrides — mirrors .dark in packages/ui/src/styles/globals.css. */
 .geu-widget.dark {
-  @apply text-gray-100;
-}
-
-/* Grid Layout */
-.geu-grid {
-  @apply grid grid-cols-1 gap-3;
-}
-@media (min-width: 540px) {
-  .geu-grid { @apply grid-cols-2; }
-}
-@media (min-width: 800px) {
-  .geu-grid { @apply grid-cols-3; }
-}
-
-/* List Layout */
-.geu-list {
-  @apply flex flex-col gap-2;
-}
-
-/* PR Card */
-.geu-card {
-  @apply flex gap-2.5 rounded-lg border border-gray-200 bg-white p-3 transition-colors;
-}
-.geu-card:hover {
-  @apply bg-gray-50;
-}
-.dark .geu-card {
-  @apply border-gray-700 bg-gray-900;
-}
-.dark .geu-card:hover {
-  @apply bg-gray-800;
-}
-
-.geu-card-icon {
-  @apply mt-0.5 shrink-0 text-purple-500;
-}
-
-.geu-card-content {
-  @apply min-w-0 flex-1;
-}
-
-.geu-card-title {
-  @apply text-sm font-medium text-gray-900 no-underline;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.geu-card-title:hover {
-  @apply underline;
-}
-.dark .geu-card-title {
-  @apply text-gray-100;
-}
-
-.geu-card-title-compact {
-  @apply text-xs;
-}
-
-.geu-card-title-large {
-  @apply text-base font-semibold;
-  -webkit-line-clamp: 2;
-}
-
-.geu-card-meta {
-  @apply mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-gray-500;
-}
-.dark .geu-card-meta {
-  @apply text-gray-400;
-}
-
-.geu-card-repo {
-  @apply flex items-center gap-1 text-gray-500 no-underline;
-}
-.geu-card-repo:hover {
-  @apply underline;
-}
-.dark .geu-card-repo {
-  @apply text-gray-400;
-}
-
-.geu-card-avatar {
-  @apply size-3.5 rounded-full;
-}
-.geu-card-avatar-large {
-  @apply size-5;
-}
-
-.geu-additions {
-  @apply text-green-600;
-}
-.geu-deletions {
-  @apply text-red-600;
-}
-
-/* Card-family: label badges, blog icon, description (feature 16) */
-.geu-card-badges {
-  @apply mb-1.5 flex flex-wrap gap-1;
-}
-.geu-card-badge {
-  @apply inline-block rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide;
-}
-.geu-card-title-row {
-  @apply flex items-start gap-1.5;
-}
-.geu-card-blog {
-  @apply mt-0.5 shrink-0 text-gray-500 no-underline transition-colors;
-}
-.geu-card-blog:hover {
-  @apply text-gray-900;
-}
-.dark .geu-card-blog {
-  @apply text-gray-400;
-}
-.dark .geu-card-blog:hover {
-  @apply text-gray-100;
-}
-.geu-card-desc {
-  @apply mt-2 text-xs leading-relaxed text-gray-500;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.dark .geu-card-desc {
-  @apply text-gray-400;
-}
-
-/* Uniform-height mode for marquee: card stretches to fill its flex
-   parent (h-full) AND reserves space for optional fields (badges,
-   description) so every card in a row has identical height and elements
-   align across cards. */
-.geu-card-uniform {
-  @apply h-full;
-}
-.geu-card-uniform .geu-card-badges {
-  min-height: 18px;
-}
-.geu-card-uniform .geu-card-desc {
-  min-height: 32px;
-}
-
-/* Timeline Layout */
-.geu-timeline {
-  @apply relative pl-1;
-}
-.geu-timeline-line {
-  @apply absolute top-0 bottom-0 left-4 w-px bg-gray-200;
-}
-.dark .geu-timeline-line {
-  @apply bg-gray-700;
-}
-.geu-timeline-item {
-  @apply relative flex gap-3.5 py-3 pl-1;
-}
-.geu-timeline-dot {
-  @apply relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-purple-500;
-}
-.dark .geu-timeline-dot {
-  @apply border-gray-700 bg-gray-900;
-}
-
-/* Single Card */
-.geu-single {
-  @apply flex gap-3.5 rounded-xl border border-gray-200 bg-white p-5;
-}
-.dark .geu-single {
-  @apply border-gray-700 bg-gray-900;
-}
-.geu-single-icon {
-  @apply flex size-10 shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-600;
-}
-.dark .geu-single-icon {
-  @apply bg-purple-900/30 text-purple-400;
-}
-.geu-single-date {
-  @apply mt-1 text-xs text-gray-500;
-}
-.dark .geu-single-date {
-  @apply text-gray-400;
+  --color-background: oklch(0.145 0 0);
+  --color-foreground: oklch(0.985 0 0);
+  --color-card: oklch(0.205 0 0);
+  --color-card-foreground: oklch(0.985 0 0);
+  --color-muted: oklch(0.269 0 0);
+  --color-muted-foreground: oklch(0.708 0 0);
+  --color-border: oklch(1 0 0 / 10%);
+  --color-brand: oklch(0.69 0.155 159.6);
+  --color-brand-foreground: oklch(0.145 0 0);
+  --color-brand-soft: oklch(0.32 0.075 159.6);
+  --color-violet: oklch(0.62 0.21 285);
+  --color-warn: oklch(0.71 0.155 56);
+  --color-danger: oklch(0.65 0.218 27);
 }
 
 /* Marquee Layout */
@@ -217,9 +211,6 @@
   width: 280px;
   min-width: 0;
 }
-.geu-marquee-item .geu-card {
-  @apply h-full;
-}
 @keyframes geu-marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(calc(-50% - 0.375rem)); }
@@ -245,58 +236,6 @@
   .geu-masonry { columns: 3; }
 }
 
-/* Highlight Layout */
-.geu-highlight {
-  @apply space-y-3;
-}
-.geu-highlight-featured {
-  @apply flex gap-4 rounded-xl border-l-4 border-l-purple-500 border border-gray-200 bg-white p-5;
-}
-.dark .geu-highlight-featured {
-  @apply border-gray-700 bg-gray-900 border-l-purple-400;
-}
-.geu-highlight-icon {
-  @apply flex size-10 shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-600;
-}
-.dark .geu-highlight-icon {
-  @apply bg-purple-900/30 text-purple-400;
-}
-.geu-highlight-secondary {
-  @apply grid grid-cols-1 gap-3 sm:grid-cols-2;
-}
-
-/* Empty State */
-.geu-empty {
-  @apply text-center py-12 text-sm text-gray-400 border border-dashed border-gray-200 rounded-lg;
-}
-.dark .geu-empty {
-  @apply text-gray-500 border-gray-700;
-}
-
-/* Footer */
-.geu-footer {
-  @apply block text-center mt-3 text-[10px] text-gray-400 no-underline;
-}
-.geu-footer:hover {
-  @apply underline text-gray-500;
-}
-.dark .geu-footer {
-  @apply text-gray-600;
-}
-.dark .geu-footer:hover {
-  @apply text-gray-500;
-}
-
-/* Loading */
-.geu-loading {
-  @apply flex items-center justify-center py-12 text-sm text-gray-400;
-}
-
-/* Error (legacy — kept for back-compat) */
-.geu-error {
-  @apply text-center py-8 text-sm text-red-500;
-}
-
 /* Empty / error placeholders — neutral and compact so they do not
    dominate a host page. Variants: -blocked, -not-found, -unavailable,
    -config. All share the base style; variants can override if needed. */
@@ -307,237 +246,6 @@
 .dark .geu-empty {
   @apply text-gray-400 border-gray-800;
 }
-
-/* =========================================================================
-   Receipt-family + screenshot-family layouts.
-   Shared tokens, light default, `.dark` ancestor overrides.
-   ========================================================================= */
-
-.geu-terminal, .geu-scorecard,
-.geu-gitlog, .geu-devlog, .geu-proof {
-  --rcpt-bg: #fafaf8;
-  --rcpt-ink: #1a1a18;
-  --rcpt-muted: #71746f;
-  --rcpt-dim: #a3a6a0;
-  --rcpt-add: #16a34a;
-  --rcpt-del: #dc2626;
-  --rcpt-amber: #b45309;
-  --rcpt-rule: #e5e5e3;
-  --rcpt-card-bg: #f0f0ee;
-  --rcpt-badge-merged: #16a34a;
-  --rcpt-scanline: rgba(0, 0, 0, 0.018);
-  font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', 'Menlo', 'Cascadia Code', 'DejaVu Sans Mono', monospace;
-  font-size: 12px;
-  line-height: 1.55;
-  color: var(--rcpt-ink);
-  letter-spacing: 0.01em;
-}
-.dark .geu-terminal, .dark .geu-scorecard,
-.dark .geu-gitlog, .dark .geu-devlog, .dark .geu-proof {
-  --rcpt-bg: #090a0b;
-  --rcpt-ink: #d4d4d2;
-  --rcpt-muted: #6f7270;
-  --rcpt-dim: #3a3d3a;
-  --rcpt-add: #4ade80;
-  --rcpt-del: #f87171;
-  --rcpt-amber: #e8b547;
-  --rcpt-rule: #1a1d1a;
-  --rcpt-card-bg: #111311;
-  --rcpt-badge-merged: #4ade80;
-  --rcpt-scanline: rgba(255, 255, 255, 0.022);
-}
-
-/* =========================================================================
-   1. TERMINAL — Receipt (scalloped edges, barcode, receipt totals)
-   ========================================================================= */
-
-.geu-terminal {
-  position: relative; margin: 0 auto; max-width: 420px; font-size: 11px; line-height: 1.5;
-}
-.geu-terminal .geu-terminal-paper {
-  position: relative; padding: 20px 22px 26px; background: var(--rcpt-bg);
-  overflow: hidden; box-shadow: inset 0 0 120px 0 rgba(232, 181, 71, 0.015);
-}
-.geu-terminal .geu-terminal-scanlines {
-  position: absolute; inset: 0; pointer-events: none;
-  background-image: linear-gradient(to bottom, var(--rcpt-scanline) 0, var(--rcpt-scanline) 1px, transparent 1px, transparent 3px);
-  background-size: 100% 3px; opacity: 0.8;
-}
-.geu-terminal .geu-terminal-tear {
-  height: 10px; background-color: var(--rcpt-bg);
-  --mask: radial-gradient(circle at 5px 0, transparent 5px, #000 5.4px);
-  -webkit-mask-image: var(--mask); mask-image: var(--mask);
-  -webkit-mask-size: 10px 10px; mask-size: 10px 10px;
-  -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
-}
-.geu-terminal .geu-terminal-tear-top { -webkit-mask-position: 0 0; mask-position: 0 0; }
-.geu-terminal .geu-terminal-tear-bottom { transform: scaleY(-1); }
-
-.geu-terminal .geu-terminal-header { position: relative; text-align: center; }
-.geu-terminal .geu-terminal-brand { font-size: 13px; font-weight: 700; letter-spacing: 0.18em; color: var(--rcpt-ink); }
-.geu-terminal .geu-terminal-rcpt { margin-top: 2px; font-size: 10px; color: var(--rcpt-amber); letter-spacing: 0.1em; }
-.geu-terminal .geu-terminal-dashes { margin: 10px 0 8px; color: var(--rcpt-dim); font-size: 10px; white-space: nowrap; overflow: hidden; user-select: none; }
-.geu-terminal .geu-terminal-dashes-double { color: var(--rcpt-muted); }
-.geu-terminal .geu-terminal-meta { margin: 0; padding: 0 2px; text-align: left; font-size: 10px; color: var(--rcpt-ink); }
-.geu-terminal .geu-terminal-meta-row { display: flex; justify-content: space-between; gap: 12px; padding: 1px 0; }
-.geu-terminal .geu-terminal-meta-row dt { color: var(--rcpt-muted); letter-spacing: 0.1em; margin: 0; }
-.geu-terminal .geu-terminal-meta-row dd { margin: 0; color: var(--rcpt-ink); letter-spacing: 0.05em; }
-
-.geu-terminal .geu-terminal-items { list-style: none; padding: 0; margin: 0; }
-.geu-terminal .geu-terminal-item { position: relative; padding: 9px 0 11px; border-bottom: 1px dashed var(--rcpt-rule); }
-.geu-terminal .geu-terminal-item:last-child { border-bottom: none; padding-bottom: 6px; }
-.geu-terminal .geu-terminal-line-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
-.geu-terminal .geu-terminal-idx { flex-shrink: 0; color: var(--rcpt-muted); font-size: 10px; width: 18px; text-align: right; }
-.geu-terminal .geu-terminal-kind {
-  flex-shrink: 0; display: inline-block; padding: 1px 5px; font-size: 9px;
-  font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  border: 1px solid currentColor; line-height: 1.4;
-}
-.geu-terminal .geu-terminal-title {
-  color: var(--rcpt-ink); text-decoration: none; font-size: 11px; line-height: 1.45;
-  overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
-  -webkit-line-clamp: 2; -webkit-box-orient: vertical; flex: 1 1 auto; min-width: 0;
-}
-.geu-terminal .geu-terminal-title:hover { color: var(--rcpt-amber); text-decoration: underline; text-underline-offset: 2px; }
-.geu-terminal .geu-terminal-line-mid { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-left: 26px; margin-top: 2px; font-size: 9.5px; color: var(--rcpt-muted); }
-.geu-terminal .geu-terminal-hash { color: var(--rcpt-amber); letter-spacing: 0.05em; }
-.geu-terminal .geu-terminal-sep { color: var(--rcpt-dim); }
-.geu-terminal .geu-terminal-repo { color: var(--rcpt-muted); text-decoration: none; }
-.geu-terminal .geu-terminal-repo:hover { color: var(--rcpt-ink); text-decoration: underline; text-underline-offset: 2px; }
-.geu-terminal .geu-terminal-date { color: var(--rcpt-dim); letter-spacing: 0.08em; }
-
-.geu-terminal .geu-terminal-diff { display: flex; align-items: center; gap: 10px; margin-top: 6px; margin-left: 26px; }
-.geu-terminal .geu-terminal-diff-bar { flex: 1 1 auto; display: flex; height: 4px; background: var(--rcpt-rule); overflow: hidden; }
-.geu-terminal .geu-terminal-diff-add-seg { background: var(--rcpt-add); height: 100%; }
-.geu-terminal .geu-terminal-diff-del-seg { background: var(--rcpt-del); height: 100%; }
-.geu-terminal .geu-terminal-diff-nums { flex-shrink: 0; display: flex; gap: 8px; font-size: 9.5px; letter-spacing: 0.03em; font-variant-numeric: tabular-nums; }
-.geu-terminal .geu-terminal-add { color: var(--rcpt-add); }
-.geu-terminal .geu-terminal-del { color: var(--rcpt-del); }
-
-.geu-terminal .geu-terminal-footer { margin-top: 6px; text-align: center; }
-.geu-terminal .geu-terminal-total-row { display: flex; justify-content: space-between; padding: 2px 2px; font-size: 10px; letter-spacing: 0.06em; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
-.geu-terminal .geu-terminal-total-row span:first-child { color: var(--rcpt-muted); }
-.geu-terminal .geu-terminal-total-row .geu-terminal-total-value { color: var(--rcpt-ink); font-weight: 600; }
-.geu-terminal .geu-terminal-total-row-grand { margin-top: 4px; padding-top: 6px; border-top: 1px dashed var(--rcpt-rule); font-size: 11px; }
-.geu-terminal .geu-terminal-total-row-grand span:first-child { color: var(--rcpt-amber); font-weight: 700; letter-spacing: 0.12em; }
-.geu-terminal .geu-terminal-total-row-grand .geu-terminal-total-value { color: var(--rcpt-amber); font-weight: 700; }
-.geu-terminal .geu-terminal-kicker { margin-top: 14px; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; color: var(--rcpt-ink); }
-.geu-terminal .geu-terminal-barcode { margin: 14px auto 6px; display: flex; align-items: stretch; justify-content: center; gap: 1px; height: 38px; padding: 0 8px; }
-.geu-terminal .geu-terminal-barcode-bar { display: inline-block; background: var(--rcpt-ink); height: 100%; }
-.geu-terminal .geu-terminal-barcode-label { font-size: 9px; letter-spacing: 0.35em; color: var(--rcpt-muted); margin-top: 2px; }
-
-/* =========================================================================
-   3. SCORECARD — Receipt-family stats banner + card grid
-   ========================================================================= */
-
-.geu-scorecard { background: var(--rcpt-bg); }
-.geu-scorecard .geu-scorecard-banner { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 16px 18px; border-bottom: 1px solid var(--rcpt-rule); }
-.geu-scorecard .geu-scorecard-hero { display: flex; flex-direction: column; }
-.geu-scorecard .geu-scorecard-hero-num { font-size: 36px; font-weight: 800; line-height: 1; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
-.geu-scorecard .geu-scorecard-hero-label { font-size: 9px; color: var(--rcpt-muted); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px; }
-.geu-scorecard .geu-scorecard-stats { display: flex; gap: 18px; }
-.geu-scorecard .geu-scorecard-stat { display: flex; flex-direction: column; align-items: flex-end; }
-.geu-scorecard .geu-scorecard-stat-num { font-size: 18px; font-weight: 700; line-height: 1.2; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
-.geu-scorecard .geu-scorecard-stat-label { font-size: 9px; color: var(--rcpt-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
-.geu-scorecard .geu-scorecard-add { color: var(--rcpt-add); }
-.geu-scorecard .geu-scorecard-del { color: var(--rcpt-del); }
-.geu-scorecard .geu-scorecard-grid { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 10px; }
-@media (min-width: 480px) { .geu-scorecard .geu-scorecard-grid { grid-template-columns: 1fr 1fr; } }
-.geu-scorecard .geu-scorecard-card { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; background: var(--rcpt-card-bg); border: 1px solid var(--rcpt-rule); }
-.geu-scorecard .geu-scorecard-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.geu-scorecard .geu-scorecard-kind { display: inline-block; padding: 1px 5px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid currentColor; line-height: 1.4; }
-.geu-scorecard .geu-scorecard-card-date { font-size: 9px; color: var(--rcpt-dim); letter-spacing: 0.06em; }
-.geu-scorecard .geu-scorecard-card-title { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; font-size: 11px; line-height: 1.4; color: var(--rcpt-ink); text-decoration: none; }
-.geu-scorecard .geu-scorecard-card-title:hover { color: var(--rcpt-amber); text-decoration: underline; text-underline-offset: 2px; }
-.geu-scorecard .geu-scorecard-card-meta { margin-top: 0; font-size: 9.5px; color: var(--rcpt-muted); }
-.geu-scorecard .geu-scorecard-card-repo { color: var(--rcpt-muted); text-decoration: none; }
-.geu-scorecard .geu-scorecard-card-repo:hover { color: var(--rcpt-ink); text-decoration: underline; text-underline-offset: 2px; }
-.geu-scorecard .geu-scorecard-card-diff { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 4px; }
-.geu-scorecard .geu-scorecard-diff-bar { flex: 1 1 auto; display: flex; height: 4px; background: var(--rcpt-rule); overflow: hidden; }
-.geu-scorecard .geu-scorecard-diff-add-seg { background: var(--rcpt-add); height: 100%; }
-.geu-scorecard .geu-scorecard-diff-del-seg { background: var(--rcpt-del); height: 100%; }
-.geu-scorecard .geu-scorecard-card-nums { flex-shrink: 0; display: flex; gap: 6px; font-size: 9.5px; font-variant-numeric: tabular-nums; }
-
-/* =========================================================================
-   4. GITLOG — CLI git-log output (screenshot 3)
-   ========================================================================= */
-
-.geu-gitlog { background: var(--rcpt-bg); padding: 16px 18px; }
-.geu-gitlog .geu-gitlog-cmd { font-size: 12px; color: var(--rcpt-muted); margin-bottom: 8px; }
-.geu-gitlog .geu-gitlog-prompt { color: var(--rcpt-add); font-weight: 700; }
-.geu-gitlog .geu-gitlog-cmd-text { color: var(--rcpt-dim); }
-.geu-gitlog .geu-gitlog-stats-row { display: flex; gap: 16px; padding: 8px 0; margin-bottom: 12px; border-bottom: 1px solid var(--rcpt-rule); }
-.geu-gitlog .geu-gitlog-stats-item { display: flex; gap: 5px; align-items: baseline; }
-.geu-gitlog .geu-gitlog-stats-label { color: var(--rcpt-amber); font-size: 11px; font-weight: 600; }
-.geu-gitlog .geu-gitlog-stats-val { color: var(--rcpt-ink); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.geu-gitlog .geu-gitlog-entries { display: flex; flex-direction: column; }
-.geu-gitlog .geu-gitlog-entry { padding: 10px 0; border-bottom: 1px solid var(--rcpt-rule); }
-.geu-gitlog .geu-gitlog-entry:last-child { border-bottom: none; }
-.geu-gitlog .geu-gitlog-entry-main { display: flex; align-items: center; gap: 8px; }
-.geu-gitlog .geu-gitlog-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--rcpt-muted); }
-.geu-gitlog .geu-gitlog-hash { flex-shrink: 0; color: var(--rcpt-dim); font-size: 11px; letter-spacing: 0.04em; }
-.geu-gitlog .geu-gitlog-title { color: var(--rcpt-ink); text-decoration: none; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1 1 auto; min-width: 0; }
-.geu-gitlog .geu-gitlog-title:hover { text-decoration: underline; text-underline-offset: 2px; }
-.geu-gitlog .geu-gitlog-desc { margin-top: 3px; padding-left: 24px; font-size: 11px; color: var(--rcpt-muted); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-
-/* =========================================================================
-   5. DEVLOG — Vertical timeline with badges + diff bars (screenshot 2)
-   ========================================================================= */
-
-.geu-devlog { position: relative; background: var(--rcpt-bg); padding: 16px 16px 16px 32px; }
-.geu-devlog .geu-devlog-line { position: absolute; top: 0; bottom: 0; left: 22px; width: 1px; background: var(--rcpt-rule); }
-.geu-devlog .geu-devlog-entry { position: relative; padding: 14px 0; }
-.geu-devlog .geu-devlog-dot { position: absolute; left: -18px; top: 18px; width: 10px; height: 10px; border-radius: 50%; background: var(--rcpt-muted); z-index: 1; box-shadow: 0 0 0 3px var(--rcpt-bg); }
-.geu-devlog .geu-devlog-content { padding-left: 8px; }
-.geu-devlog .geu-devlog-badges { display: flex; gap: 6px; margin-bottom: 6px; }
-.geu-devlog .geu-devlog-badge { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid currentColor; }
-.geu-devlog .geu-devlog-title { display: block; font-size: 13px; font-weight: 600; color: var(--rcpt-ink); text-decoration: none; line-height: 1.4; }
-.geu-devlog .geu-devlog-title:hover { text-decoration: underline; text-underline-offset: 2px; }
-.geu-devlog .geu-devlog-desc { margin: 4px 0 0; font-size: 11px; color: var(--rcpt-muted); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.geu-devlog .geu-devlog-meta { margin-top: 6px; font-size: 10px; }
-.geu-devlog .geu-devlog-repo { color: var(--rcpt-dim); text-decoration: none; }
-.geu-devlog .geu-devlog-repo:hover { color: var(--rcpt-ink); text-decoration: underline; text-underline-offset: 2px; }
-.geu-devlog .geu-devlog-diff { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-.geu-devlog .geu-devlog-diff-bar { flex: 1 1 auto; display: flex; height: 4px; background: var(--rcpt-rule); overflow: hidden; }
-.geu-devlog .geu-devlog-diff-add { background: var(--rcpt-add); height: 100%; }
-.geu-devlog .geu-devlog-diff-del { background: var(--rcpt-del); height: 100%; }
-.geu-devlog .geu-devlog-diff-nums { flex-shrink: 0; display: flex; gap: 8px; font-size: 10px; font-variant-numeric: tabular-nums; }
-.geu-devlog .geu-devlog-add { color: var(--rcpt-add); }
-.geu-devlog .geu-devlog-del { color: var(--rcpt-del); }
-
-/* =========================================================================
-   6. PROOF — "Proof of Work" dashboard (screenshot 1)
-   ========================================================================= */
-
-.geu-proof { background: var(--rcpt-bg); }
-.geu-proof .geu-proof-banner { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 20px 20px 18px; border-bottom: 1px solid var(--rcpt-rule); overflow: hidden; }
-.geu-proof .geu-proof-glow { position: absolute; top: -40px; left: -40px; width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, rgba(232, 181, 71, 0.12) 0%, transparent 70%); pointer-events: none; }
-.dark .geu-proof .geu-proof-glow { background: radial-gradient(circle, rgba(232, 181, 71, 0.08) 0%, transparent 70%); }
-.geu-proof .geu-proof-hero { display: flex; flex-direction: column; position: relative; z-index: 1; }
-.geu-proof .geu-proof-hero-label { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; color: var(--rcpt-amber); text-transform: uppercase; margin-bottom: 2px; }
-.geu-proof .geu-proof-hero-num { font-size: 42px; font-weight: 800; line-height: 1; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
-.geu-proof .geu-proof-stats { display: flex; gap: 20px; position: relative; z-index: 1; }
-.geu-proof .geu-proof-stat { display: flex; flex-direction: column; align-items: flex-end; }
-.geu-proof .geu-proof-stat-num { font-size: 22px; font-weight: 700; line-height: 1.2; color: var(--rcpt-ink); font-variant-numeric: tabular-nums; }
-.geu-proof .geu-proof-stat-label { font-size: 9px; color: var(--rcpt-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
-.geu-proof .geu-proof-add { color: var(--rcpt-add); }
-.geu-proof .geu-proof-del { color: var(--rcpt-del); }
-.geu-proof .geu-proof-grid { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 12px; }
-@media (min-width: 480px) { .geu-proof .geu-proof-grid { grid-template-columns: 1fr 1fr; } }
-.geu-proof .geu-proof-card { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: var(--rcpt-card-bg); border: 1px solid var(--rcpt-rule); }
-.geu-proof .geu-proof-card-badges { display: flex; gap: 6px; }
-.geu-proof .geu-proof-badge { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; border: 1px solid currentColor; }
-.geu-proof .geu-proof-card-title { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; font-size: 13px; font-weight: 600; line-height: 1.4; color: var(--rcpt-ink); text-decoration: none; }
-.geu-proof .geu-proof-card-title:hover { text-decoration: underline; text-underline-offset: 2px; }
-.geu-proof .geu-proof-card-desc { margin: 0; font-size: 11px; color: var(--rcpt-muted); line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
-.geu-proof .geu-proof-card-meta { margin-top: 0; font-size: 10px; }
-.geu-proof .geu-proof-card-repo { color: var(--rcpt-dim); text-decoration: none; }
-.geu-proof .geu-proof-card-repo:hover { color: var(--rcpt-ink); text-decoration: underline; text-underline-offset: 2px; }
-.geu-proof .geu-proof-card-diff { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 4px; }
-.geu-proof .geu-proof-diff-bar { flex: 1 1 auto; display: flex; height: 4px; background: var(--rcpt-rule); overflow: hidden; }
-.geu-proof .geu-proof-diff-add-seg { background: var(--rcpt-add); height: 100%; }
-.geu-proof .geu-proof-diff-del-seg { background: var(--rcpt-del); height: 100%; }
-.geu-proof .geu-proof-card-nums { flex-shrink: 0; display: flex; gap: 6px; font-size: 10px; font-variant-numeric: tabular-nums; }
 
 /* =========================================================================
    Label & dot colors — MUST be at the end of the file so they win by

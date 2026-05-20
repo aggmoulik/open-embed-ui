@@ -6,7 +6,7 @@
  * for a single endpoint. Edge-runtime safe.
  */
 
-import { VALID_LABELS } from '@open-embed-ui/types';
+import { VALID_LABELS, isSafeHttpUrl } from '@open-embed-ui/types';
 
 export const TITLE_OVERRIDE_MAX = 200;
 export const DESCRIPTION_MAX = 500;
@@ -120,40 +120,4 @@ export function validateUpdateContribution(body: unknown): ValidationResult {
   return { ok: true, data };
 }
 
-/**
- * Returns true iff `value` parses as a URL with an http or https scheme.
- * Rejects `javascript:`, `data:`, `vbscript:`, `file:`, and any other
- * scheme that could be used for XSS or local-resource access.
- *
- * Uses the global `URL` constructor (Web API), which is available in
- * Node, Cloudflare Workers, Deno, and browsers.
- */
-export function isSafeHttpUrl(value: string): boolean {
-  let url: URL;
-  try {
-    url = new URL(value);
-  } catch {
-    return false;
-  }
-  return url.protocol === 'http:' || url.protocol === 'https:';
-}
-
-/**
- * Returns the URL if it parses as http(s); otherwise '#'. Use for
- * `<a href={safeHref(...)}>` defense-in-depth at render time, even
- * when the API write boundary already rejects unsafe schemes.
- */
-export function safeHref(value: string | undefined | null): string {
-  if (!value) return '#';
-  return isSafeHttpUrl(value) ? value : '#';
-}
-
-/**
- * Returns the URL if it parses as http(s); otherwise empty string.
- * Use for `<img src={safeImgSrc(...)}>` so the browser does not render
- * a broken-image icon for a `#` src.
- */
-export function safeImgSrc(value: string | undefined | null): string {
-  if (!value) return '';
-  return isSafeHttpUrl(value) ? value : '';
-}
+export { isSafeHttpUrl, safeHref, safeImgSrc } from '@open-embed-ui/types';

@@ -14,7 +14,7 @@ async function seed() {
 
   const userId = 'dev-user-001';
   const widgetId = 'dev-widget-001';
-  const widgetDevlogId = 'dev-widget-002';
+  const widgetHighlightId = 'dev-widget-002';
   const embedId = 'dev-embed-001';
 
   // Optional user-authored enrichments per PR. Selective on purpose:
@@ -220,18 +220,18 @@ async function seed() {
     allowedOrigins: ['http://localhost:3000', 'http://localhost:4321', 'http://localhost:5173'],
   });
 
-  // Second widget pre-configured to a receipt-family layout so the dev
-  // can flip between `dev-widget-001` (grid) and `dev-widget-002` (devlog)
-  // to visually compare the two visual treatments of blog icon + labels
-  // + description without re-editing widget config every time.
+  // Second widget pre-configured to a different layout so the dev can flip
+  // between `dev-widget-001` (grid) and `dev-widget-002` (highlight) to
+  // visually compare the two visual treatments of blog icon + labels +
+  // description without re-editing widget config every time.
   await db.insert(schema.widgets).values({
-    id: widgetDevlogId,
+    id: widgetHighlightId,
     userId,
-    name: 'My OSS Contributions — devlog view',
-    description: 'Same data as widget 001, rendered with the devlog (vertical timeline + badges) layout.',
+    name: 'My OSS Contributions — highlight view',
+    description: 'Same data as widget 001, rendered with the highlight (1 + grid) layout.',
     config: {
       theme: 'system',
-      layout: 'devlog',
+      layout: 'highlight',
       timeRange: 'all',
       maxItems: 10,
     },
@@ -348,7 +348,7 @@ async function seed() {
   console.log('Seed complete!');
   console.log(`  Admin user:   ${userId} (dev@localhost.dev)`);
   console.log(`    ↳ Contributions: ${contributions.length} (${enrichedCount} with user-authored fields)`);
-  console.log(`    ↳ Widgets: ${widgetId} (grid), ${widgetDevlogId} (devlog)`);
+  console.log(`    ↳ Widgets: ${widgetId} (grid), ${widgetHighlightId} (highlight)`);
   console.log(`    ↳ Embed: ${embedId}`);
   console.log(`  Regular user: ${regularUserId} (user@example.dev)`);
   console.log(`    ↳ Contributions: ${regularContributions.length}`);

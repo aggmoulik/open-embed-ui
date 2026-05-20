@@ -1,7 +1,7 @@
-import { BookOpen, GitPullRequest } from 'lucide-react';
+import { BookOpen, GitPullRequest } from './icons';
 import { getBlogTarget, getDisplayLabels, getLabelColor } from '@open-embed-ui/types';
-import type { Contribution } from '@/types';
-import { safeHref, safeImgSrc } from '@/lib/validation/contribution';
+import type { BaseContribution as Contribution } from '@open-embed-ui/types';
+import { safeHref, safeImgSrc } from '@open-embed-ui/types';
 
 interface PRCardProps {
   contribution: Contribution;

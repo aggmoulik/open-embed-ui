@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plain HTML host — widget smoke test</title>
+    <style>
+      body {
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        max-width: 920px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        color: #1a1a1a;
+      }
+      h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+      p { color: #555; }
+    </style>
+  </head>
+  <body>
+    <h1>Plain HTML host</h1>
+    <p>The widget below loads via a &lt;script&gt; tag. No host framework, no host CSS reset.</p>
+
+    <!-- Replace data-widget-id with a real widget ID from your dev DB. -->
+    <script
+      async
+      src="http://localhost:3000/widget.js"
+      data-widget-id="dev-widget-001"
+    ></script>
+  </body>
+</html>

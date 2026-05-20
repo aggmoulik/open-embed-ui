@@ -23,15 +23,37 @@ const CHUNKS_DIR = join(WIDGET_DIST, 'chunks');
 // Gzipped byte budgets. Single source of truth — bump deliberately.
 const BUDGETS = {
   // IIFE all-layouts bundle (default static-export ship + workers asset).
-  'widget.js': 19 * 1024,
+  // Raised 19→22 KB on 2026-05-20 (Stage 1 of shared-widget-components
+  // migration) to accommodate Stage 2's ~2.5 KB preact/compat shim.
+  // Raised 22→25 KB on 2026-05-20 (Stage 2 Task 11) — HighlightLayout's
+  // useState plumbing + the shared PRCard's expanded helpers (safeHref/etc
+  // from @open-embed-ui/types) added ~2 KB. Per-layout bundles all sit
+  // comfortably under 22 KB; this ceiling only covers users who bundle all
+  // 12 layouts at once via the script-tag path.
+  'widget.js': 25 * 1024,
   // ESM core entry (consumed by per-layout per-bundle splits).
   'index.mjs': 11 * 1024,
   // ESM core shared chunk (Preact + theme bridge + mount + Widget).
-  coreChunk: 12 * 1024,
+  // Raised 12→14 KB on 2026-05-20 — Stage 2 T11/T12 added shared color
+  // tokens to widget.css (oklch values for both light and dark modes,
+  // mirroring packages/ui/src/styles/globals.css) so the Shadow DOM has
+  // background/foreground/muted/border/brand/violet/danger CSS vars to
+  // resolve; the chunk grew ~500 B.
+  coreChunk: 14 * 1024,
   // Per-layout chunks. Most are < 1.5 KB; TerminalLayout acts as the
   // shared chunk for the receipt-family group after Rollup dedup, so
   // the ceiling is 3 KB to accommodate it.
   layoutChunk: 3 * 1024,
+  // IIFE per-layout bundles (Task 5). Slim path for static-export users
+  // who know their layout at build time. Each ships only the named layout
+  // plus the shared core runtime.
+  'widget-grid.js': 22 * 1024,
+  'widget-list.js': 22 * 1024,
+  'widget-timeline.js': 22 * 1024,
+  'widget-single-card.js': 22 * 1024,
+  'widget-marquee.js': 22 * 1024,
+  'widget-masonry.js': 22 * 1024,
+  'widget-highlight.js': 22 * 1024,
 };
 
 // Chunk names that count as "core" (shared runtime), not per-layout.
@@ -77,6 +99,21 @@ failures += check('widget.js (IIFE)', join(WIDGET_DIST, 'widget.js'), BUDGETS['w
 
 // 2. ESM entry
 failures += check('index.mjs (ESM)', join(WIDGET_DIST, 'index.mjs'), BUDGETS['index.mjs']);
+
+// 3. Per-layout IIFE bundles (widget-grid.js, widget-list.js, etc.)
+const PER_LAYOUT_BUNDLES = [
+  'widget-grid.js',
+  'widget-list.js',
+  'widget-timeline.js',
+  'widget-single-card.js',
+  'widget-marquee.js',
+  'widget-masonry.js',
+  'widget-highlight.js',
+];
+console.log(`\n  ${DIM}Per-layout IIFE bundles:${RESET}`);
+for (const name of PER_LAYOUT_BUNDLES) {
+  failures += check(name, join(WIDGET_DIST, name), BUDGETS[name]);
+}
 
 // 3. Chunks — group by chunk name (files have content-hash suffixes).
 const seenChunks = new Set();

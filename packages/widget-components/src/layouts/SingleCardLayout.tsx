@@ -1,7 +1,12 @@
-import { BookOpen, GitPullRequest } from 'lucide-react';
-import { getBlogTarget, getDisplayLabels, getLabelColor } from '@open-embed-ui/types';
-import type { Contribution } from '@/types';
-import { safeHref, safeImgSrc } from '@/lib/validation/contribution';
+import { BookOpen, GitPullRequest } from '../icons';
+import {
+  getBlogTarget,
+  getDisplayLabels,
+  getLabelColor,
+  safeHref,
+  safeImgSrc,
+} from '@open-embed-ui/types';
+import type { BaseContribution as Contribution } from '@open-embed-ui/types';
 
 interface SingleCardLayoutProps {
   contributions: Contribution[];
