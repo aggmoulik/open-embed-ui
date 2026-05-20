@@ -209,9 +209,7 @@ async function seed() {
     name: 'My OSS Contributions',
     description: 'Showcasing my open-source work across the ecosystem',
     config: {
-      theme: 'system',
       layout: 'grid',
-      timeRange: 'all',
       maxItems: 10,
     },
     isPublic: true,
@@ -230,9 +228,7 @@ async function seed() {
     name: 'My OSS Contributions — highlight view',
     description: 'Same data as widget 001, rendered with the highlight (1 + grid) layout.',
     config: {
-      theme: 'system',
       layout: 'highlight',
-      timeRange: 'all',
       maxItems: 10,
     },
     isPublic: true,
@@ -335,9 +331,7 @@ async function seed() {
     name: 'My contributions',
     description: 'Default grid layout — open the builder to see only the 5 featured options.',
     config: {
-      theme: 'system',
       layout: 'grid',
-      timeRange: 'all',
       maxItems: 10,
     },
     isPublic: true,

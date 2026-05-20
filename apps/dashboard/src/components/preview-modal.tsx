@@ -80,7 +80,7 @@ export function PreviewModal({
             </span>
             <span className="text-muted-foreground/70 font-mono text-[10px] tracking-[0.08em] uppercase">
               {filteredContributions.length} prs · {config.layout ?? 'grid'} ·{' '}
-              {config.theme ?? 'system'}
+              {config.preset ?? 'default'}
             </span>
           </div>
           <button

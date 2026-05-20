@@ -61,7 +61,6 @@ interface SyncResponse {
 
 export interface ContributionFilters {
   repo?: string;
-  timeRange?: 'week' | 'month' | 'year' | 'all';
   limit?: number;
   offset?: number;
   sort?: 'newest' | 'oldest';
@@ -70,7 +69,6 @@ export interface ContributionFilters {
 export function fetchContributions(filters?: ContributionFilters) {
   const params = new URLSearchParams();
   if (filters?.repo) params.set('repo', filters.repo);
-  if (filters?.timeRange) params.set('timeRange', filters.timeRange);
   if (filters?.limit) params.set('limit', String(filters.limit));
   if (filters?.offset !== undefined) params.set('offset', String(filters.offset));
   if (filters?.sort) params.set('sort', filters.sort);

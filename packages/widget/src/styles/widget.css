@@ -248,6 +248,86 @@
 }
 
 /* =========================================================================
+   Watermark / "Powered by openembed/ui" — branding lockdown.
+
+   Always-white full-width bar that matches the marketing brand mark
+   (black ⌥ square + openembed/ui wordmark). DELIBERATELY uses fixed
+   colors (no theme tokens), so even if an owner overrides every other
+   token in `themeOverrides`, the brand attribution stays consistent.
+
+   Why !important is justified here (despite the smell):
+     - This is the brand attribution. It MUST render.
+     - The OKLCH validator on themeOverrides blocks CSS injection, so
+       there's no way for an owner's saved config to land an !important
+       rule that beats this — !important here is the upper bound.
+     - Scoping is `.geu-widget` so it never affects host-page styles.
+
+   Selector specificity climbs to 0,2,0 via the descendant combinator
+   so it beats the base `.geu-widget a` rule (0,1,1).
+   ========================================================================= */
+.geu-widget .geu-footer {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.7) !important;
+  text-decoration: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.geu-widget .geu-footer:hover {
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Logo: a black 16px rounded square with a white ⌥ glyph — exactly the
+   mark used on the landing page nav (apps/dashboard/(marketing)/...nav).
+   Sized down for inline use. */
+.geu-widget .geu-footer-mark {
+  display: inline-grid !important;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: #0a0a0a !important;
+  color: #ffffff !important;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  /* keep the glyph baseline aligned with the wordmark x-height */
+  letter-spacing: 0;
+  flex-shrink: 0;
+}
+
+.geu-widget .geu-footer-text {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+
+.geu-widget .geu-footer-brand {
+  font-family: ui-monospace, 'Geist Mono', 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+/* =========================================================================
    Label & dot colors — MUST be at the end of the file so they win by
    source order over layout-specific badge rules with equal specificity.
    ========================================================================= */

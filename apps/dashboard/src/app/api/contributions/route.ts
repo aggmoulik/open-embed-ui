@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { db, contributions } from '@/lib/db';
-import { eq, and, asc, desc, count, gte, isNull } from 'drizzle-orm';
+import { eq, and, asc, desc, count, isNull } from 'drizzle-orm';
 import { getSession, errorResponse } from '@/lib/auth-server';
 
 export const dynamic = 'force-dynamic';
@@ -13,7 +13,6 @@ export async function GET(request: NextRequest) {
 
   const searchParams = request.nextUrl.searchParams;
   const repo = searchParams.get('repo');
-  const timeRange = searchParams.get('timeRange') ?? 'all';
   const limit = Math.min(Number(searchParams.get('limit') ?? 50), 100);
   const offset = Number(searchParams.get('offset') ?? 0);
   const sort = searchParams.get('sort') === 'oldest' ? 'oldest' : 'newest';
@@ -22,20 +21,6 @@ export async function GET(request: NextRequest) {
 
   if (repo) {
     conditions.push(eq(contributions.repo, repo));
-  }
-
-  if (timeRange !== 'all') {
-    const now = new Date();
-    const ranges: Record<string, number> = {
-      week: 7,
-      month: 30,
-      year: 365,
-    };
-    const days = ranges[timeRange];
-    if (days) {
-      const since = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-      conditions.push(gte(contributions.createdAt, since));
-    }
   }
 
   const where = and(...conditions);
@@ -53,6 +38,6 @@ export async function GET(request: NextRequest) {
   return Response.json({
     data: results,
     pagination: { limit, offset, total: total.count },
-    filters: { repo, timeRange, sort },
+    filters: { repo, sort },
   });
 }

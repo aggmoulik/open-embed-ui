@@ -29,11 +29,6 @@ export interface WidgetData {
     config: WidgetConfig;
   };
   contributions: Contribution[];
-  user: {
-    name: string;
-    image: string | null;
-    githubUsername: string | null;
-  };
 }
 
 /** Widget-facing contribution (mergedAt is always a string from the API). */

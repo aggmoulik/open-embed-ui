@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
 import type { ComponentType } from 'preact';
 import type { WidgetData, WidgetOptions, WidgetLayout, Contribution } from './types';
 import { safeHref } from './lib/url-safe';
 import type { LayoutResolver, LayoutProps } from './layout-map';
+import { applyThemeTokens } from './theme-inject';
 
 interface WidgetProps {
   options: WidgetOptions;
@@ -100,6 +101,22 @@ export function Widget({ options, LayoutComponent: injectedLayout, layoutResolve
     });
   }, [data, injectedLayout, layoutResolver, legacyFallback]);
 
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Inject per-widget theme tokens once the layout has resolved and the
+  // <div ref={rootRef}> is actually in the DOM. Depending only on `data`
+  // here would miss the inject on first paint, because while data arrives
+  // first, the render returns null until `resolvedLayout` is also set —
+  // and by the time the ref attaches, the effect would no longer re-run.
+  // applyThemeTokens is idempotent so re-runs are safe.
+  useEffect(() => {
+    if (!data || !resolvedLayout || !rootRef.current) return;
+    const root = rootRef.current.getRootNode();
+    if (root instanceof ShadowRoot) {
+      applyThemeTokens(root, data.widget.config);
+    }
+  }, [data, resolvedLayout]);
+
   if (loading) return <div class="geu-loading">Loading...</div>;
   if (errorKind) return <ErrorPlaceholder kind={errorKind} />;
   if (!data || !resolvedLayout) return null;
@@ -109,7 +126,7 @@ export function Widget({ options, LayoutComponent: injectedLayout, layoutResolve
   const contributions = data.contributions;
 
   return (
-    <div>
+    <div ref={rootRef}>
       <LayoutComponent contributions={contributions} titleOverrides={titleOverrides} />
       <a
         href={safeHref(baseUrl) === '#' ? 'https://github.com/moulikaggarwal/github-embed-ui' : baseUrl}
@@ -117,7 +134,9 @@ export function Widget({ options, LayoutComponent: injectedLayout, layoutResolve
         rel="noopener noreferrer"
         class="geu-footer"
       >
-        Powered by Open Embed UI
+        <span class="geu-footer-mark" aria-hidden="true">⌥</span>
+        <span class="geu-footer-text">Powered by</span>
+        <span class="geu-footer-brand">openembed/ui</span>
       </a>
     </div>
   );

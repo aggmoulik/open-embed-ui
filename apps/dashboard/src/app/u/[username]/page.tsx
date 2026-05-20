@@ -72,10 +72,10 @@ export default async function PublicProfilePage({ params }: Props) {
         </div>
       </header>
 
-      <section className="relative overflow-hidden border-b border-border pb-12 pt-16">
+      <section className="border-border relative overflow-hidden border-b pt-16 pb-12">
         <div className="marketing-grid-bg" aria-hidden="true" />
         <div className="relative mx-auto max-w-[1100px] px-7">
-          <div className="marketing-section-eyebrow text-muted-foreground mb-4 inline-block font-mono text-[11px] uppercase tracking-[0.08em]">
+          <div className="marketing-section-eyebrow text-muted-foreground mb-4 inline-block font-mono text-[11px] tracking-[0.08em] uppercase">
             01 · open-source contributions
           </div>
 
@@ -88,7 +88,7 @@ export default async function PublicProfilePage({ params }: Props) {
               />
             )}
             <div>
-              <h1 className="font-sans text-[36px] font-semibold leading-[1.05] tracking-[-0.025em] sm:text-[44px]">
+              <h1 className="font-sans text-[36px] leading-[1.05] font-semibold tracking-[-0.025em] sm:text-[44px]">
                 {user.name}
               </h1>
               <a
@@ -121,22 +121,19 @@ export default async function PublicProfilePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="border-b border-border py-16">
+      <section className="border-border border-b py-16">
         <div className="mx-auto max-w-[1100px] px-7">
           <div className="mb-9">
-            <div className="marketing-section-eyebrow text-muted-foreground mb-3 inline-block font-mono text-[11px] uppercase tracking-[0.08em]">
+            <div className="marketing-section-eyebrow text-muted-foreground mb-3 inline-block font-mono text-[11px] tracking-[0.08em] uppercase">
               02 · merged pull requests · {userContributions.length}
             </div>
-            <h2 className="font-sans text-[28px] font-semibold leading-[1.1] tracking-[-0.025em] sm:text-[32px]">
+            <h2 className="font-sans text-[28px] leading-[1.1] font-semibold tracking-[-0.025em] sm:text-[32px]">
               The shipped list.
             </h2>
           </div>
 
           {userContributions.length > 0 ? (
-            <WidgetRenderer
-              contributions={userContributions}
-              config={{ layout: 'grid', theme: 'system' }}
-            />
+            <WidgetRenderer contributions={userContributions} config={{ layout: 'grid' }} />
           ) : (
             <div className="border-border bg-muted/20 text-muted-foreground rounded-xl border border-dashed py-16 text-center font-mono text-[13px]">
               <span className="text-brand">●</span> No contributions synced yet.
@@ -176,9 +173,9 @@ function StatCell({
 }) {
   return (
     <div
-      className={`border-border p-5 ${isLast ? '' : 'sm:border-r'} ${isLast ? '' : 'max-sm:border-b'} max-sm:[&:nth-child(odd)]:sm:border-r-0 max-sm:[&:nth-child(odd)]:border-r max-sm:[&:nth-child(2n)]:border-r-0`}
+      className={`border-border p-5 ${isLast ? '' : 'sm:border-r'} ${isLast ? '' : 'max-sm:border-b'} max-sm:[&:nth-child(2n)]:border-r-0 max-sm:[&:nth-child(odd)]:border-r max-sm:[&:nth-child(odd)]:sm:border-r-0`}
     >
-      <div className="text-muted-foreground/70 mb-1 font-mono text-[10px] uppercase tracking-[0.08em]">
+      <div className="text-muted-foreground/70 mb-1 font-mono text-[10px] tracking-[0.08em] uppercase">
         {label}
       </div>
       <div className={`font-sans text-[24px] font-semibold tracking-[-0.025em] ${accent ?? ''}`}>

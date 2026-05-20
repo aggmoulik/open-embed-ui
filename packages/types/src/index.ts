@@ -23,15 +23,34 @@ export type WidgetLayout =
   | 'masonry'
   | 'highlight';
 
+export type ThemePresetId = 'default' | 'neutral' | 'violet' | 'rose' | 'mono';
+
+export type ThemeTokenKey =
+  | '--color-background'
+  | '--color-foreground'
+  | '--color-card'
+  | '--color-border'
+  | '--color-brand'
+  | '--color-muted';
+
+export interface ThemeOverrides {
+  light?: Partial<Record<ThemeTokenKey, string>>;
+  dark?: Partial<Record<ThemeTokenKey, string>>;
+}
+
 export interface WidgetConfig {
-  theme?: 'light' | 'dark' | 'system';
+  preset?: ThemePresetId;
+  themeOverrides?: ThemeOverrides;
   layout?: WidgetLayout;
   repos?: string[];
-  timeRange?: 'week' | 'month' | 'year' | 'all';
   maxItems?: number;
   selectedPRs?: string[];
   titleOverrides?: Record<string, string>;
 }
+
+export { isValidOklch, sanitizeOverrides } from './theme-validate';
+export { PRESETS, resolveThemeTokens } from './theme-presets';
+export type { ThemePreset } from './theme-presets';
 
 /** Base contribution fields shared across widget and dashboard. */
 export interface BaseContribution {

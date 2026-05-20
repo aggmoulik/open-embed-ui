@@ -10,9 +10,10 @@
  */
 
 import { and, desc, eq, isNull } from 'drizzle-orm';
+import { PRESETS } from '@open-embed-ui/types';
 import type { WidgetConfig } from '@open-embed-ui/types';
 import { db } from '../index';
-import { contributions, users, widgets } from '../schema';
+import { contributions, widgets } from '../schema';
 
 export interface EmbedPayload {
   widget: {
@@ -20,11 +21,6 @@ export interface EmbedPayload {
     config: WidgetConfig;
   };
   contributions: SerializedContribution[];
-  user: {
-    name: string;
-    image: string | null;
-    githubUsername: string | null;
-  } | null;
 }
 
 export interface SerializedContribution {
@@ -82,37 +78,35 @@ export async function getEmbedPayload(
   const widget = await db.query.widgets.findFirst({ where: widgetWhere });
   if (!widget) return null;
 
-  const config: WidgetConfig = (widget.config as WidgetConfig) ?? {};
+  // `rawConfig` carries the full DB config — used for server-side
+  // filtering (selectedPRs, maxItems). `config` is the trimmed shape sent
+  // to the widget (layout, titleOverrides, themeOverrides only).
+  const rawConfig: WidgetConfig = (widget.config as WidgetConfig) ?? {};
+  const config = normalizeConfigForPayload(rawConfig);
 
-  const [user, prs] = await Promise.all([
-    db.query.users.findFirst({
-      where: and(eq(users.id, widget.userId), isNull(users.deletedAt)),
-    }),
-    db
-      .select()
-      .from(contributions)
-      .where(and(eq(contributions.userId, widget.userId), isNull(contributions.deletedAt)))
-      .orderBy(desc(contributions.mergedAt)),
-  ]);
+  // User profile fields are no longer shipped — the widget renders only
+  // contributions and watermark, never per-user metadata. Drop the users
+  // query entirely. Owner deletion eligibility is enforced upstream by
+  // the soft-delete check on the contributions query (they all share the
+  // same userId so a deleted user yields zero contributions).
+  const prs = await db
+    .select()
+    .from(contributions)
+    .where(and(eq(contributions.userId, widget.userId), isNull(contributions.deletedAt)))
+    .orderBy(desc(contributions.mergedAt));
 
-  // Filtering rules — must match the dashboard API exactly.
+  // Filtering rules — must match the dashboard API exactly. Read from
+  // `rawConfig` because `config` has had these fields stripped for the
+  // payload contract.
   let filtered = prs;
 
-  if (config.timeRange && config.timeRange !== 'all') {
-    const now = Date.now();
-    const ranges = { week: 7, month: 30, year: 365 } as const;
-    const days = ranges[config.timeRange];
-    const since = new Date(now - days * 24 * 60 * 60 * 1000);
-    filtered = filtered.filter((c) => c.mergedAt && c.mergedAt >= since);
-  }
-
-  if (config.selectedPRs && config.selectedPRs.length > 0) {
-    const selectedSet = new Set(config.selectedPRs);
+  if (rawConfig.selectedPRs && rawConfig.selectedPRs.length > 0) {
+    const selectedSet = new Set(rawConfig.selectedPRs);
     filtered = filtered.filter((c) => selectedSet.has(c.id));
   }
 
-  if (config.maxItems) {
-    filtered = filtered.slice(0, config.maxItems);
+  if (rawConfig.maxItems) {
+    filtered = filtered.slice(0, rawConfig.maxItems);
   }
 
   const payload: EmbedPayload = {
@@ -137,13 +131,49 @@ export async function getEmbedPayload(
       blogUrl: c.blogUrl ?? null,
       blogOpenInNewTab: c.blogOpenInNewTab,
     })),
-    user: user
-      ? { name: user.name, image: user.image, githubUsername: user.githubUsername }
-      : null,
   };
 
   return {
     payload,
     allowedOrigins: (widget.allowedOrigins as string[] | null) ?? null,
   };
+}
+
+/**
+ * Normalize the stored WidgetConfig for the embed payload:
+ *
+ *   1. If `themeOverrides` is set, fill any missing keys from the chosen
+ *      preset's defaults so the widget receives a complete token map. Older
+ *      widgets stored sparse overrides (only modified keys); the widget
+ *      runtime no longer knows about presets and reads themeOverrides
+ *      verbatim, so the server has to flatten preset+sparse into the full
+ *      data the widget needs.
+ *
+ *   2. Strip the `preset` field — it's dashboard UI metadata (which preset
+ *      name was selected as a starting point), not something the widget
+ *      runtime needs. Keeps the payload small and the contract clean.
+ *
+ * Widgets with no themeOverrides keep their bundled widget.css defaults —
+ * no injection runs.
+ */
+function normalizeConfigForPayload(config: WidgetConfig): WidgetConfig {
+  // Strip fields the widget doesn't read at render time:
+  //   - preset, repos, selectedPRs, maxItems: server-applied or
+  //     dashboard-only metadata. The contributions list is already filtered
+  //     server-side, so the widget doesn't need to re-apply any of these.
+  // The widget reads only: layout, titleOverrides, themeOverrides.
+  const { preset, themeOverrides, layout, titleOverrides } = config;
+
+  const trimmed: WidgetConfig = {};
+  if (layout) trimmed.layout = layout;
+  if (titleOverrides) trimmed.titleOverrides = titleOverrides;
+
+  if (!themeOverrides) return trimmed;
+  const presetId = preset ?? 'default';
+  const presetTokens = PRESETS[presetId] ?? PRESETS.default;
+  trimmed.themeOverrides = {
+    light: { ...presetTokens.light, ...(themeOverrides.light ?? {}) },
+    dark: { ...presetTokens.dark, ...(themeOverrides.dark ?? {}) },
+  };
+  return trimmed;
 }

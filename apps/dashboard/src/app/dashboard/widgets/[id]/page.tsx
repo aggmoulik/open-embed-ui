@@ -13,6 +13,8 @@ import { isValidOriginEntry } from '@/lib/db';
 import { LAYOUTS } from '@/lib/layouts';
 import { Section, Field, TextInput } from '@/components/section';
 import { WidgetRenderer } from '@/components/widget-preview/widget-renderer';
+import { ThemeSection } from '@/components/theme/theme-section';
+import { PRESETS } from '@open-embed-ui/widget-components';
 import type { Contribution, WidgetConfig } from '@/types';
 
 export default function WidgetBuilderPage() {
@@ -27,23 +29,20 @@ export default function WidgetBuilderPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [config, setConfig] = useState<WidgetConfig>({
-    theme: 'system',
     layout: 'grid',
-    timeRange: 'all',
     maxItems: 10,
   });
   const [allowedOriginsText, setAllowedOriginsText] = useState('');
   const [saving, setSaving] = useState(false);
   const [showEmbed, setShowEmbed] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
     if (widget) {
       setName(widget.name);
       setDescription(widget.description ?? '');
-      setConfig(
-        widget.config ?? { theme: 'system', layout: 'grid', timeRange: 'all', maxItems: 10 },
-      );
+      setConfig(normalizeThemeOverrides(widget.config));
       setAllowedOriginsText((widget.allowedOrigins ?? []).join('\n'));
     }
   }, [widget]);
@@ -283,6 +282,13 @@ export default function WidgetBuilderPage() {
             </div>
           </Section>
 
+          <ThemeSection
+            config={config}
+            setConfig={setConfig}
+            previewMode={previewMode}
+            setPreviewMode={setPreviewMode}
+          />
+
           <Section title="max items">
             <TextInput
               type="number"
@@ -503,7 +509,7 @@ interface LivePreviewProps {
 
 function LivePreview({ contributions, config, totalSelected, totalAvailable }: LivePreviewProps) {
   const layout = config.layout ?? 'grid';
-  const theme = config.theme ?? 'system';
+  const preset = config.preset ?? 'default';
 
   return (
     <Section
@@ -511,7 +517,7 @@ function LivePreview({ contributions, config, totalSelected, totalAvailable }: L
       padded={false}
       trailing={
         <span className="text-muted-foreground/70 font-mono text-[10px] tracking-[0.08em] uppercase">
-          {totalSelected} / {totalAvailable} prs · {layout} · {theme}
+          {totalSelected} / {totalAvailable} prs · {layout} · {preset}
         </span>
       }
     >
@@ -544,4 +550,25 @@ function LivePreview({ contributions, config, totalSelected, totalAvailable }: L
       </div>
     </Section>
   );
+}
+
+/**
+ * Backfill sparse themeOverrides (from before the widget-only-reads-overrides
+ * refactor) into a complete light + dark token map. Used on widget load so
+ * the dashboard preview matches the widget runtime — the runtime now ignores
+ * `preset` and reads only `themeOverrides`. Re-saving the widget flushes the
+ * full map back to the DB.
+ */
+function normalizeThemeOverrides(config: WidgetConfig | null | undefined): WidgetConfig {
+  const base: WidgetConfig = config ?? { layout: 'grid', maxItems: 10 };
+  if (!base.themeOverrides) return base;
+  const presetId = base.preset ?? 'default';
+  const preset = PRESETS[presetId];
+  return {
+    ...base,
+    themeOverrides: {
+      light: { ...preset.light, ...(base.themeOverrides.light ?? {}) },
+      dark: { ...preset.dark, ...(base.themeOverrides.dark ?? {}) },
+    },
+  };
 }

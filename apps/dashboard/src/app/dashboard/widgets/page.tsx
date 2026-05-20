@@ -76,7 +76,7 @@ export default function WidgetsPage() {
             return (
               <div
                 key={widget.id}
-                className="border-border bg-background hover:border-foreground/30 hover:-translate-y-px hover:shadow-[0_1px_0_rgba(0,0,0,.02),0_4px_16px_rgba(0,0,0,.05)] group flex flex-col overflow-hidden rounded-xl border transition-all"
+                className="border-border bg-background hover:border-foreground/30 group flex flex-col overflow-hidden rounded-xl border transition-all hover:-translate-y-px hover:shadow-[0_1px_0_rgba(0,0,0,.02),0_4px_16px_rgba(0,0,0,.05)]"
               >
                 <div className="border-border bg-muted/30 flex items-start justify-between border-b p-4">
                   <div className="min-w-0 flex-1">
@@ -95,15 +95,10 @@ export default function WidgetsPage() {
                   </span>
                 </div>
 
-                <div className="flex flex-1 flex-wrap items-center gap-1.5 px-4 py-3 font-mono text-[11px] text-muted-foreground">
-                  {widget.config?.theme && (
+                <div className="text-muted-foreground flex flex-1 flex-wrap items-center gap-1.5 px-4 py-3 font-mono text-[11px]">
+                  {widget.config?.preset && widget.config.preset !== 'default' && (
                     <span className="border-border rounded-sm border px-1.5 py-0.5">
-                      {widget.config.theme}
-                    </span>
-                  )}
-                  {widget.config?.timeRange && widget.config.timeRange !== 'all' && (
-                    <span className="border-border rounded-sm border px-1.5 py-0.5">
-                      {widget.config.timeRange}
+                      {widget.config.preset}
                     </span>
                   )}
                   {widget.config?.maxItems && (
@@ -152,7 +147,7 @@ export default function WidgetsPage() {
         ) : (
           <div className="border-border bg-muted/20 col-span-full flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
             <Box className="text-muted-foreground/50 size-10" strokeWidth={1.5} />
-            <div className="marketing-section-eyebrow mt-5 inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
+            <div className="marketing-section-eyebrow text-muted-foreground mt-5 inline-block font-mono text-[11px] tracking-[0.08em] uppercase">
               empty state
             </div>
             <h3 className="mt-1 font-sans text-[18px] font-semibold tracking-[-0.01em]">

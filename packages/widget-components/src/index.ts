@@ -14,6 +14,7 @@
 
 export * from './icons';
 export * from './PRCard';
+export * from './themes';
 export * from './layouts/GridLayout';
 export * from './layouts/ListLayout';
 export * from './layouts/MasonryLayout';

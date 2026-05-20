@@ -170,18 +170,6 @@ export default function LoginPage() {
             </>
           )}
         </div>
-
-        <p className="text-muted-foreground/70 mt-5 text-center font-mono text-[11px]">
-          By signing in you agree to our{' '}
-          <a href="/terms" className="underline-offset-2 hover:underline">
-            terms
-          </a>{' '}
-          and{' '}
-          <a href="/privacy" className="underline-offset-2 hover:underline">
-            privacy policy
-          </a>
-          .
-        </p>
       </div>
     </div>
   );
