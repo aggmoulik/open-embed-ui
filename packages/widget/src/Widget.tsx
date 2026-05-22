@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import type { ComponentType } from 'preact';
 import type { WidgetData, WidgetOptions, WidgetLayout, Contribution } from './types';
-import { safeHref } from './lib/url-safe';
 import type { LayoutResolver, LayoutProps } from './layout-map';
 import { applyThemeTokens } from './theme-inject';
 
@@ -129,7 +128,7 @@ export function Widget({ options, LayoutComponent: injectedLayout, layoutResolve
     <div ref={rootRef}>
       <LayoutComponent contributions={contributions} titleOverrides={titleOverrides} />
       <a
-        href={safeHref(baseUrl) === '#' ? 'https://github.com/moulikaggarwal/github-embed-ui' : baseUrl}
+        href="https://open-embed-ui.vercel.app/"
         target="_blank"
         rel="noopener noreferrer"
         class="geu-footer"
