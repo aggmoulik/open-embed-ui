@@ -12,10 +12,10 @@ import { LandingFooter } from './(marketing)/_components/landing-footer';
 export const dynamic = 'force-dynamic';
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
-const ogImage = `${baseUrl}/og-landing.png`;
+const ogImage = `${baseUrl}/api/og/landing`;
 const title = 'Open Embed UI — Show off your open-source PRs anywhere';
 const description =
-  'Drop a single <script> tag on your blog, portfolio, or README. Get a live, themed widget of your merged contributions — no iframes, no API keys, no maintenance.';
+  'Drop a single <script> tag on your blog, portfolio, or README. Get a live widget of your merged contributions — seven layouts, fully themeable, no iframes, no API keys, no maintenance.';
 
 export const metadata: Metadata = {
   title,

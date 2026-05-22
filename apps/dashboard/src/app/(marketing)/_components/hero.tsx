@@ -45,8 +45,9 @@ export function Hero({ isAuthenticated = false }: HeroProps) {
               <code className="border-border bg-muted text-foreground rounded border px-1.5 py-0.5 font-mono text-[13px]">
                 &lt;script&gt;
               </code>{' '}
-              tag. Seven layouts. Zero iframes, zero API keys, zero maintenance. Drop it on your
-              blog, portfolio, or README and get a live, themed widget of your merged contributions.
+              tag. Seven layouts. Fully themeable. Zero iframes, zero API keys, zero maintenance.
+              Drop it on your blog, portfolio, or README and get a live widget of your merged
+              contributions — styled to match your brand.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3">

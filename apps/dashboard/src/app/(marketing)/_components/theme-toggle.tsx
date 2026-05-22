@@ -21,7 +21,7 @@ export function ThemeToggle() {
     setTheme(isDark ? 'light' : 'dark');
   }
 
-  const Icon = isDark ? Sun : Moon;
+  const Icon = isDark ? Moon : Sun;
   const label = !mounted
     ? 'Toggle theme'
     : isDark

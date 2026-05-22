@@ -6,8 +6,8 @@ const FEATURES = [
   },
   {
     num: '02',
-    title: 'Light, dark, or system',
-    body: "Theme follows your visitor's OS preference automatically. Or pin it light / dark / per-embed. All 7 layouts ship both modes.",
+    title: 'Themes that match your brand',
+    body: "Pick any accent, background, border, or muted color. Per-token overrides mean the widget fits portfolios, docs sites, and dark-mode blogs alike — light, dark, or system mode follows your visitor's OS automatically.",
   },
   {
     num: '03',
