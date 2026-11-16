@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { ThemeToggle } from './theme-toggle';
-import { WaitlistTrigger } from './waitlist-trigger';
 
-const VERSION_LABEL = 'private beta';
+const VERSION_LABEL = 'open beta';
 
 interface LandingNavProps {
   isAuthenticated?: boolean;
@@ -70,9 +69,12 @@ export function LandingNav({ isAuthenticated = false }: LandingNavProps) {
               Open dashboard →
             </Link>
           ) : (
-            <WaitlistTrigger className="border-foreground bg-foreground text-background hover:bg-foreground/90 inline-flex h-[30px] items-center gap-2 rounded-md border px-3 text-[12px] font-medium transition-colors">
-              Join waitlist →
-            </WaitlistTrigger>
+            <Link
+              href="/login"
+              className="border-foreground bg-foreground text-background hover:bg-foreground/90 inline-flex h-[30px] items-center gap-2 rounded-md border px-3 text-[12px] font-medium transition-colors"
+            >
+              Sign in with GitHub →
+            </Link>
           )}
         </nav>
       </div>

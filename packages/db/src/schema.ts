@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import type { WidgetConfig } from '@open-embed-ui/types';
 
 export const users = sqliteTable('users', {
@@ -144,42 +144,6 @@ export const embeds = sqliteTable('embeds', {
     .notNull()
     .$defaultFn(() => new Date()),
 });
-
-// Feature 15: pre-launch waitlist.
-// Idempotent on email (unique). Source = HTTP Referer; UTM fields are
-// passed by the client from window.location.search on submit.
-//
-// `approvedAt` is the gate for the closed-beta sign-in flow:
-//   NULL  → on the waitlist, not yet allowed to sign in
-//   timestamp → admin approved this signup, sign-in passes the gate
-// Set/cleared by admins from /dashboard/waitlist. See `lib/invites.ts`.
-export const waitlist = sqliteTable('waitlist', {
-  id: text('id').primaryKey(),
-  email: text('email').notNull().unique(),
-  source: text('source'),
-  utmSource: text('utm_source'),
-  utmMedium: text('utm_medium'),
-  utmCampaign: text('utm_campaign'),
-  approvedAt: integer('approved_at', { mode: 'timestamp' }),
-  createdAt: integer('created_at', { mode: 'timestamp' })
-    .notNull()
-    .$defaultFn(() => new Date()),
-});
-
-// Per-IP rate-limit attempts log for /api/waitlist. Stores a salted hash
-// of the request IP (never the raw IP). Old rows are pruned opportunistically
-// by the rate-limit check itself; no cron required for low-volume traffic.
-export const waitlistAttempts = sqliteTable(
-  'waitlist_attempts',
-  {
-    id: text('id').primaryKey(),
-    ipHash: text('ip_hash').notNull(),
-    createdAt: integer('created_at', { mode: 'timestamp' })
-      .notNull()
-      .$defaultFn(() => new Date()),
-  },
-  (table) => [index('waitlist_attempts_ip_created_idx').on(table.ipHash, table.createdAt)],
-);
 
 export const accountDeletions = sqliteTable('account_deletions', {
   id: text('id').primaryKey(),

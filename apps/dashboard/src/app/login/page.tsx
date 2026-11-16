@@ -7,24 +7,19 @@ import { toast } from 'sonner';
 
 // Classify the raw error query-param into one of our known buckets.
 // better-auth's onAPIError.errorURL redirect can either:
-//   (a) pass our APIError `code` (e.g. "WAITLIST_REQUIRED") in `?error=` — short, snake-case
+//   (a) pass an APIError `code` in `?error=` — short, snake-case
 //   (b) pass the full APIError `message` in `?error=` — long, sentence-cased
 // We detect (a) by exact match against known codes, and fall back to keyword
 // sniffing on the message for (b) so we don't display raw URL-encoded text.
-type ErrorKind = 'waitlist' | 'cancelled' | 'generic';
+type ErrorKind = 'cancelled' | 'generic';
 
 function classifyError(raw: string | null | undefined): ErrorKind | null {
   if (!raw) return null;
-  const upper = raw.toUpperCase();
-  if (upper === 'WAITLIST_REQUIRED' || upper === 'FORBIDDEN') return 'waitlist';
   if (raw === 'access_denied' || /cancel/i.test(raw)) return 'cancelled';
-  if (/waitlist/i.test(raw)) return 'waitlist';
   return 'generic';
 }
 
 const ERROR_MESSAGES: Record<ErrorKind, string> = {
-  waitlist:
-    "You're not on the waitlist yet, or your account hasn't been approved. Join the waitlist from the home page — we'll send an invite when capacity opens.",
   cancelled: 'GitHub sign-in was cancelled. No account was created.',
   generic: "Sign-in didn't go through. Please try again.",
 };
@@ -82,7 +77,7 @@ export default function LoginPage() {
             ⌥
           </span>
           <span>openembed/ui</span>
-          <span className="text-muted-foreground/80 font-normal">private beta</span>
+          <span className="text-muted-foreground/80 font-normal">open beta</span>
         </div>
 
         <div className="border-border bg-background rounded-xl border p-7 shadow-[0_1px_0_rgba(0,0,0,.02),0_4px_16px_rgba(0,0,0,.05)]">
@@ -100,18 +95,8 @@ export default function LoginPage() {
               role="alert"
               className="border-destructive/40 bg-destructive/5 text-destructive mb-4 rounded-md border p-3 font-mono text-[12px] leading-[1.55]"
             >
-              <span className="font-semibold">
-                // {kind === 'waitlist' ? 'waitlist required' : 'sign-in failed'}
-              </span>
+              <span className="font-semibold">{'// sign-in failed'}</span>
               <div className="text-foreground/90 mt-1.5 font-sans text-[13px]">{errorMessage}</div>
-              {kind === 'waitlist' && (
-                <a
-                  href="/#waitlist-email"
-                  className="text-foreground mt-2 inline-block font-mono text-[12px] underline underline-offset-2 hover:opacity-80"
-                >
-                  Join the waitlist →
-                </a>
-              )}
             </div>
           )}
 
@@ -132,7 +117,7 @@ export default function LoginPage() {
                 </div>
                 <div className="relative flex justify-center">
                   <span className="bg-background text-muted-foreground/70 px-2 font-mono text-[10px] tracking-[0.08em] uppercase">
-                    // dev only
+                    {'// dev only'}
                   </span>
                 </div>
               </div>

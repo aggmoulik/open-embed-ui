@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const VERSION_LABEL = 'private beta';
+const VERSION_LABEL = 'open beta';
 
 // Same handle is used across all three platforms today. Swap any URL here if
 // a different account is later set up.
@@ -38,7 +38,7 @@ export function LandingFooter() {
               <span>openembed/ui</span>
             </div>
             <p className="text-muted-foreground m-0 max-w-[320px] text-[14px]">
-              Embeddable widgets for your open-source contributions. A closed-beta product by{' '}
+              Embeddable widgets for your open-source contributions. An open-beta product by{' '}
               <a
                 href="https://github.com/aggmoulik"
                 target="_blank"

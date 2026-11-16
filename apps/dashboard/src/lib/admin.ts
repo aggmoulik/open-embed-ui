@@ -1,6 +1,6 @@
 // Hard-coded admin allowlist. Add emails here to grant access to
-// admin-only surfaces (currently: /dashboard/waitlist). Match is
-// case-insensitive on the user's verified session email.
+// admin-only surfaces. Match is case-insensitive on the user's
+// verified session email.
 //
 // Kept in code (not a DB column or env var) intentionally — admin
 // changes are rare and gating them behind a code review + deploy is

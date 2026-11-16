@@ -20,7 +20,5 @@ export {
   contributions,
   embeds,
   accountDeletions,
-  waitlist,
-  waitlistAttempts,
 } from '@open-embed-ui/db/schema';
 export * as schema from '@open-embed-ui/db/schema';

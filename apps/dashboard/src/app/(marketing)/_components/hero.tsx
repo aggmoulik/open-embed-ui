@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import { CodeCard } from './code-card';
-import { InlineWaitlist } from './inline-waitlist';
-import { WaitlistTrigger } from './waitlist-trigger';
 
 interface HeroProps {
   isAuthenticated?: boolean;
@@ -24,9 +22,7 @@ export function Hero({ isAuthenticated = false }: HeroProps) {
                   boxShadow: '0 0 0 3px color-mix(in oklab, var(--brand) 18%, transparent)',
                 }}
               />
-              <span>private beta</span>
-              <span className="text-muted-foreground/60">·</span>
-              <span>invite-only</span>
+              <span>open beta</span>
             </span>
 
             <h1 className="mt-4 text-[36px] leading-[1.05] font-semibold tracking-[-0.035em] text-balance sm:text-[56px] sm:leading-[1.02] lg:text-[64px]">
@@ -59,9 +55,12 @@ export function Hero({ isAuthenticated = false }: HeroProps) {
                   Open dashboard →
                 </Link>
               ) : (
-                <WaitlistTrigger className="border-foreground bg-foreground text-background hover:bg-foreground/90 inline-flex h-[38px] items-center justify-center gap-2 rounded-md border px-4 font-mono text-[13px] font-medium whitespace-nowrap transition-colors">
-                  Join the waitlist →
-                </WaitlistTrigger>
+                <Link
+                  href="/login"
+                  className="border-foreground bg-foreground text-background hover:bg-foreground/90 inline-flex h-[38px] items-center justify-center gap-2 rounded-md border px-4 font-mono text-[13px] font-medium whitespace-nowrap transition-colors"
+                >
+                  Sign in with GitHub →
+                </Link>
               )}
               <a
                 href="#demo"
@@ -102,7 +101,7 @@ export function Hero({ isAuthenticated = false }: HeroProps) {
 
           <div className="mx-auto w-full max-w-[520px] min-w-0 lg:mx-0 lg:w-full lg:max-w-none lg:justify-self-end">
             <CodeCard />
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <div className="border-border bg-background mt-4 flex flex-wrap items-center justify-between gap-3 rounded-md border p-4 sm:flex-nowrap sm:gap-4">
                 <div className="min-w-0">
                   <p className="text-muted-foreground font-mono text-[12px]">
@@ -119,13 +118,6 @@ export function Hero({ isAuthenticated = false }: HeroProps) {
                   Open dashboard →
                 </Link>
               </div>
-            ) : (
-              <>
-                <InlineWaitlist className="mt-4" inputId="waitlist-email" />
-                <p className="text-muted-foreground/70 mt-2.5 font-mono text-[11px]">
-                  No spam. One email when invites open. Unsubscribe anytime.
-                </p>
-              </>
             )}
           </div>
         </div>

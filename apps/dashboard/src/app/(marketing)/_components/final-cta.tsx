@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { InlineWaitlist } from './inline-waitlist';
 
 interface FinalCtaProps {
   isAuthenticated?: boolean;
@@ -42,10 +41,15 @@ export function FinalCta({ isAuthenticated = false }: FinalCtaProps) {
         ) : (
           <>
             <p className="text-background/70 mx-auto mt-3.5 mb-7 max-w-[620px] text-[16px]">
-              Private beta is open. We&apos;re sending 200 invites a week to people on the waitlist.
+              Open beta is live. Sign in with GitHub and build your first widget in minutes.
             </p>
             <div className="flex justify-center">
-              <InlineWaitlist variant="dark" buttonLabel="Get my invite" />
+              <Link
+                href="/login"
+                className="bg-brand inline-flex h-11 items-center justify-center gap-2 rounded-md px-5 font-mono text-[13px] font-medium text-white transition-opacity hover:opacity-90"
+              >
+                Sign in with GitHub →
+              </Link>
             </div>
           </>
         )}
@@ -60,7 +64,7 @@ export function FinalCta({ isAuthenticated = false }: FinalCtaProps) {
           >
             @aggmoulik
           </a>{' '}
-          · closed beta
+          · open beta
         </p>
       </div>
     </section>

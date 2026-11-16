@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
-    "build": "rm -rf dist && node build.mjs",
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && node build.mjs",
     "dev": "node build.mjs --watch",
     "preview": "node dev/serve.mjs"
   },

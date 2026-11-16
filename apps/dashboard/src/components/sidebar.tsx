@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@open-embed-ui/ui/lib/utils';
-import { LayoutDashboard, GitPullRequest, Box, Settings, Mail, Menu, X } from 'lucide-react';
+import { LayoutDashboard, GitPullRequest, Box, Settings, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
-const VERSION_LABEL = 'private beta';
+const VERSION_LABEL = 'open beta';
 
 const baseNavItems = [
   { href: '/dashboard', label: 'overview', icon: LayoutDashboard },
@@ -15,16 +15,10 @@ const baseNavItems = [
   { href: '/dashboard/settings', label: 'settings', icon: Settings },
 ];
 
-const adminNavItems = [{ href: '/dashboard/waitlist', label: 'waitlist', icon: Mail }];
-
-interface SidebarProps {
-  isAdmin?: boolean;
-}
-
-export function Sidebar({ isAdmin = false }: SidebarProps) {
+export function Sidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const navItems = isAdmin ? [...baseNavItems, ...adminNavItems] : baseNavItems;
+  const navItems = baseNavItems;
 
   return (
     <>
@@ -71,7 +65,7 @@ export function Sidebar({ isAdmin = false }: SidebarProps) {
 
         <div className="border-border border-b border-dashed px-4 py-3">
           <span className="text-muted-foreground font-mono text-[10px] tracking-[0.08em] uppercase">
-            // navigation
+            {'// navigation'}
           </span>
         </div>
 

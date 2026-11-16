@@ -8,7 +8,7 @@
     "dev:all": "pnpm db:push && turbo dev --filter=@open-embed-ui/dashboard --filter=@open-embed-ui/preview",
     "dx": "pnpm install && pnpm db:push && pnpm db:seed",
     "build": "turbo build",
-    "build:widget": "turbo build --filter=@open-embed-ui/widget && cp packages/widget/dist/widget.js apps/dashboard/public/widget.js && pnpm check:bundle-size",
+    "build:widget": "turbo build --filter=@open-embed-ui/widget && node scripts/copy-widget.mjs apps/dashboard/public/widget.js && pnpm check:bundle-size",
     "check:bundle-size": "node scripts/check-bundle-size.mjs",
     "start": "pnpm --filter @open-embed-ui/dashboard start",
     "lint": "turbo lint",
@@ -21,7 +21,7 @@
     "db:migrate": "pnpm --filter @open-embed-ui/db db:migrate",
     "db:studio": "pnpm --filter @open-embed-ui/db db:studio",
     "db:seed": "pnpm --filter @open-embed-ui/db db:seed",
-    "setup": "pnpm install && cp -n packages/db/.env.example packages/db/.env && cp -n apps/dashboard/.env.example apps/dashboard/.env && pnpm db:push",
+    "setup": "pnpm install && node scripts/setup-env.mjs && pnpm db:push",
     "ui:add": "pnpm --filter @open-embed-ui/ui shadcn add",
     "export:widget": "tsx --env-file=packages/db/.env scripts/export-widget.ts"
   },
