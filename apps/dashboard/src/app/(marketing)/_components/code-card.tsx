@@ -27,6 +27,10 @@ const TOKEN_CLS: Record<TokenCls, string> = {
   'tk-punc': 'text-muted-foreground',
 };
 
+// Live widget bundle URL. Derived from the dashboard origin so production,
+// previews, and custom domains all emit a working snippet.
+const WIDGET_SRC = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/widget.js`;
+
 // `hidden: true` is kept in source for when a feature lands later — filtered out
 // of the public tabs via SNIPPETS below. Static/CI is gated until the CLI ships.
 const ALL_SNIPPETS: Snippet[] = [
@@ -42,23 +46,15 @@ const ALL_SNIPPETS: Snippet[] = [
           ['tk-punc', ' '],
           ['tk-attr', 'src'],
           ['tk-punc', '='],
-          ['tk-str', '"https://embed.openembed.dev/v0/widget.js"'],
+          ['tk-str', `"${WIDGET_SRC}"`],
         ],
       },
       {
         tokens: [
           ['tk-punc', '        '],
-          ['tk-attr', 'data-user'],
+          ['tk-attr', 'data-widget-id'],
           ['tk-punc', '='],
-          ['tk-str', '"aggmoulik"'],
-        ],
-      },
-      {
-        tokens: [
-          ['tk-punc', '        '],
-          ['tk-attr', 'data-layout'],
-          ['tk-punc', '='],
-          ['tk-str', '"list"'],
+          ['tk-str', '"YOUR_WIDGET_ID"'],
         ],
       },
       {
@@ -66,7 +62,7 @@ const ALL_SNIPPETS: Snippet[] = [
           ['tk-punc', '        '],
           ['tk-attr', 'data-theme'],
           ['tk-punc', '='],
-          ['tk-str', '"auto"'],
+          ['tk-str', '"system"'],
         ],
       },
       {
@@ -146,25 +142,16 @@ const ALL_SNIPPETS: Snippet[] = [
           ['tk-punc', '    s.'],
           ['tk-attr', 'src'],
           ['tk-punc', ' = '],
-          ['tk-str', "'https://embed.openembed.dev/v0/widget.js'"],
+          ['tk-str', `'${WIDGET_SRC}'`],
           ['tk-punc', ';'],
         ],
       },
       {
         tokens: [
           ['tk-punc', '    s.dataset.'],
-          ['tk-attr', 'user'],
+          ['tk-attr', 'widgetId'],
           ['tk-punc', ' = '],
-          ['tk-str', "'aggmoulik'"],
-          ['tk-punc', ';'],
-        ],
-      },
-      {
-        tokens: [
-          ['tk-punc', '    s.dataset.'],
-          ['tk-attr', 'layout'],
-          ['tk-punc', ' = '],
-          ['tk-str', "'timeline'"],
+          ['tk-str', "'YOUR_WIDGET_ID'"],
           ['tk-punc', ';'],
         ],
       },

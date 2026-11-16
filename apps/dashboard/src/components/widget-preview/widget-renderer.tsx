@@ -1,3 +1,5 @@
+'use client';
+
 import { lazy, Suspense, type CSSProperties } from 'react';
 import type { Contribution, WidgetConfig, WidgetLayout } from '@/types';
 import { resolveThemeTokens } from '@open-embed-ui/widget-components';
